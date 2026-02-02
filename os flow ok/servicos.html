@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>OS Flow • Cadastro de Serviços</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Paleta de Cores Profissional - Azul Claro como principal */
+      --primary-50: #f0f9ff;
+      --primary-100: #e0f2fe;
+      --primary-200: #bae6fd;
+      --primary-300: #7dd3fc;
+      --primary-400: #38bdf8;
+      --primary-500: #0ea5e9;
+      --primary-600: #0284c7;
+      --primary-700: #0369a1;
+      --primary-800: #075985;
+      --primary-900: #0c4a6e;
+      
+      /* Cores Semânticas */
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --info: #0ea5e9;
+      --info-light: #e0f2fe;
+      --purple: #8b5cf6;
+      --purple-light: #ede9fe;
+      --teal: #14b8a6;
+      --teal-light: #ccfbf1;
+      
+      /* Cores Neutras Profissionais */
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      
+      /* Cores de Fundo */
+      --bg-body: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+      --bg-surface: #ffffff;
+      --bg-surface-hover: #f8fafc;
+      --bg-sidebar: rgba(255, 255, 255, 0.95);
+      --bg-card: #ffffff;
+      
+      /* Cores de Texto */
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-tertiary: #6b7280;
+      --text-muted: #9ca3af;
+      --text-inverse: #ffffff;
+      
+      /* Bordas */
+      --border-light: #e5e7eb;
+      --border-medium: #d1d5db;
+      --border-accent: var(--primary-400);
+      
+      /* Sombras Profissionais */
+      --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-2xl: 0 25px 50px -12px rgba(0,  0,  0,  0.25);
+      --shadow-primary: 0 4px 14px 0 rgba(14, 165, 233, 0.2);
+      
+      /* Tipografia */
+      --font-primary: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-secondary: 'Manrope', system-ui, -apple-system, sans-serif;
+      --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
+      
+      /* Espaçamento */
+      --space-0: 0;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+      
+      /* Bordas */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-full: 9999px;
+      
+      /* Transições */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+      
+      /* Layout */
+      --sidebar-width: 260px;
+      --sidebar-collapsed: 72px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-secondary);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    /* Layout Principal */
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      min-height: 100vh;
+      transition: grid-template-columns var(--transition-base);
+    }
+    .layout.collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
+
+    /* ========== SIDEBAR ELEGANTE RECOLHÍVEL ========== */
+    .sidebar-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+      width: var(--sidebar-width);
+      transition: all var(--transition-base);
+      overflow: hidden;
+    }
+    .layout.collapsed .sidebar-wrapper { width: var(--sidebar-collapsed); }
+
+    .sidebar {
+      padding: var(--space-6) 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .sidebar-logo {
+      padding: 0 var(--space-4) var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: var(--space-6);
+      position: relative;
+      min-height: 60px;
+    }
+    .layout.collapsed .sidebar-logo { padding: 0 var(--space-3) var(--space-6); justify-content: center; }
+
+    .sidebar-logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-inverse);
+      font-family: var(--font-primary);
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: var(--shadow-primary);
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform var(--transition-base);
+    }
+    .sidebar-logo-icon:hover { transform: scale(1.05); }
+
+    .sidebar-logo-text {
+      overflow: hidden;
+      transition: opacity var(--transition-base), max-width var(--transition-base);
+      max-width: 200px;
+    }
+    .layout.collapsed .sidebar-logo-text { opacity: 0; max-width: 0; }
+
+    .sidebar-logo-text h1 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .sidebar-logo-text small {
+      display: block;
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .menu {
+      list-style: none;
+      margin: 0;
+      padding: 0 var(--space-2);
+      flex: 1;
+      font-size: 0.875rem;
+    }
+    .layout.collapsed .menu { padding: 0 var(--space-1); }
+    .menu li { margin-bottom: var(--space-1); }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-3);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      position: relative;
+    }
+    .layout.collapsed .menu a { justify-content: center; padding: var(--space-3); }
+
+    .menu a:hover {
+      background: var(--primary-50);
+      color: var(--primary-600);
+      transform: translateX(4px);
+    }
+    .layout.collapsed .menu a:hover { transform: translateX(0) scale(1.05); }
+
+    .menu a.active {
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-primary);
+      font-weight: 600;
+    }
+
+    .menu-icon { width: 20px; text-align: center; font-size: 1.125rem; flex-shrink: 0; }
+    .menu-text {
+      overflow: hidden;
+      transition: opacity var(--transition-base), max-width var(--transition-base);
+      max-width: 200px;
+    }
+    .layout.collapsed .menu-text { opacity: 0; max-width: 0; }
+
+    .sidebar-footer {
+      padding: var(--space-3) var(--space-4);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-light);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      text-align: center;
+    }
+    .layout.collapsed .sidebar-footer {
+      padding: var(--space-2);
+      font-size: 0.6rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .sidebar-footer span { display: inline-block; transition: opacity var(--transition-base); text-align: center; }
+    .layout.collapsed .sidebar-footer span:not(:first-child) { opacity: 0; width: 0; margin: 0; }
+
+    /* ========== TOPBAR COMPACTO ========== */
+    .main-wrapper { display: flex; flex-direction: column; min-width: 0; background: transparent; }
+
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--space-3) var(--space-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      box-shadow: var(--shadow-sm);
+      min-height: 60px;
+    }
+
+    .topbar-left { display: flex; align-items: center; flex: 1; }
+
+    .topbar-title {
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .breadcrumb {
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 500;
+    }
+
+    .breadcrumb::before {
+      content: '|';
+      display: inline-block;
+      color: var(--border-medium);
+      margin-right: var(--space-2);
+      font-weight: 400;
+    }
+
+    .breadcrumb span {
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--teal) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-inverse);
+      font-weight: 700;
+      font-size: 0.875rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-base);
+      cursor: pointer;
+    }
+    .user-avatar:hover { transform: scale(1.05); }
+
+    .content { padding: var(--space-6); flex: 1; }
+
+    /* ========== CADASTRO DE SERVIÇOS ========== */
+    .service-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-8);
+    }
+
+    .service-header h1 {
+      font-family: var(--font-primary);
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .service-header h1:before { content: '🔧'; font-size: 1.5rem; }
+
+    .service-actions { display: flex; gap: var(--space-3); }
+
+    .btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary {
+      background: var(--primary-500);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-primary);
+    }
+    .btn-primary:hover { background: var(--primary-600); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+    .btn-success {
+      background: var(--success);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.2);
+    }
+    .btn-success:hover { background: #0da271; transform: translateY(-2px); }
+
+    .btn-danger {
+      background: var(--danger);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.2);
+    }
+    .btn-danger:hover { background: #dc2626; transform: translateY(-2px); }
+
+    /* Layout do formulário */
+    .service-form-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: var(--space-8);
+      margin-bottom: var(--space-8);
+      align-items: start;
+    }
+    @media (max-width: 1024px) { .service-form-container { grid-template-columns: 1fr; } }
+
+    /* Painel de formulário */
+    .form-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+      height: 100%;
+      min-height: 680px;
+    }
+    .form-panel:hover { box-shadow: var(--shadow-lg); border-color: var(--primary-300); }
+
+    .form-panel-header {
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .form-panel-header h2 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .form-panel-header h2:before { content: '📝'; font-size: 1rem; }
+
+    .form-group { margin-bottom: var(--space-6); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+
+    .form-label {
+      display: block;
+      margin-bottom: var(--space-2);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .form-label.required:after { content: ' *'; color: var(--danger); }
+
+    .form-input {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      transition: all var(--transition-base);
+    }
+    .form-input:focus { outline: none; border-color: var(--primary-400); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+    .form-input:hover:not(:focus) { border-color: var(--border-medium); }
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .form-textarea { min-height: 100px; resize: vertical; }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right var(--space-4) center;
+      background-size: 1rem;
+      padding-right: var(--space-10);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      margin-top: var(--space-8);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--border-light);
+    }
+
+    /* ========== PAINEL DE ESTATÍSTICAS AVANÇADAS ========== */
+    .stats-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      height: 100%;
+      min-height: 680px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stats-panel-header {
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .stats-panel-header h3 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .stats-panel-header h3:before { content: '📊'; font-size: 1rem; }
+
+    /* Estatísticas principais */
+    .stats-main-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .stat-main-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all var(--transition-base);
+      box-shadow: var(--shadow-sm);
+      height: 100%;
+    }
+    .stat-main-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-300); }
+
+    .stat-main-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-inverse);
+      margin-bottom: var(--space-2);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-main-value {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+      line-height: 1;
+    }
+
+    .stat-main-label {
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    /* Gráfico de distribuição */
+    .distribution-chart { margin-bottom: var(--space-6); }
+
+    .distribution-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .distribution-bars { display: flex; flex-direction: column; gap: var(--space-2); }
+
+    .distribution-bar { display: flex; align-items: center; gap: var(--space-3); }
+
+    .distribution-bar-label {
+      width: 100px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .distribution-bar-container {
+      flex: 1;
+      height: 24px;
+      background: var(--gray-100);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .distribution-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 1s ease-out;
+      position: relative;
+    }
+
+    .distribution-bar-value {
+      position: absolute;
+      right: var(--space-2);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--text-inverse);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    /* Estatísticas Adicionais */
+    .additional-stats { margin-bottom: var(--space-6); }
+
+    .additional-stats-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    .additional-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+
+    .additional-stat-item {
+      background: var(--gray-50);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .additional-stat-value {
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .additional-stat-label {
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    /* Atividades Recentes */
+    .recent-activities { flex: 1; margin-bottom: var(--space-6); }
+
+    .activities-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    .activities-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: var(--space-2);
+    }
+
+    .activity-item {
+      padding: var(--space-3);
+      background: var(--gray-50);
+      border-radius: var(--radius-lg);
+      border-left: 3px solid var(--primary-400);
+    }
+    .activity-item:nth-child(2) { border-left-color: var(--success); }
+    .activity-item:nth-child(3) { border-left-color: var(--warning); }
+    .activity-item:nth-child(4) { border-left-color: var(--purple); }
+
+    .activity-text {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: var(--space-1);
+    }
+
+    .activity-time {
+      font-size: 0.625rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Dicas Rápidas */
+    .quick-tips { margin-top: auto; padding-top: var(--space-6); border-top: 1px solid var(--border-light); }
+
+    .tips-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    .tips-list { font-size: 0.75rem; color: var(--text-secondary); }
+
+    .tip-item { display: flex; align-items: flex-start; gap: var(--space-2); margin-bottom: var(--space-2); }
+    .tip-item:before { content: '💡'; font-size: 0.875rem; flex-shrink: 0; }
+
+    /* Lista de serviços */
+    .services-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      margin-top: var(--space-8);
+    }
+
+    .services-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .services-panel-header h2 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .services-panel-header h2:before { content: '🔧'; font-size: 1rem; }
+
+    .search-container { display: flex; gap: var(--space-2); }
+
+    .search-input {
+      width: 250px;
+      padding: var(--space-2) var(--space-4);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+      transition: all var(--transition-base);
+    }
+    .search-input:focus { outline: none; border-color: var(--primary-400); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+
+    .services-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.875rem;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .services-table th,
+    .services-table td {
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .services-table th {
+      background: var(--gray-50);
+      color: var(--text-secondary);
+      font-family: var(--font-primary);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    .services-table tr:last-child td { border-bottom: none; }
+    .services-table tr:hover td { background: var(--primary-50); }
+
+    .service-status {
+      display: inline-block;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-active { background: var(--success-light); color: var(--success); }
+    .status-inactive { background: var(--danger-light); color: var(--danger); }
+
+    .price-tag {
+      font-family: var(--font-primary);
+      font-weight: 700;
+      color: var(--success);
+      font-size: 0.875rem;
+    }
+
+    .table-actions { display: flex; gap: var(--space-2); }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+    }
+
+    .btn-edit { background: var(--warning-light); border-color: transparent; color: var(--warning); }
+    .btn-edit:hover { background: #fbbf24; color: white; }
+
+    .btn-delete { background: var(--danger-light); border-color: transparent; color: var(--danger); }
+    .btn-delete:hover { background: var(--danger); color: white; }
+
+    .empty-state { text-align: center; padding: var(--space-12) var(--space-6); color: var(--text-tertiary); }
+    .empty-state-icon { font-size: 3rem; margin-bottom: var(--space-4); opacity: 0.5; }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ADICIONADO: fadeOut (usado no JS) */
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+    .modal {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      width: 500px;
+      max-width: 90vw;
+      box-shadow: var(--shadow-2xl);
+      border: 1px solid var(--border-light);
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    .modal-close:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+
+    .modal-body { max-height: 400px; overflow-y: auto; padding-right: var(--space-2); }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar-wrapper {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border-light);
+        z-index: 1000;
+      }
+      .sidebar { padding: var(--space-4) 0; flex-direction: row; align-items: center; }
+      .menu { display: flex; overflow-x: auto; flex: 0 0 auto; }
+      .menu li { margin: 0; }
+      .menu a { flex-direction: column; padding: var(--space-2); }
+      .menu-text { font-size: 0.625rem; }
+      .content { padding: var(--space-4); }
+      .topbar { padding: var(--space-4); }
+
+      .service-header { flex-direction: column; gap: var(--space-4); align-items: flex-start; }
+      .service-actions { width: 100%; justify-content: space-between; }
+
+      .services-panel-header { flex-direction: column; gap: var(--space-4); align-items: flex-start; }
+      .search-container { width: 100%; }
+      .search-input { flex: 1; }
+
+      .stats-main-grid { grid-template-columns: 1fr; }
+      .additional-stats-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Tooltip para menu recolhido */
+    .menu-tooltip {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--gray-800);
+      color: white;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-fast);
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+    }
+
+    .layout.collapsed .menu a:hover .menu-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) translateX(8px);
+    }
+
+    .menu a { position: relative; }
+
+    /* Animações */
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    .slide-in { animation: slideUp 0.5s ease-out; }
+  </style>
+</head>
+<body>
+  <div class="layout" id="mainLayout">
+    <!-- SIDEBAR RECOLHÍVEL -->
+    <div class="sidebar-wrapper">
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon" onclick="toggleSidebar()">OS</div>
+          <div class="sidebar-logo-text">
+            <h1>OS Flow</h1>
+            <small>Dashboard Inteligente</small>
+          </div>
+        </div>
+        <ul class="menu">
+          <li><a href="index.html">
+            <span class="menu-icon">📊</span>
+            <span class="menu-text">Dashboard</span>
+            <span class="menu-tooltip">Dashboard</span>
+          </a></li>
+          <li><a href="cadastrar-clientes.html">
+            <span class="menu-icon">👥</span>
+            <span class="menu-text">Clientes</span>
+            <span class="menu-tooltip">Clientes</span>
+          </a></li>
+          <li><a href="produtos.html">
+            <span class="menu-icon">📦</span>
+            <span class="menu-text">Produtos</span>
+            <span class="menu-tooltip">Produtos</span>
+          </a></li>
+          <li><a href="servicos.html" class="active">
+            <span class="menu-icon">🔧</span>
+            <span class="menu-text">Serviços</span>
+            <span class="menu-tooltip">Serviços</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">💰</span>
+            <span class="menu-text">Vendas</span>
+            <span class="menu-tooltip">Vendas</span>
+          </a></li>
+          <li><a href="ordem-servico.html">
+            <span class="menu-icon">📋</span>
+            <span class="menu-text">Ordens</span>
+            <span class="menu-tooltip">Ordens</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">🛡️</span>
+            <span class="menu-text">Garantias</span>
+            <span class="menu-tooltip">Garantias</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">📁</span>
+            <span class="menu-text">Arquivos</span>
+            <span class="menu-tooltip">Arquivos</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">💳</span>
+            <span class="menu-text">Financeiro</span>
+            <span class="menu-tooltip">Financeiro</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">📄</span>
+            <span class="menu-text">Cobrança</span>
+            <span class="menu-tooltip">Cobrança</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">⚙️</span>
+            <span class="menu-text">Configurações</span>
+            <span class="menu-tooltip">Configurações</span>
+          </a></li>
+        </ul>
+        <div class="sidebar-footer">
+          v3.8.1 • © <span id="ano-atual"></span> • OS Flow
+        </div>
+      </aside>
+    </div>
+
+    <!-- ÁREA PRINCIPAL -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">
+            Cadastro de Serviços
+            <div class="breadcrumb">
+              <span>Gestão de Serviços</span>
+            </div>
+          </div>
+        </div>
+        <div class="user-info">
+          <span>Bem-vindo, <strong>V1ctor Gomes</strong></span>
+          <div class="user-avatar">VG</div>
+        </div>
+      </header>
+
+      <main class="content fade-in">
+        <!-- CABEÇALHO DA PÁGINA -->
+        <div class="service-header slide-in">
+          <h1>Cadastro de Serviços</h1>
+          <div class="service-actions">
+            <button class="btn" onclick="exportarServicos()">
+              <span>📤</span> Exportar
+            </button>
+            <button class="btn btn-primary" onclick="limparFormulario()">
+              <span>🆕</span> Novo Serviço
+            </button>
+          </div>
+        </div>
+
+        <!-- FORMULÁRIO E ESTATÍSTICAS -->
+        <div class="service-form-container">
+          <!-- FORMULÁRIO PRINCIPAL -->
+          <section class="form-panel slide-in">
+            <div class="form-panel-header">
+              <h2>Dados do Serviço</h2>
+            </div>
+            
+            <form id="servicoForm" onsubmit="salvarServico(event)">
+              <div class="form-group">
+                <label class="form-label required" for="nome">Nome do Serviço</label>
+                <input type="text" id="nome" class="form-input" placeholder="Digite o nome do serviço" required>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label required" for="codigo">Código do Serviço</label>
+                <input type="text" id="codigo" class="form-input" placeholder="Ex: SRV-001" required>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label required" for="categoria">Categoria</label>
+                  <select id="categoria" class="form-input form-select" required>
+                    <option value="">Selecione...</option>
+                    <option value="conserto">Conserto</option>
+                    <option value="manutencao">Manutenção</option>
+                    <option value="instalacao">Instalação</option>
+                    <option value="configuracao">Configuração</option>
+                    <option value="limpeza">Limpeza</option>
+                    <option value="diagnostico">Diagnóstico</option>
+                    <option value="outro">Outro</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label required" for="tipo">Tipo de Serviço</label>
+                  <select id="tipo" class="form-input form-select" required>
+                    <option value="">Selecione...</option>
+                    <option value="interno">Interno</option>
+                    <option value="externo">Externo</option>
+                    <option value="remoto">Remoto</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label required" for="tempo_estimado">Tempo Estimado</label>
+                  <input type="text" id="tempo_estimado" class="form-input" placeholder="Ex: 2 horas" required>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label required" for="garantia">Garantia (dias)</label>
+                  <input type="number" id="garantia" class="form-input" placeholder="Ex: 30" min="0" required>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label required" for="valor">Valor (R$)</label>
+                  <input type="number" id="valor" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label required" for="custo">Custo (R$)</label>
+                  <input type="number" id="custo" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required" for="descricao">Descrição do Serviço</label>
+                <textarea id="descricao" class="form-input form-textarea" placeholder="Descreva detalhadamente o serviço..." required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="observacoes">Observações Adicionais</label>
+                <textarea id="observacoes" class="form-input form-textarea" placeholder="Informações complementares..."></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label required" for="dificuldade">Nível de Dificuldade</label>
+                  <select id="dificuldade" class="form-input form-select" required>
+                    <option value="">Selecione...</option>
+                    <option value="baixa">Baixa</option>
+                    <option value="media">Média</option>
+                    <option value="alta">Alta</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label required" for="status">Status</label>
+                  <select id="status" class="form-input form-select" required>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-danger" onclick="limparFormulario()">
+                  <span>🗑️</span> Limpar
+                </button>
+                <button type="submit" class="btn btn-success">
+                  <span>💾</span> Salvar Serviço
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- PAINEL DE ESTATÍSTICAS AVANÇADAS -->
+          <aside class="stats-panel slide-in">
+            <div class="stats-panel-header">
+              <h3>📊 Estatísticas dos Serviços</h3>
+            </div>
+            
+            <!-- Estatísticas principais -->
+            <div class="stats-main-grid">
+              <div class="stat-main-card">
+                <div class="stat-main-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);">🔧</div>
+                <div class="stat-main-value" id="totalServicos">0</div>
+                <div class="stat-main-label">Total de Serviços</div>
+              </div>
+              
+              <div class="stat-main-card">
+                <div class="stat-main-icon" style="background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);">✅</div>
+                <div class="stat-main-value" id="servicosAtivos">0</div>
+                <div class="stat-main-label">Serviços Ativos</div>
+              </div>
+              
+              <div class="stat-main-card">
+                <div class="stat-main-icon" style="background: linear-gradient(135deg, var(--purple) 0%, #a78bfa 100%);">💰</div>
+                <div class="stat-main-value" id="faturamentoMedio">R$ 0</div>
+                <div class="stat-main-label">Faturamento Médio</div>
+              </div>
+              
+              <div class="stat-main-card">
+                <div class="stat-main-icon" style="background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);">⏱️</div>
+                <div class="stat-main-value" id="tempoMedio">0h</div>
+                <div class="stat-main-label">Tempo Médio</div>
+              </div>
+            </div>
+            
+            <!-- Gráfico de distribuição -->
+            <div class="distribution-chart">
+              <div class="distribution-title">
+                <span>Distribuição por Categoria</span>
+                <span id="percentConserto">0%</span>
+              </div>
+              <div class="distribution-bars">
+                <div class="distribution-bar">
+                  <span class="distribution-bar-label">Conserto</span>
+                  <div class="distribution-bar-container">
+                    <div class="distribution-bar-fill" id="barConserto" style="background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-600) 100%); width: 0%;">
+                      <span class="distribution-bar-value" id="barConsertoValue">0</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="distribution-bar">
+                  <span class="distribution-bar-label">Manutenção</span>
+                  <div class="distribution-bar-container">
+                    <div class="distribution-bar-fill" id="barManutencao" style="background: linear-gradient(90deg, var(--success) 0%, #34d399 100%); width: 0%;">
+                      <span class="distribution-bar-value" id="barManutencaoValue">0</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="distribution-bar">
+                  <span class="distribution-bar-label">Outros</span>
+                  <div class="distribution-bar-container">
+                    <div class="distribution-bar-fill" id="barOutros" style="background: linear-gradient(90deg, var(--warning) 0%, #fbbf24 100%); width: 0%;">
+                      <span class="distribution-bar-value" id="barOutrosValue">0</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Estatísticas Adicionais -->
+            <div class="additional-stats">
+              <div class="additional-stats-title">Métricas Financeiras</div>
+              <div class="additional-stats-grid">
+                <div class="additional-stat-item">
+                  <div class="additional-stat-value" id="lucroMedio">0%</div>
+                  <div class="additional-stat-label">Margem Média</div>
+                </div>
+                <div class="additional-stat-item">
+                  <div class="additional-stat-value" id="servicosMes">0</div>
+                  <div class="additional-stat-label">Serviços/Mês</div>
+                </div>
+                <div class="additional-stat-item">
+                  <div class="additional-stat-value" id="garantiaMedia">0</div>
+                  <div class="additional-stat-label">Garantia Média</div>
+                </div>
+                <div class="additional-stat-item">
+                  <div class="additional-stat-value" id="popularidade">0%</div>
+                  <div class="additional-stat-label">Popularidade</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Atividades Recentes -->
+            <div class="recent-activities">
+              <div class="activities-title">Atividades Recentes</div>
+              <div class="activities-list" id="atividadesLista"></div>
+            </div>
+            
+            <!-- Dicas Rápidas -->
+            <div class="quick-tips">
+              <div class="tips-title">Dicas Rápidas</div>
+              <div class="tips-list">
+                <div class="tip-item">Calcule bem o custo para definir o preço ideal</div>
+                <div class="tip-item">Serviços inativos não aparecem nas OS</div>
+                <div class="tip-item">Ajuste a garantia conforme a complexidade</div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- LISTA DE SERVIÇOS -->
+        <section class="services-panel slide-in">
+          <div class="services-panel-header">
+            <h2>Serviços Cadastrados</h2>
+            <div class="search-container">
+              <input type="text" class="search-input" placeholder="Buscar serviço..." id="buscarServico" onkeyup="filtrarServicos()">
+              <button class="btn" onclick="filtrarServicos()">
+                <span>🔍</span> Buscar
+              </button>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <table class="services-table" id="tabelaServicos">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Categoria</th>
+                  <th>Tempo</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="servicosLista"></tbody>
+            </table>
+          </div>
+          
+          <div id="semServicos" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">🔧</div>
+            <h3>Nenhum serviço cadastrado</h3>
+            <p>Comece cadastrando seu primeiro serviço usando o formulário acima.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO -->
+  <div class="modal-backdrop" id="modalConfirmacao">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitulo">Confirmação</h3>
+        <button class="modal-close" onclick="fecharModal()">×</button>
+      </div>
+      <div class="modal-body" id="modalCorpo"></div>
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-6);">
+        <button class="btn" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-danger" id="btnConfirmarAcao" onclick="confirmarAcao()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================
+    // LOCALSTORAGE PADRONIZADO (OS Flow)
+    // ============================
+    const LS = Object.freeze({
+      clientes: 'osflow:clientes',
+      atividadesClientes: 'osflow:atividades:clientes',
+      produtos: 'osflow:produtos',
+      servicos: 'osflow:servicos',
+      atividadesServicos: 'osflow:atividades:servicos',
+      sidebarCollapsed: 'osflow:ui:sidebarCollapsed',
+
+      // legado (migração)
+      legacyClientes: 'clientesOSFlow',
+      legacyAtividadesClientes: 'atividadesClientes',
+      legacyProdutos: 'produtosOSFlow',
+      legacyServicos: 'servicosOSFlow',
+      legacyAtividadesServicos: 'atividadesServicos',
+      legacySidebarCollapsed: 'sidebarCollapsed'
+    });
+
+    function migrateLocalStorageKeys() {
+      if (!localStorage.getItem(LS.clientes) && localStorage.getItem(LS.legacyClientes)) {
+        localStorage.setItem(LS.clientes, localStorage.getItem(LS.legacyClientes));
+      }
+      if (!localStorage.getItem(LS.atividadesClientes) && localStorage.getItem(LS.legacyAtividadesClientes)) {
+        localStorage.setItem(LS.atividadesClientes, localStorage.getItem(LS.legacyAtividadesClientes));
+      }
+      if (!localStorage.getItem(LS.produtos) && localStorage.getItem(LS.legacyProdutos)) {
+        localStorage.setItem(LS.produtos, localStorage.getItem(LS.legacyProdutos));
+      }
+      if (!localStorage.getItem(LS.servicos) && localStorage.getItem(LS.legacyServicos)) {
+        localStorage.setItem(LS.servicos, localStorage.getItem(LS.legacyServicos));
+      }
+      if (!localStorage.getItem(LS.atividadesServicos) && localStorage.getItem(LS.legacyAtividadesServicos)) {
+        localStorage.setItem(LS.atividadesServicos, localStorage.getItem(LS.legacyAtividadesServicos));
+      }
+      if (!localStorage.getItem(LS.sidebarCollapsed) && localStorage.getItem(LS.legacySidebarCollapsed)) {
+        localStorage.setItem(LS.sidebarCollapsed, localStorage.getItem(LS.legacySidebarCollapsed));
+      }
+    }
+
+    function lsReadJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch {
+        return fallback;
+      }
+    }
+
+    function lsWriteJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    migrateLocalStorageKeys();
+
+    // ============================
+    // DADOS (inicia vazio)
+    // ============================
+    let servicos = lsReadJSON(LS.servicos, null);
+    if (!Array.isArray(servicos)) servicos = [];
+    if (!localStorage.getItem(LS.servicos)) lsWriteJSON(LS.servicos, servicos);
+
+    let servicoEditando = null;
+    let acaoConfirmar = null;
+    let dadosConfirmacao = null;
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('ano-atual').textContent = new Date().getFullYear();
+
+      carregarServicos();
+      atualizarEstatisticas();
+      carregarAtividades();
+
+      // Restaurar estado do sidebar
+      restoreSidebarState();
+
+      // Formatar valor monetário
+      document.getElementById('valor').addEventListener('blur', formatarValorMonetario);
+      document.getElementById('custo').addEventListener('blur', formatarValorMonetario);
+    });
+
+    // SIDEBAR
+    function toggleSidebar() {
+      const layout = document.getElementById('mainLayout');
+      layout.classList.toggle('collapsed');
+      const isCollapsed = layout.classList.contains('collapsed');
+      localStorage.setItem(LS.sidebarCollapsed, isCollapsed);
+    }
+
+    function restoreSidebarState() {
+      const isCollapsed = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+      const layout = document.getElementById('mainLayout');
+      if (isCollapsed) layout.classList.add('collapsed');
+      else layout.classList.remove('collapsed');
+    }
+
+    // FORMATAR VALOR MONETÁRIO
+    function formatarValorMonetario(event) {
+      const input = event.target;
+      let valor = parseFloat(input.value);
+
+      if (!isNaN(valor)) input.value = valor.toFixed(2);
+    }
+
+    function persistServicos() {
+      lsWriteJSON(LS.servicos, servicos);
+    }
+
+    // SALVAR SERVIÇO
+    function salvarServico(event) {
+      event.preventDefault();
+
+      const servico = {
+        id: servicoEditando ? servicoEditando.id : Date.now(),
+        codigo: document.getElementById('codigo').value.toUpperCase(),
+        nome: document.getElementById('nome').value,
+        categoria: document.getElementById('categoria').value,
+        tipo: document.getElementById('tipo').value,
+        tempo_estimado: document.getElementById('tempo_estimado').value,
+        garantia: parseInt(document.getElementById('garantia').value, 10),
+        valor: parseFloat(document.getElementById('valor').value),
+        custo: parseFloat(document.getElementById('custo').value),
+        descricao: document.getElementById('descricao').value,
+        observacoes: document.getElementById('observacoes').value,
+        dificuldade: document.getElementById('dificuldade').value,
+        status: document.getElementById('status').value,
+        dataCadastro: servicoEditando ? servicoEditando.dataCadastro : new Date().toISOString().split('T')[0]
+      };
+
+      if (servicoEditando) {
+        const index = servicos.findIndex(s => s.id === servicoEditando.id);
+        servicos[index] = servico;
+
+        registrarAtividade(`Serviço "${servico.nome}" atualizado`, 'edicao');
+        mostrarNotificacao('✅ Serviço atualizado com sucesso!', 'success');
+      } else {
+        servicos.push(servico);
+
+        registrarAtividade(`Novo serviço cadastrado: ${servico.nome}`, 'cadastro');
+        mostrarNotificacao('✨ Serviço cadastrado com sucesso!', 'success');
+      }
+
+      persistServicos();
+
+      carregarServicos();
+      atualizarEstatisticas();
+      carregarAtividades();
+      limparFormulario();
+      servicoEditando = null;
+    }
+
+    // CARREGAR SERVIÇOS NA TABELA
+    function carregarServicos() {
+      // Sempre recarrega do storage (fonte da verdade)
+      servicos = lsReadJSON(LS.servicos, servicos) || [];
+
+      const tbody = document.getElementById('servicosLista');
+      const emptyState = document.getElementById('semServicos');
+
+      if (servicos.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      const servicosOrdenados = [...servicos].sort((a, b) => (a.codigo || '').localeCompare(b.codigo || ''));
+
+      tbody.innerHTML = servicosOrdenados.map(servico => {
+        const categoriaText = {
+          conserto: 'Conserto',
+          manutencao: 'Manutenção',
+          instalacao: 'Instalação',
+          configuracao: 'Configuração',
+          limpeza: 'Limpeza',
+          diagnostico: 'Diagnóstico',
+          outro: 'Outro'
+        }[servico.categoria] || servico.categoria || '-';
+
+        const valor = Number(servico.valor || 0);
+        const custo = Number(servico.custo || 0);
+        const margem = valor > 0 ? (((valor - custo) / valor) * 100).toFixed(0) : '0';
+
+        return `
+          <tr data-id="${servico.id}">
+            <td><strong>${servico.codigo || ''}</strong></td>
+            <td><strong>${servico.nome || ''}</strong></td>
+            <td>${categoriaText}</td>
+            <td>${servico.tempo_estimado || '-'}</td>
+            <td>
+              <div class="price-tag">R$ ${valor.toFixed(2)}</div>
+              <div style="font-size: 0.625rem; color: var(--text-muted);">${margem}% margem</div>
+            </td>
+            <td>
+              <span class="service-status ${servico.status === 'ativo' ? 'status-active' : 'status-inactive'}">
+                ${servico.status === 'ativo' ? 'Ativo' : 'Inativo'}
+              </span>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-icon btn-edit" onclick="editarServico(${servico.id})">
+                  <span>✏️</span>
+                </button>
+                <button class="btn btn-icon btn-delete" onclick="confirmarExclusao(${servico.id})">
+                  <span>🗑️</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // EDITAR SERVIÇO
+    function editarServico(id) {
+      servicoEditando = servicos.find(s => s.id === id);
+      if (!servicoEditando) return;
+
+      document.getElementById('codigo').value = servicoEditando.codigo || '';
+      document.getElementById('nome').value = servicoEditando.nome || '';
+      document.getElementById('categoria').value = servicoEditando.categoria || '';
+      document.getElementById('tipo').value = servicoEditando.tipo || '';
+      document.getElementById('tempo_estimado').value = servicoEditando.tempo_estimado || '';
+      document.getElementById('garantia').value = Number(servicoEditando.garantia || 0);
+      document.getElementById('valor').value = Number(servicoEditando.valor || 0).toFixed(2);
+      document.getElementById('custo').value = Number(servicoEditando.custo || 0).toFixed(2);
+      document.getElementById('descricao').value = servicoEditando.descricao || '';
+      document.getElementById('observacoes').value = servicoEditando.observacoes || '';
+      document.getElementById('dificuldade').value = servicoEditando.dificuldade || '';
+      document.getElementById('status').value = servicoEditando.status || 'ativo';
+
+      document.querySelector('.form-panel').scrollIntoView({ behavior: 'smooth' });
+      mostrarNotificacao('📝 Editando serviço: ' + (servicoEditando.nome || ''), 'info');
+    }
+
+    // CONFIRMAR EXCLUSÃO
+    function confirmarExclusao(id) {
+      const servico = servicos.find(s => s.id === id);
+      if (!servico) return;
+
+      acaoConfirmar = 'excluirServico';
+      dadosConfirmacao = { id, nome: servico.nome };
+
+      document.getElementById('modalTitulo').textContent = 'Confirmar Exclusão';
+      document.getElementById('modalCorpo').innerHTML = `
+        <p>Tem certeza que deseja excluir o serviço <strong>${servico.nome}</strong>?</p>
+        <p style="color: var(--danger); font-size: 0.875rem; margin-top: var(--space-2);">
+          ⚠️ Esta ação não pode ser desfeita.
+        </p>
+      `;
+
+      abrirModal();
+    }
+
+    // EXCLUIR SERVIÇO
+    function excluirServico(id) {
+      const servico = servicos.find(s => s.id === id);
+      servicos = servicos.filter(s => s.id !== id);
+
+      persistServicos();
+
+      registrarAtividade(`Serviço "${servico ? servico.nome : 'removido'}" excluído`, 'exclusao');
+
+      carregarServicos();
+      atualizarEstatisticas();
+      carregarAtividades();
+      mostrarNotificacao('🗑️ Serviço excluído com sucesso!', 'warning');
+    }
+
+    // LIMPAR FORMULÁRIO
+    function limparFormulario() {
+      document.getElementById('servicoForm').reset();
+      servicoEditando = null;
+      mostrarNotificacao('🆕 Formulário limpo. Pronto para novo cadastro.', 'info');
+    }
+
+    // FILTRAR SERVIÇOS
+    function filtrarServicos() {
+      const termo = document.getElementById('buscarServico').value.toLowerCase();
+      const linhas = document.querySelectorAll('#servicosLista tr');
+
+      let encontrados = 0;
+
+      linhas.forEach(linha => {
+        const texto = linha.textContent.toLowerCase();
+        const deveMostrar = texto.includes(termo);
+        linha.style.display = deveMostrar ? '' : 'none';
+        if (deveMostrar) encontrados++;
+      });
+
+      const emptyState = document.getElementById('semServicos');
+      if (encontrados === 0 && termo !== '') {
+        emptyState.innerHTML = `
+          <div class="empty-state-icon">🔍</div>
+          <h3>Nenhum serviço encontrado</h3>
+          <p>Nenhum serviço corresponde à busca: "${termo}"</p>
+        `;
+        emptyState.style.display = 'block';
+      } else {
+        emptyState.style.display = 'none';
+      }
+    }
+
+    // ============================
+    // MÉTRICAS (REAIS)
+    // ============================
+    function parseTempoHoras(texto) {
+      if (!texto) return 0;
+
+      const s = String(texto).toLowerCase();
+      const matchHoras = s.match(/(\d+)\s*h/);
+      if (matchHoras) return parseInt(matchHoras[1], 10);
+
+      const matchHoraPalavra = s.match(/(\d+)\s*hora/);
+      if (matchHoraPalavra) return parseInt(matchHoraPalavra[1], 10);
+
+      const matchMin = s.match(/(\d+)\s*min/);
+      if (matchMin) return Math.max(1, Math.round(parseInt(matchMin[1], 10) / 60));
+
+      return 1; // fallback conservador
+    }
+
+    function atualizarEstatisticas() {
+      servicos = lsReadJSON(LS.servicos, servicos) || [];
+
+      const total = servicos.length;
+      const ativos = servicos.filter(s => s.status === 'ativo').length;
+
+      // Categorias
+      const categorias = {
+        conserto: servicos.filter(s => s.categoria === 'conserto').length,
+        manutencao: servicos.filter(s => s.categoria === 'manutencao').length,
+        outros: servicos.filter(s => s.categoria !== 'conserto' && s.categoria !== 'manutencao').length
+      };
+
+      // Financeiro
+      const somaValor = servicos.reduce((acc, s) => acc + Number(s.valor || 0), 0);
+      const somaCusto = servicos.reduce((acc, s) => acc + Number(s.custo || 0), 0);
+
+      const faturamentoMedio = total > 0 ? somaValor / total : 0;
+
+      const lucroMedioPct = somaValor > 0
+        ? Math.round(((somaValor - somaCusto) / somaValor) * 100)
+        : 0;
+
+      // Tempo médio (horas)
+      const temposHoras = servicos.map(s => parseTempoHoras(s.tempo_estimado)).filter(n => Number.isFinite(n));
+      const tempoMedio = temposHoras.length > 0 ? Math.round(temposHoras.reduce((a,b) => a + b, 0) / temposHoras.length) : 0;
+
+      // Garantia média (dias)
+      const garantias = servicos.map(s => Number(s.garantia || 0)).filter(n => Number.isFinite(n));
+      const garantiaMedia = garantias.length > 0 ? Math.round(garantias.reduce((a,b) => a + b, 0) / garantias.length) : 0;
+
+      // Serviços/Mês (meses desde primeiro cadastro, mínimo 1) - igual padrão do clientes.html
+      const datas = servicos
+        .map(s => new Date(s.dataCadastro))
+        .filter(d => !Number.isNaN(d.getTime()))
+        .sort((a,b) => a - b);
+
+      let meses = 1;
+      if (datas.length > 0) {
+        const first = datas[0];
+        const now = new Date();
+        meses = Math.max(1, (now.getFullYear() - first.getFullYear()) * 12 + (now.getMonth() - first.getMonth()) + 1);
+      }
+      const servicosMes = total > 0 ? Math.round(total / meses) : 0;
+
+      // Popularidade (mantive simples e “realista” baseado em % de ativos)
+      const popularidade = total > 0 ? Math.round((ativos / total) * 100) : 0;
+
+      // Percentuais do gráfico
+      const percentConserto = total > 0 ? Math.round((categorias.conserto / total) * 100) : 0;
+      const percentManutencao = total > 0 ? Math.round((categorias.manutencao / total) * 100) : 0;
+      const percentOutros = Math.max(0, 100 - percentConserto - percentManutencao);
+
+      // Atualizar UI
+      document.getElementById('totalServicos').textContent = total;
+      document.getElementById('servicosAtivos').textContent = ativos;
+      document.getElementById('faturamentoMedio').textContent = 'R$ ' + Math.round(faturamentoMedio);
+      document.getElementById('tempoMedio').textContent = tempoMedio + 'h';
+
+      document.getElementById('lucroMedio').textContent = lucroMedioPct + '%';
+      document.getElementById('servicosMes').textContent = servicosMes;
+      document.getElementById('garantiaMedia').textContent = garantiaMedia;
+      document.getElementById('popularidade').textContent = popularidade + '%';
+
+      document.getElementById('percentConserto').textContent = percentConserto + '%';
+
+      document.getElementById('barConsertoValue').textContent = categorias.conserto;
+      document.getElementById('barManutencaoValue').textContent = categorias.manutencao;
+      document.getElementById('barOutrosValue').textContent = categorias.outros;
+
+      setTimeout(() => {
+        document.getElementById('barConserto').style.width = percentConserto + '%';
+        document.getElementById('barManutencao').style.width = percentManutencao + '%';
+        document.getElementById('barOutros').style.width = percentOutros + '%';
+      }, 100);
+    }
+
+    // ============================
+    // ATIVIDADES (padronizado)
+    // ============================
+    function obterAtividades() {
+      const fromLs = lsReadJSON(LS.atividadesServicos, null);
+      if (Array.isArray(fromLs)) return fromLs;
+
+      // fallback (somente se não existir nada)
+      return [
+        { texto: 'Bem-vindo ao cadastro de serviços', tempo: 'agora mesmo', tipo: 'info' }
+      ];
+    }
+
+    function registrarAtividade(texto, tipo) {
+      const atividades = obterAtividades();
+      const novaAtividade = { texto, tempo: 'agora mesmo', tipo };
+      atividades.unshift(novaAtividade);
+      if (atividades.length > 4) atividades.pop();
+      lsWriteJSON(LS.atividadesServicos, atividades);
+    }
+
+    function carregarAtividades() {
+      const atividadesLista = document.getElementById('atividadesLista');
+      const atividades = obterAtividades();
+
+      atividadesLista.innerHTML = atividades.map(() => '').join('');
+
+      atividadesLista.innerHTML = atividades.map((atividade) => `
+        <div class="activity-item">
+          <div class="activity-text">${atividade.texto}</div>
+          <div class="activity-time">${atividade.tempo}</div>
+        </div>
+      `).join('');
+    }
+
+    // EXPORTAR SERVIÇOS
+    function exportarServicos() {
+      if (servicos.length === 0) {
+        mostrarNotificacao('ℹ️ Nenhum serviço para exportar.', 'info');
+        return;
+      }
+
+      registrarAtividade('Exportação de serviços concluída', 'exportacao');
+      carregarAtividades();
+
+      mostrarNotificacao('📤 Exportando serviços...', 'info');
+
+      setTimeout(() => {
+        mostrarNotificacao('✅ Serviços exportados com sucesso!', 'success');
+      }, 1500);
+    }
+
+    // MODAL
+    function abrirModal() {
+      document.getElementById('modalConfirmacao').style.display = 'flex';
+    }
+
+    function fecharModal() {
+      const modal = document.getElementById('modalConfirmacao');
+      modal.style.animation = 'fadeOut 0.3s ease-out forwards';
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.style.animation = '';
+      }, 300);
+    }
+
+    function confirmarAcao() {
+      if (acaoConfirmar === 'excluirServico') excluirServico(dadosConfirmacao.id);
+
+      fecharModal();
+      acaoConfirmar = null;
+      dadosConfirmacao = null;
+    }
+
+    // NOTIFICAÇÕES
+    function mostrarNotificacao(mensagem, tipo = 'info') {
+      const cores = {
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        danger: 'var(--danger)',
+        info: 'var(--primary-500)'
+      };
+
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${cores[tipo] || cores.info};
+        color: white;
+        padding: var(--space-3) var(--space-4);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        animation: slideUp 0.3s ease-out;
+      `;
+      notification.innerHTML = mensagem;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease-out forwards';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // ATALHOS DE TECLADO
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        document.querySelector('.btn-success').click();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        toggleSidebar();
+      }
+      if (e.key === 'Escape') {
+        limparFormulario();
+      }
+    });
+
+    // Sincronizar com outras abas (Dashboard etc.)
+    window.addEventListener('storage', (e) => {
+      if (e.key === LS.servicos) {
+        servicos = lsReadJSON(LS.servicos, []) || [];
+        carregarServicos();
+        atualizarEstatisticas();
+      }
+      if (e.key === LS.atividadesServicos) {
+        carregarAtividades();
+      }
+      if (e.key === LS.sidebarCollapsed) {
+        restoreSidebarState();
+      }
+    });
+  </script>
+</body>
+</html>

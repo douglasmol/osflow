@@ -1,0 +1,2428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>OS Flow • Gestão de Vendas</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Paleta de Cores Profissional - Azul Claro como principal */
+      --primary-50: #f0f9ff;
+      --primary-100: #e0f2fe;
+      --primary-200: #bae6fd;
+      --primary-300: #7dd3fc;
+      --primary-400: #38bdf8;
+      --primary-500: #0ea5e9;
+      --primary-600: #0284c7;
+      --primary-700: #0369a1;
+      --primary-800: #075985;
+      --primary-900: #0c4a6e;
+
+      /* Cores Semânticas */
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --info: #0ea5e9;
+      --info-light: #e0f2fe;
+      --purple: #8b5cf6;
+      --purple-light: #ede9fe;
+      --teal: #14b8a6;
+      --teal-light: #ccfbf1;
+      --orange: #f97316;
+      --orange-light: #fed7aa;
+      --pink: #ec4899;
+      --pink-light: #fce7f3;
+      --emerald: #10b981;
+      --emerald-light: #d1fae5;
+
+      /* Cores Neutras Profissionais */
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+
+      /* Cores de Fundo */
+      --bg-body: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+      --bg-surface: #ffffff;
+      --bg-surface-hover: #f8fafc;
+      --bg-sidebar: rgba(255, 255, 255, 0.95);
+      --bg-card: #ffffff;
+
+      /* Cores de Texto */
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-tertiary: #6b7280;
+      --text-muted: #9ca3af;
+      --text-inverse: #ffffff;
+
+      /* Bordas */
+      --border-light: #e5e7eb;
+      --border-medium: #d1d5db;
+      --border-accent: var(--primary-400);
+
+      /* Sombras Profissionais */
+      --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --shadow-primary: 0 4px 14px 0 rgba(14, 165, 233, 0.2);
+
+      /* Tipografia */
+      --font-primary: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-secondary: 'Manrope', system-ui, -apple-system, sans-serif;
+      --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
+
+      /* Espaçamento */
+      --space-0: 0;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+
+      /* Bordas */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-full: 9999px;
+
+      /* Transições */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Layout */
+      --sidebar-width: 260px;
+      --sidebar-collapsed: 72px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-secondary);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      min-height: 100vh;
+      transition: grid-template-columns var(--transition-base);
+    }
+    .layout.collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
+
+    .sidebar-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+      width: var(--sidebar-width);
+      transition: all var(--transition-base);
+      overflow: hidden;
+    }
+    .layout.collapsed .sidebar-wrapper { width: var(--sidebar-collapsed); }
+
+    .sidebar {
+      padding: var(--space-6) 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .sidebar-logo {
+      padding: 0 var(--space-4) var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: var(--space-6);
+      position: relative;
+      min-height: 60px;
+    }
+    .layout.collapsed .sidebar-logo { padding: 0 var(--space-3) var(--space-6); justify-content: center; }
+
+    .sidebar-logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-inverse);
+      font-family: var(--font-primary);
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: var(--shadow-primary);
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform var(--transition-base);
+    }
+    .sidebar-logo-icon:hover { transform: scale(1.05); }
+
+    .sidebar-logo-text {
+      overflow: hidden;
+      transition: opacity var(--transition-base), max-width var(--transition-base);
+      max-width: 200px;
+    }
+    .layout.collapsed .sidebar-logo-text { opacity: 0; max-width: 0; }
+
+    .sidebar-logo-text h1 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .sidebar-logo-text small {
+      display: block;
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .menu {
+      list-style: none;
+      margin: 0;
+      padding: 0 var(--space-2);
+      flex: 1;
+      font-size: 0.875rem;
+    }
+    .layout.collapsed .menu { padding: 0 var(--space-1); }
+    .menu li { margin-bottom: var(--space-1); }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-3);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      position: relative;
+    }
+    .layout.collapsed .menu a { justify-content: center; padding: var(--space-3); }
+
+    .menu a:hover {
+      background: var(--primary-50);
+      color: var(--primary-600);
+      transform: translateX(4px);
+    }
+    .layout.collapsed .menu a:hover { transform: translateX(0) scale(1.05); }
+
+    .menu a.active {
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-primary);
+      font-weight: 600;
+    }
+
+    .menu-icon { width: 20px; text-align: center; font-size: 1.125rem; flex-shrink: 0; }
+
+    .menu-text {
+      overflow: hidden;
+      transition: opacity var(--transition-base), max-width var(--transition-base);
+      max-width: 200px;
+    }
+    .layout.collapsed .menu-text { opacity: 0; max-width: 0; }
+
+    .sidebar-footer {
+      padding: var(--space-3) var(--space-4);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-light);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      text-align: center;
+    }
+
+    .layout.collapsed .sidebar-footer {
+      padding: var(--space-2);
+      font-size: 0.6rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .sidebar-footer span { display: inline-block; transition: opacity var(--transition-base); text-align: center; }
+    .layout.collapsed .sidebar-footer span:not(:first-child) { opacity: 0; width: 0; margin: 0; }
+
+    .main-wrapper { display: flex; flex-direction: column; min-width: 0; background: transparent; }
+
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--space-3) var(--space-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      box-shadow: var(--shadow-sm);
+      min-height: 60px;
+    }
+
+    .topbar-left { display: flex; align-items: center; flex: 1; }
+
+    .topbar-title {
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .breadcrumb {
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 500;
+    }
+
+    .breadcrumb::before {
+      content: '|';
+      display: inline-block;
+      color: var(--border-medium);
+      margin-right: var(--space-2);
+      font-weight: 400;
+    }
+
+    .breadcrumb span {
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--teal) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-inverse);
+      font-weight: 700;
+      font-size: 0.875rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-base);
+      cursor: pointer;
+    }
+    .user-avatar:hover { transform: scale(1.05); }
+
+    .content { padding: var(--space-6); flex: 1; }
+
+    .sales-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-8);
+    }
+
+    .sales-header h1 {
+      font-family: var(--font-primary);
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .sales-header h1:before { content: '💰'; font-size: 1.5rem; }
+
+    .sales-actions { display: flex; gap: var(--space-3); }
+
+    .btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary {
+      background: var(--primary-500);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-primary);
+    }
+    .btn-primary:hover { background: var(--primary-600); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+    .btn-success {
+      background: var(--success);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.2);
+    }
+    .btn-success:hover { background: #0da271; transform: translateY(-2px); }
+
+    .btn-danger {
+      background: var(--danger);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.2);
+    }
+    .btn-danger:hover { background: #dc2626; transform: translateY(-2px); }
+
+    .btn-warning {
+      background: var(--warning);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.2);
+    }
+    .btn-warning:hover { background: #d97706; transform: translateY(-2px); }
+
+    .sales-container {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: var(--space-8);
+      margin-bottom: var(--space-8);
+      align-items: start;
+    }
+    @media (max-width: 1024px) { .sales-container { grid-template-columns: 1fr; } }
+
+    .new-sale-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+      height: 100%;
+      min-height: 780px;
+    }
+    .new-sale-panel:hover { box-shadow: var(--shadow-lg); border-color: var(--primary-300); }
+
+    .new-sale-header {
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .new-sale-header h2 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .new-sale-header h2:before { content: '🛒'; font-size: 1rem; }
+
+    .product-search { margin-bottom: var(--space-6); }
+
+    .search-bar { display: flex; gap: var(--space-2); margin-bottom: var(--space-4); }
+
+    .search-input {
+      flex: 1;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+      transition: all var(--transition-base);
+    }
+    .search-input:focus { outline: none; border-color: var(--primary-400); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--space-3);
+      max-height: 300px;
+      overflow-y: auto;
+      padding: var(--space-2);
+    }
+
+    .product-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-300); }
+
+    .product-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-2);
+    }
+
+    .product-name { font-weight: 600; font-size: 0.875rem; color: var(--text-primary); margin-bottom: var(--space-1); }
+    .product-code { font-size: 0.6875rem; color: var(--text-tertiary); font-family: var(--font-mono); }
+    .product-price { font-size: 1rem; font-weight: 700; color: var(--success); margin-top: auto; }
+    .product-stock { font-size: 0.6875rem; color: var(--text-tertiary); margin-top: var(--space-1); }
+
+    .stock-badge {
+      display: inline-block;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      font-size: 0.625rem;
+      font-weight: 600;
+    }
+
+    .stock-ok { background: var(--success-light); color: var(--success); }
+    .stock-low { background: var(--warning-light); color: var(--warning); }
+    .stock-out { background: var(--danger-light); color: var(--danger); }
+
+    .cart-section { margin-top: var(--space-6); }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+    .cart-header h3 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+
+    .cart-items {
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: var(--space-4);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      border-bottom: 1px solid var(--border-light);
+      align-items: center;
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item:hover { background: var(--gray-50); }
+
+    .cart-item-name { font-weight: 600; font-size: 0.875rem; color: var(--text-primary); }
+    .cart-item-price { font-size: 0.875rem; color: var(--text-tertiary); }
+
+    .cart-item-actions { display: flex; align-items: center; gap: var(--space-2); }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      background: var(--gray-100);
+      border-radius: var(--radius-full);
+      padding: var(--space-1);
+    }
+
+    .quantity-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all var(--transition-base);
+    }
+    .quantity-btn:hover { background: var(--primary-50); border-color: var(--primary-300); }
+
+    .quantity-value { min-width: 30px; text-align: center; font-weight: 600; font-size: 0.875rem; }
+
+    .remove-btn {
+      color: var(--danger);
+      cursor: pointer;
+      padding: var(--space-1);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-base);
+    }
+    .remove-btn:hover { background: var(--danger-light); }
+
+    .cart-summary {
+      background: var(--gray-50);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+    }
+
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: var(--space-2); font-size: 0.875rem; }
+
+    .summary-row.total {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      padding-top: var(--space-2);
+      border-top: 2px solid var(--border-light);
+      margin-top: var(--space-2);
+    }
+
+    .cart-actions { display: flex; gap: var(--space-3); margin-top: var(--space-4); }
+
+    .sale-info-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      height: 100%;
+      min-height: 780px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sale-info-header {
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sale-info-header h3 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .sale-info-header h3:before { content: '🧾'; font-size: 1rem; }
+
+    .client-info { margin-bottom: var(--space-6); }
+
+    .client-info-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    .client-select {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      transition: all var(--transition-base);
+      margin-bottom: var(--space-3);
+    }
+    .client-select:focus { outline: none; border-color: var(--primary-400); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+
+    .new-client-btn { width: 100%; justify-content: center; margin-bottom: var(--space-4); }
+
+    .payment-methods { margin-bottom: var(--space-6); }
+
+    .payment-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    .payment-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+    .payment-option:hover { background: var(--primary-50); border-color: var(--primary-300); }
+    .payment-option.selected { background: var(--primary-500); border-color: transparent; color: var(--text-inverse); }
+
+    .payment-option-icon { font-size: 1.25rem; }
+    .payment-option-label { font-size: 0.75rem; font-weight: 600; }
+
+    .payment-fields { display: grid; gap: var(--space-3); margin-bottom: var(--space-4); }
+
+    .payment-field { display: flex; flex-direction: column; gap: var(--space-1); }
+
+    .payment-field label { font-size: 0.75rem; color: var(--text-tertiary); font-weight: 500; }
+
+    .payment-input {
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+      transition: all var(--transition-base);
+    }
+    .payment-input:focus { outline: none; border-color: var(--primary-400); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+
+    /* NOVO: opção de finalização (pagar agora / gerar cobrança) */
+    .fulfillment {
+      border: 1px solid var(--border-light);
+      background: var(--gray-50);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .fulfillment-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+    .fulfillment-options {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+    .radio-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      border: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      user-select: none;
+    }
+    .radio-row:hover { border-color: var(--primary-300); background: var(--primary-50); }
+    .radio-row input { cursor: pointer; }
+    .radio-row strong { font-family: var(--font-primary); font-size: 0.875rem; }
+    .radio-row small { display: block; font-size: 0.75rem; color: var(--text-tertiary); margin-top: 2px; }
+
+    .sale-summary {
+      margin-bottom: var(--space-6);
+      padding: var(--space-4);
+      background: var(--gray-50);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+    }
+
+    .sale-summary-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    .sale-summary-item { display: flex; justify-content: space-between; margin-bottom: var(--space-2); font-size: 0.875rem; }
+
+    .sale-summary-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      padding-top: var(--space-2);
+      border-top: 2px solid var(--border-light);
+      margin-top: var(--space-2);
+    }
+
+    .finish-sale-btn {
+      width: 100%;
+      padding: var(--space-4);
+      font-size: 1rem;
+      font-weight: 700;
+      justify-content: center;
+      margin-top: auto;
+    }
+
+    .quick-stats {
+      margin-top: var(--space-6);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--border-light);
+    }
+
+    .quick-stats-title {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+
+    .quick-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+
+    .quick-stat {
+      background: var(--gray-50);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      text-align: center;
+    }
+
+    .quick-stat-value {
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-600);
+      margin-bottom: var(--space-1);
+    }
+
+    .quick-stat-label { font-size: 0.6875rem; color: var(--text-tertiary); font-weight: 500; }
+
+    .sales-stats-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      margin-top: var(--space-8);
+    }
+
+    .sales-stats-header {
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sales-stats-header h2 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .sales-stats-header h2:before { content: '📊'; font-size: 1rem; }
+
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    @media (max-width: 1200px) { .stats-cards { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .stats-cards { grid-template-columns: 1fr; } }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      transition: all var(--transition-base);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-300); }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--text-inverse);
+      flex-shrink: 0;
+    }
+
+    .stat-content { flex: 1; }
+
+    .stat-value {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .recent-sales { margin-top: var(--space-8); }
+
+    .recent-sales-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .recent-sales-header h2 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .recent-sales-header h2:before { content: '📋'; font-size: 1rem; }
+
+    .sales-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.875rem;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sales-table th,
+    .sales-table td {
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .sales-table th {
+      background: var(--gray-50);
+      color: var(--text-secondary);
+      font-family: var(--font-primary);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    .sales-table tr:last-child td { border-bottom: none; }
+    .sales-table tr:hover td { background: var(--primary-50); }
+
+    .sale-status {
+      display: inline-block;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-completed { background: var(--success-light); color: var(--success); }
+    .status-pending { background: var(--warning-light); color: var(--warning); }
+    .status-cancelled { background: var(--danger-light); color: var(--danger); }
+
+    .table-actions { display: flex; gap: var(--space-2); }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+    }
+
+    .btn-view { background: var(--info-light); border-color: transparent; color: var(--info); }
+    .btn-view:hover { background: var(--info); color: white; }
+
+    .btn-print { background: var(--purple-light); border-color: transparent; color: var(--purple); }
+    .btn-print:hover { background: var(--purple); color: white; }
+
+    .empty-state { text-align: center; padding: var(--space-12) var(--space-6); color: var(--text-tertiary); }
+    .empty-state-icon { font-size: 3rem; margin-bottom: var(--space-4); opacity: 0.5; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+    .modal {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      width: 500px;
+      max-width: 90vw;
+      box-shadow: var(--shadow-2xl);
+      border: 1px solid var(--border-light);
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    .modal-close:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+
+    .modal-body { max-height: 400px; overflow-y: auto; padding-right: var(--space-2); }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar-wrapper {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border-light);
+        z-index: 1000;
+      }
+      .sidebar { padding: var(--space-4) 0; flex-direction: row; align-items: center; }
+      .menu { display: flex; overflow-x: auto; flex: 0 0 auto; }
+      .menu li { margin: 0; }
+      .menu a { flex-direction: column; padding: var(--space-2); }
+      .menu-text { font-size: 0.625rem; }
+      .content { padding: var(--space-4); }
+      .topbar { padding: var(--space-4); }
+      .sales-header { flex-direction: column; gap: var(--space-4); align-items: flex-start; }
+      .sales-actions { width: 100%; justify-content: space-between; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .payment-options { grid-template-columns: 1fr; }
+      .cart-item { grid-template-columns: 1fr; gap: var(--space-2); }
+    }
+
+    .menu-tooltip {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--gray-800);
+      color: white;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-fast);
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+    }
+
+    .layout.collapsed .menu a:hover .menu-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) translateX(8px);
+    }
+
+    .menu a { position: relative; }
+
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    .slide-in { animation: slideUp 0.5s ease-out; }
+  </style>
+</head>
+<body>
+  <div class="layout" id="mainLayout">
+    <div class="sidebar-wrapper">
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon" onclick="toggleSidebar()">OS</div>
+          <div class="sidebar-logo-text">
+            <h1>OS Flow</h1>
+            <small>Dashboard Inteligente</small>
+          </div>
+        </div>
+
+        <ul class="menu">
+          <li><a href="index.html">
+            <span class="menu-icon">📊</span>
+            <span class="menu-text">Dashboard</span>
+            <span class="menu-tooltip">Dashboard</span>
+          </a></li>
+
+          <li><a href="cadastrar-clientes.html">
+            <span class="menu-icon">👥</span>
+            <span class="menu-text">Clientes</span>
+            <span class="menu-tooltip">Clientes</span>
+          </a></li>
+
+          <li><a href="produtos.html">
+            <span class="menu-icon">📦</span>
+            <span class="menu-text">Produtos</span>
+            <span class="menu-tooltip">Produtos</span>
+          </a></li>
+
+          <li><a href="servicos.html">
+            <span class="menu-icon">🔧</span>
+            <span class="menu-text">Serviços</span>
+            <span class="menu-tooltip">Serviços</span>
+          </a></li>
+
+          <li><a href="vendas.html" class="active">
+            <span class="menu-icon">💰</span>
+            <span class="menu-text">Vendas</span>
+            <span class="menu-tooltip">Vendas</span>
+          </a></li>
+
+          <li><a href="ordem-servico.html">
+            <span class="menu-icon">📋</span>
+            <span class="menu-text">Ordens</span>
+            <span class="menu-tooltip">Ordens</span>
+          </a></li>
+
+          <li><a href="#">
+            <span class="menu-icon">🛡️</span>
+            <span class="menu-text">Garantias</span>
+            <span class="menu-tooltip">Garantias</span>
+          </a></li>
+
+          <li><a href="#">
+            <span class="menu-icon">📁</span>
+            <span class="menu-text">Arquivos</span>
+            <span class="menu-tooltip">Arquivos</span>
+          </a></li>
+
+          <li><a href="#">
+            <span class="menu-icon">💳</span>
+            <span class="menu-text">Financeiro</span>
+            <span class="menu-tooltip">Financeiro</span>
+          </a></li>
+
+          <li><a href="cobranca.html">
+            <span class="menu-icon">📄</span>
+            <span class="menu-text">Cobrança</span>
+            <span class="menu-tooltip">Cobrança</span>
+          </a></li>
+
+          <li><a href="configuracoes.html">
+            <span class="menu-icon">⚙️</span>
+            <span class="menu-text">Configurações</span>
+            <span class="menu-tooltip">Configurações</span>
+          </a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+          v3.8.1 • © <span id="ano-atual"></span> • OS Flow
+        </div>
+      </aside>
+    </div>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">
+            Gestão de Vendas
+            <div class="breadcrumb">
+              <span>PDV - Ponto de Venda</span>
+            </div>
+          </div>
+        </div>
+        <div class="user-info">
+          <span>Bem-vindo, <strong>V1ctor Gomes</strong></span>
+          <div class="user-avatar">VG</div>
+        </div>
+      </header>
+
+      <main class="content fade-in">
+        <div class="sales-header slide-in">
+          <h1>Ponto de Venda (PDV)</h1>
+          <div class="sales-actions">
+            <button class="btn" onclick="abrirCaixa()">
+              <span>💵</span> Abrir Caixa
+            </button>
+            <button class="btn btn-warning" onclick="gerarRelatorio()">
+              <span>📊</span> Relatório
+            </button>
+            <button class="btn btn-primary" onclick="novaVenda()">
+              <span>🆕</span> Nova Venda
+            </button>
+          </div>
+        </div>
+
+        <div class="sales-container">
+          <section class="new-sale-panel slide-in">
+            <div class="new-sale-header">
+              <h2>Nova Venda</h2>
+            </div>
+
+            <div class="product-search">
+              <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Buscar produto por nome ou código..." id="buscarProduto" onkeyup="filtrarProdutos()">
+                <button class="btn" onclick="filtrarProdutos()"><span>🔍</span></button>
+              </div>
+
+              <div class="products-grid" id="produtosGrid"></div>
+            </div>
+
+            <div class="cart-section">
+              <div class="cart-header">
+                <h3>Carrinho de Compras</h3>
+                <span id="cart-count">0 itens</span>
+              </div>
+
+              <div class="cart-items" id="cart-items">
+                <div class="empty-state" style="padding: var(--space-8);">
+                  <div style="font-size: 2rem; margin-bottom: var(--space-2);">🛒</div>
+                  <p style="color: var(--text-tertiary);">Adicione produtos ao carrinho</p>
+                </div>
+              </div>
+
+              <div class="cart-summary">
+                <div class="summary-row">
+                  <span>Subtotal:</span>
+                  <span id="subtotal">R$ 0,00</span>
+                </div>
+                <div class="summary-row">
+                  <span>Desconto:</span>
+                  <span id="desconto">R$ 0,00</span>
+                </div>
+                <div class="summary-row total">
+                  <span>Total:</span>
+                  <span id="total">R$ 0,00</span>
+                </div>
+              </div>
+
+              <div class="cart-actions">
+                <button class="btn btn-danger" onclick="limparCarrinho()">
+                  <span>🗑️</span> Limpar
+                </button>
+                <button class="btn" onclick="aplicarDesconto()">
+                  <span>🎁</span> Desconto
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <aside class="sale-info-panel slide-in">
+            <div class="sale-info-header">
+              <h3>Finalizar Venda</h3>
+            </div>
+
+            <div class="client-info">
+              <div class="client-info-title">Cliente</div>
+              <select class="client-select" id="clienteSelect">
+                <option value="">Selecionar cliente...</option>
+              </select>
+              <button class="btn new-client-btn" onclick="cadastrarCliente()">
+                <span>➕</span> Cadastrar Novo Cliente
+              </button>
+            </div>
+
+            <div class="payment-methods">
+              <div class="payment-title">Forma de Pagamento</div>
+              <div class="payment-options" id="paymentOptions">
+                <div class="payment-option" onclick="selecionarPagamento(this, 'dinheiro')">
+                  <span class="payment-option-icon">💵</span>
+                  <span class="payment-option-label">Dinheiro</span>
+                </div>
+                <div class="payment-option" onclick="selecionarPagamento(this, 'cartao')">
+                  <span class="payment-option-icon">💳</span>
+                  <span class="payment-option-label">Cartão</span>
+                </div>
+                <div class="payment-option" onclick="selecionarPagamento(this, 'pix')">
+                  <span class="payment-option-icon">🧾</span>
+                  <span class="payment-option-label">PIX</span>
+                </div>
+                <div class="payment-option" onclick="selecionarPagamento(this, 'boleto')">
+                  <span class="payment-option-icon">📄</span>
+                  <span class="payment-option-label">Boleto</span>
+                </div>
+              </div>
+
+              <div class="payment-fields" id="paymentFields" style="display: none;">
+                <div class="payment-field">
+                  <label>Valor Recebido:</label>
+                  <input type="number" class="payment-input" id="valorRecebido" placeholder="0.00" step="0.01">
+                </div>
+                <div class="payment-field" id="trocoField" style="display: none;">
+                  <label>Troco:</label>
+                  <input type="text" class="payment-input" id="troco" placeholder="0.00" readonly>
+                </div>
+              </div>
+            </div>
+
+            <!-- NOVO: após escolher pagamento, escolher "pagar agora" ou "gerar cobrança" -->
+            <div class="fulfillment" id="fulfillmentWrap" style="display:none;">
+              <div class="fulfillment-title">Como finalizar</div>
+              <div class="fulfillment-options">
+                <label class="radio-row" for="optPayNow">
+                  <input type="radio" name="fulfillment" id="optPayNow" value="pay_now" checked />
+                  <div>
+                    <strong>Pagar agora</strong>
+                    <small>Confirma a venda como <b>concluída</b> e dá baixa no estoque.</small>
+                  </div>
+                </label>
+                <label class="radio-row" for="optCharge">
+                  <input type="radio" name="fulfillment" id="optCharge" value="charge" />
+                  <div>
+                    <strong>Gerar cobrança</strong>
+                    <small>Cria cobrança em <b>cobrança.html</b> e deixa a venda como <b>aguardando pagamento</b>. Sem baixa no estoque até pagar.</small>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="sale-summary">
+              <div class="sale-summary-title">Resumo da Venda</div>
+              <div class="sale-summary-item">
+                <span>Itens:</span>
+                <span id="resumo-itens">0</span>
+              </div>
+              <div class="sale-summary-item">
+                <span>Subtotal:</span>
+                <span id="resumo-subtotal">R$ 0,00</span>
+              </div>
+              <div class="sale-summary-item">
+                <span>Desconto:</span>
+                <span id="resumo-desconto">R$ 0,00</span>
+              </div>
+              <div class="sale-summary-total">
+                <span>Total:</span>
+                <span id="resumo-total">R$ 0,00</span>
+              </div>
+            </div>
+
+            <button class="btn btn-success finish-sale-btn" onclick="finalizarVenda()">
+              <span>✅</span> Finalizar Venda
+            </button>
+
+            <div class="quick-stats">
+              <div class="quick-stats-title">Caixa do Dia</div>
+              <div class="quick-stats-grid">
+                <div class="quick-stat">
+                  <div class="quick-stat-value" id="vendas-hoje">0</div>
+                  <div class="quick-stat-label">Vendas</div>
+                </div>
+                <div class="quick-stat">
+                  <div class="quick-stat-value" id="valor-hoje">R$ 0</div>
+                  <div class="quick-stat-label">Valor</div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <section class="sales-stats-panel slide-in">
+          <div class="sales-stats-header">
+            <h2>📊 Estatísticas de Vendas</h2>
+          </div>
+
+          <div class="stats-cards">
+            <div class="stat-card">
+              <div class="stat-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);">💰</div>
+              <div class="stat-content">
+                <div class="stat-value" id="total-vendas-mes">R$ 0,0k</div>
+                <div class="stat-label">Vendas no Mês</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon" style="background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);">📈</div>
+              <div class="stat-content">
+                <div class="stat-value" id="crescimento">+0%</div>
+                <div class="stat-label">Crescimento</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon" style="background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);">📦</div>
+              <div class="stat-content">
+                <div class="stat-value" id="produtos-vendidos">0</div>
+                <div class="stat-label">Produtos Vendidos</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon" style="background: linear-gradient(135deg, var(--purple) 0%, #a78bfa 100%);">👥</div>
+              <div class="stat-content">
+                <div class="stat-value" id="clientes-mes">0</div>
+                <div class="stat-label">Clientes/Mês</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="recent-sales slide-in">
+          <div class="recent-sales-header">
+            <h2>Vendas Recentes</h2>
+            <button class="btn" onclick="verTodasVendas()">
+              <span>📋</span> Ver Todas
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="sales-table" id="tabelaVendas">
+              <thead>
+                <tr>
+                  <th>Nº Venda</th>
+                  <th>Cliente</th>
+                  <th>Data</th>
+                  <th>Itens</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="vendasLista"></tbody>
+            </table>
+          </div>
+
+          <div id="semVendas" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">💰</div>
+            <h3>Nenhuma venda registrada</h3>
+            <p>Realize sua primeira venda usando o PDV acima.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalConfirmacao">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitulo">Confirmação</h3>
+        <button class="modal-close" onclick="fecharModal()">×</button>
+      </div>
+      <div class="modal-body" id="modalCorpo"></div>
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-6);">
+        <button class="btn" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-success" id="btnConfirmarAcao" onclick="confirmarAcao()">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalComprovante">
+    <div class="modal" style="width: 400px;">
+      <div class="modal-header">
+        <h3>🎫 Comprovante de Venda</h3>
+        <button class="modal-close" onclick="fecharModalComprovante()">×</button>
+      </div>
+      <div class="modal-body" id="modalComprovanteCorpo"></div>
+      <div style="display: flex; justify-content: center; gap: var(--space-3); margin-top: var(--space-6);">
+        <button class="btn" onclick="imprimirComprovante()">
+          <span>🖨️</span> Imprimir
+        </button>
+        <button class="btn btn-primary" onclick="fecharModalComprovante()">
+          <span>✅</span> OK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================
+    // LOCALSTORAGE PADRONIZADO (OS Flow)
+    // ============================
+    const LS = Object.freeze({
+      clientes: 'osflow:clientes',
+      produtos: 'osflow:produtos',
+      vendas: 'osflow:vendas',
+      cobrancas: 'osflow:cobrancas',            // NOVO: cobranças
+      carrinhoVendas: 'osflow:pdv:carrinho',
+      sidebarCollapsed: 'osflow:ui:sidebarCollapsed',
+
+      // legado (migração)
+      legacyClientes: 'clientesOSFlow',
+      legacyProdutos: 'produtosOSFlow',
+      legacyVendas: 'vendasOSFlow',
+      legacyCarrinho: 'carrinhoVendas',
+      legacySidebarCollapsed: 'sidebarCollapsed'
+    });
+
+    function migrateLocalStorageKeys() {
+      if (!localStorage.getItem(LS.clientes) && localStorage.getItem(LS.legacyClientes)) {
+        localStorage.setItem(LS.clientes, localStorage.getItem(LS.legacyClientes));
+      }
+      if (!localStorage.getItem(LS.produtos) && localStorage.getItem(LS.legacyProdutos)) {
+        localStorage.setItem(LS.produtos, localStorage.getItem(LS.legacyProdutos));
+      }
+      if (!localStorage.getItem(LS.vendas) && localStorage.getItem(LS.legacyVendas)) {
+        localStorage.setItem(LS.vendas, localStorage.getItem(LS.legacyVendas));
+      }
+      if (!localStorage.getItem(LS.carrinhoVendas) && localStorage.getItem(LS.legacyCarrinho)) {
+        localStorage.setItem(LS.carrinhoVendas, localStorage.getItem(LS.legacyCarrinho));
+      }
+      if (!localStorage.getItem(LS.sidebarCollapsed) && localStorage.getItem(LS.legacySidebarCollapsed)) {
+        localStorage.setItem(LS.sidebarCollapsed, localStorage.getItem(LS.legacySidebarCollapsed));
+      }
+    }
+
+    function lsReadJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch {
+        return fallback;
+      }
+    }
+
+    function lsWriteJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    migrateLocalStorageKeys();
+
+    // ============================
+    // STATE
+    // ============================
+    let produtosDisponiveis = []; // vem do osflow:produtos
+    let carrinho = lsReadJSON(LS.carrinhoVendas, []) || [];
+    let formaPagamentoSelecionada = null;
+    let descontoAplicado = 0;
+
+    // Fonte da verdade sempre: osflow:vendas
+    let vendas = lsReadJSON(LS.vendas, []) || [];
+
+    // ============================
+    // INIT
+    // ============================
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('ano-atual').textContent = new Date().getFullYear();
+
+      restoreSidebarState();
+
+      carregarProdutosDoStorage();
+      carregarProdutosGrid();
+      carregarClientesSelect();
+
+      atualizarCarrinho();
+      carregarVendas();
+      atualizarEstatisticas();
+
+      document.getElementById('valorRecebido').addEventListener('input', calcularTroco);
+    });
+
+    function restoreSidebarState() {
+      const isCollapsed = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+      const layout = document.getElementById('mainLayout');
+      if (isCollapsed) layout.classList.add('collapsed');
+    }
+
+    // TOGGLE SIDEBAR
+    function toggleSidebar() {
+      const layout = document.getElementById('mainLayout');
+      layout.classList.toggle('collapsed');
+      localStorage.setItem(LS.sidebarCollapsed, layout.classList.contains('collapsed'));
+    }
+
+    // ============================
+    // PRODUTOS (REAIS) - vindo do produtos.html
+    // ============================
+    function carregarProdutosDoStorage() {
+      const produtos = lsReadJSON(LS.produtos, []) || [];
+      // Mostrar somente produtos "ativos" ou "esgotado" (esgotado aparece mas bloqueia compra)
+      produtosDisponiveis = produtos
+        .filter(p => p && (p.status === 'ativo' || p.status === 'esgotado'))
+        .map(p => ({
+          id: p.id,
+          nome: p.nome,
+          codigo: p.codigo,
+          preco: Number(p.preco_venda || 0),
+          estoque: Number(p.estoque_atual || 0),
+          marca: p.marca || '',
+          categoria: p.categoria || ''
+        }));
+    }
+
+    function carregarProdutosGrid() {
+      const produtosGrid = document.getElementById('produtosGrid');
+
+      if (!Array.isArray(produtosDisponiveis) || produtosDisponiveis.length === 0) {
+        produtosGrid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1; padding: var(--space-8);">
+            <div style="font-size: 2rem; margin-bottom: var(--space-2);">📦</div>
+            <p style="color: var(--text-tertiary);">
+              Nenhum produto cadastrado. Cadastre produtos em <strong>Produtos</strong> para aparecerem aqui.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      produtosGrid.innerHTML = produtosDisponiveis.map(produto => {
+        const statusEstoque =
+          produto.estoque === 0 ? 'stock-out' :
+          produto.estoque <= 3 ? 'stock-low' : 'stock-ok';
+
+        const textoEstoque =
+          produto.estoque === 0 ? 'Esgotado' :
+          produto.estoque <= 3 ? `${produto.estoque} un` : 'Em estoque';
+
+        return `
+          <div class="product-card" onclick="adicionarAoCarrinho(${produto.id})" data-categoria="${produto.categoria}">
+            <div class="product-card-header">
+              <div>
+                <div class="product-name">${produto.nome}</div>
+                <div class="product-code">${produto.codigo || ''}</div>
+              </div>
+              <span class="stock-badge ${statusEstoque}">${textoEstoque}</span>
+            </div>
+            <div class="product-price">R$ ${produto.preco.toFixed(2)}</div>
+            <div class="product-stock">${produto.marca || ''}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filtrarProdutos() {
+      const termo = document.getElementById('buscarProduto').value.toLowerCase();
+      const cards = document.querySelectorAll('.product-card');
+      cards.forEach(card => {
+        const texto = card.textContent.toLowerCase();
+        card.style.display = texto.includes(termo) ? 'flex' : 'none';
+      });
+    }
+
+    // ============================
+    // CLIENTES (REAIS) - somente cliente cadastrado
+    // ============================
+    function carregarClientesSelect() {
+      const select = document.getElementById('clienteSelect');
+      const clientes = lsReadJSON(LS.clientes, []) || [];
+
+      const options = [
+        `<option value="">Selecionar cliente...</option>`,
+        ...clientes
+          .filter(c => c && c.status === 'ativo')
+          .sort((a,b) => (a.nome || '').localeCompare(b.nome || ''))
+          .map(c => `<option value="${c.id}">${c.nome}</option>`)
+      ];
+
+      select.innerHTML = options.join('');
+    }
+
+    // ============================
+    // CARRINHO
+    // ============================
+    function persistCarrinho() {
+      lsWriteJSON(LS.carrinhoVendas, carrinho);
+    }
+
+    function adicionarAoCarrinho(produtoId) {
+      const produto = produtosDisponiveis.find(p => p.id === produtoId);
+      if (!produto) return;
+
+      if (produto.estoque === 0) {
+        mostrarNotificacao('❌ Produto esgotado!', 'danger');
+        return;
+      }
+
+      const itemExistente = carrinho.find(item => item.id === produtoId);
+
+      if (itemExistente) {
+        if (itemExistente.quantidade >= produto.estoque) {
+          mostrarNotificacao('❌ Estoque insuficiente!', 'danger');
+          return;
+        }
+        itemExistente.quantidade++;
+      } else {
+        carrinho.push({
+          id: produto.id,
+          nome: produto.nome,
+          codigo: produto.codigo,
+          preco: produto.preco,
+          quantidade: 1
+        });
+      }
+
+      persistCarrinho();
+      atualizarCarrinho();
+      mostrarNotificacao(`✅ ${produto.nome} adicionado ao carrinho!`, 'success');
+    }
+
+    function removerDoCarrinho(produtoId) {
+      carrinho = carrinho.filter(item => item.id !== produtoId);
+      persistCarrinho();
+      atualizarCarrinho();
+      mostrarNotificacao('🗑️ Item removido do carrinho', 'warning');
+    }
+
+    function atualizarQuantidade(produtoId, delta) {
+      const item = carrinho.find(item => item.id === produtoId);
+      if (!item) return;
+
+      const produto = produtosDisponiveis.find(p => p.id === produtoId);
+      const novaQuantidade = item.quantidade + delta;
+
+      if (novaQuantidade < 1) {
+        removerDoCarrinho(produtoId);
+        return;
+      }
+
+      if (produto && novaQuantidade > produto.estoque) {
+        mostrarNotificacao('❌ Estoque insuficiente!', 'danger');
+        return;
+      }
+
+      item.quantidade = novaQuantidade;
+      persistCarrinho();
+      atualizarCarrinho();
+    }
+
+    function atualizarCarrinho() {
+      const cartItems = document.getElementById('cart-items');
+      const cartCount = document.getElementById('cart-count');
+
+      const subtotalElement = document.getElementById('subtotal');
+      const totalElement = document.getElementById('total');
+
+      const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+      cartCount.textContent = `${totalItens} ${totalItens === 1 ? 'item' : 'itens'}`;
+
+      const subtotal = carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+      const total = Math.max(0, subtotal - descontoAplicado);
+
+      subtotalElement.textContent = `R$ ${subtotal.toFixed(2)}`;
+      document.getElementById('desconto').textContent = `R$ ${descontoAplicado.toFixed(2)}`;
+      totalElement.textContent = `R$ ${total.toFixed(2)}`;
+
+      document.getElementById('resumo-itens').textContent = totalItens;
+      document.getElementById('resumo-subtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+      document.getElementById('resumo-desconto').textContent = `R$ ${descontoAplicado.toFixed(2)}`;
+      document.getElementById('resumo-total').textContent = `R$ ${total.toFixed(2)}`;
+
+      if (carrinho.length === 0) {
+        cartItems.innerHTML = `
+          <div class="empty-state" style="padding: var(--space-8);">
+            <div style="font-size: 2rem; margin-bottom: var(--space-2);">🛒</div>
+            <p style="color: var(--text-tertiary);">Adicione produtos ao carrinho</p>
+          </div>
+        `;
+        return;
+      }
+
+      cartItems.innerHTML = carrinho.map(item => `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.nome}</div>
+            <div class="cart-item-price">R$ ${item.preco.toFixed(2)}</div>
+          </div>
+          <div class="cart-item-actions">
+            <div class="quantity-control">
+              <button class="quantity-btn" onclick="atualizarQuantidade(${item.id}, -1)">−</button>
+              <span class="quantity-value">${item.quantidade}</span>
+              <button class="quantity-btn" onclick="atualizarQuantidade(${item.id}, 1)">+</button>
+            </div>
+            <div class="remove-btn" onclick="removerDoCarrinho(${item.id})">🗑️</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function limparCarrinho() {
+      if (carrinho.length === 0) {
+        mostrarNotificacao('🛒 Carrinho já está vazio', 'info');
+        return;
+      }
+      carrinho = [];
+      persistCarrinho();
+      descontoAplicado = 0;
+      atualizarCarrinho();
+      mostrarNotificacao('🗑️ Carrinho limpo com sucesso!', 'warning');
+    }
+
+    function aplicarDesconto() {
+      const subtotal = carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+
+      if (subtotal === 0) {
+        mostrarNotificacao('🛒 Adicione produtos ao carrinho primeiro', 'info');
+        return;
+      }
+
+      const desconto = prompt(`Aplicar desconto (máximo R$ ${subtotal.toFixed(2)}):`, "0.00");
+      if (desconto === null) return;
+
+      const valorDesconto = parseFloat(desconto);
+
+      if (isNaN(valorDesconto) || valorDesconto < 0) {
+        mostrarNotificacao('❌ Valor de desconto inválido', 'danger');
+        return;
+      }
+
+      if (valorDesconto > subtotal) {
+        mostrarNotificacao('❌ Desconto não pode ser maior que o subtotal', 'danger');
+        return;
+      }
+
+      descontoAplicado = valorDesconto;
+      atualizarCarrinho();
+      mostrarNotificacao(`🎁 Desconto de R$ ${valorDesconto.toFixed(2)} aplicado!`, 'success');
+    }
+
+    // ============================
+    // PAGAMENTO
+    // ============================
+    function selecionarPagamento(element, forma) {
+      document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+      element.classList.add('selected');
+      formaPagamentoSelecionada = forma;
+
+      const paymentFields = document.getElementById('paymentFields');
+      paymentFields.style.display = 'grid';
+
+      const trocoField = document.getElementById('trocoField');
+      trocoField.style.display = forma === 'dinheiro' ? 'block' : 'none';
+
+      // NOVO: mostrar opção pagar agora / gerar cobrança
+      const fulfillmentWrap = document.getElementById('fulfillmentWrap');
+      if (fulfillmentWrap) fulfillmentWrap.style.display = 'block';
+
+      if (forma === 'dinheiro') calcularTroco();
+    }
+
+    function calcularTroco() {
+      if (formaPagamentoSelecionada !== 'dinheiro') return;
+
+      const valorRecebido = parseFloat(document.getElementById('valorRecebido').value) || 0;
+      const subtotal = carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+      const total = Math.max(0, subtotal - descontoAplicado);
+
+      const troco = valorRecebido - total;
+      document.getElementById('troco').value = troco > 0 ? `R$ ${troco.toFixed(2)}` : 'R$ 0,00';
+    }
+
+    function getFulfillmentChoice() {
+      const checked = document.querySelector('input[name="fulfillment"]:checked');
+      return checked ? checked.value : 'pay_now';
+    }
+
+    // ============================
+    // COBRANÇAS (padronizado)
+    // ============================
+    function getCobrancas() {
+      const list = lsReadJSON(LS.cobrancas, []);
+      return Array.isArray(list) ? list : [];
+    }
+
+    function setCobrancas(list) {
+      lsWriteJSON(LS.cobrancas, Array.isArray(list) ? list : []);
+    }
+
+    function createCobrancaFromVenda(venda) {
+      // Modelo simples e padronizado
+      const cobranca = {
+        id: Date.now(),
+        vendaId: venda.id,
+        numeroVenda: venda.numero,
+        clienteId: venda.clienteId,
+        clienteNome: venda.clienteNome,
+        valor: Number(venda.total || 0),
+        formaPagamentoSugerida: venda.formaPagamento || '',
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        dueDate: '',     // opcional (pode ser preenchido em cobranca.html)
+        paidAt: ''
+      };
+
+      const cobrancas = getCobrancas();
+      cobrancas.unshift(cobranca);
+      setCobrancas(cobrancas);
+
+      return cobranca;
+    }
+
+    // ============================
+    // FINALIZAR VENDA
+    // Regras (1A):
+    // - Pagar agora: status completed + baixa estoque
+    // - Gerar cobrança: status pending + NÃO baixa estoque + cria osflow:cobrancas
+    // ============================
+    function finalizarVenda() {
+      if (carrinho.length === 0) {
+        mostrarNotificacao('🛒 Adicione produtos ao carrinho primeiro', 'danger');
+        return;
+      }
+
+      // Exigir cliente cadastrado
+      const clienteId = document.getElementById('clienteSelect').value || '';
+      if (!clienteId) {
+        mostrarNotificacao('👥 Selecione um cliente cadastrado para finalizar', 'danger');
+        return;
+      }
+
+      if (!formaPagamentoSelecionada) {
+        mostrarNotificacao('💳 Selecione uma forma de pagamento', 'danger');
+        return;
+      }
+
+      const fulfillment = getFulfillmentChoice(); // pay_now | charge
+
+      const subtotal = carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+      const total = Math.max(0, subtotal - descontoAplicado);
+
+      // Se pagar agora e for dinheiro, validar valor recebido
+      if (fulfillment === 'pay_now' && formaPagamentoSelecionada === 'dinheiro') {
+        const valorRecebido = parseFloat(document.getElementById('valorRecebido').value) || 0;
+        if (valorRecebido < total) {
+          mostrarNotificacao('💵 Valor recebido insuficiente', 'danger');
+          return;
+        }
+      }
+
+      // Revalida estoque com base nos produtos reais (sempre valida antes de vender/gerar cobrança)
+      const produtosAtuais = lsReadJSON(LS.produtos, []) || [];
+      for (const item of carrinho) {
+        const p = produtosAtuais.find(pp => pp.id === item.id);
+        const estoqueAtual = Number(p?.estoque_atual || 0);
+        if (!p) {
+          mostrarNotificacao(`❌ Produto não encontrado no cadastro: ${item.nome}`, 'danger');
+          return;
+        }
+        if (estoqueAtual < item.quantidade) {
+          mostrarNotificacao(`❌ Estoque insuficiente para: ${item.nome}`, 'danger');
+          return;
+        }
+      }
+
+      const clienteNome = document.getElementById('clienteSelect')
+        .options[document.getElementById('clienteSelect').selectedIndex].text;
+
+      const vendaId = Date.now();
+
+      const novaVenda = {
+        id: vendaId,
+        numero: 'V' + String(vendaId).slice(-6),
+        clienteId,
+        clienteNome,
+        data: new Date().toISOString(),
+        itens: [...carrinho],
+        subtotal,
+        desconto: descontoAplicado,
+        total,
+        formaPagamento: formaPagamentoSelecionada,
+
+        // status final depende do fulfillment
+        status: (fulfillment === 'pay_now') ? 'completed' : 'pending',
+
+        // link opcional para cobrança
+        cobrancaId: null
+      };
+
+      if (fulfillment === 'pay_now') {
+        // Baixa estoque REAL + recalcula status do produto
+        for (const item of carrinho) {
+          const idx = produtosAtuais.findIndex(p => p.id === item.id);
+          const p = produtosAtuais[idx];
+
+          const novoEstoque = Math.max(0, Number(p.estoque_atual || 0) - item.quantidade);
+          p.estoque_atual = novoEstoque;
+
+          if (p.status !== 'inativo') {
+            if (novoEstoque === 0) p.status = 'esgotado';
+            else p.status = 'ativo';
+          }
+
+          produtosAtuais[idx] = p;
+        }
+        lsWriteJSON(LS.produtos, produtosAtuais);
+      }
+
+      // Se gerar cobrança: cria cobrança e vincula
+      if (fulfillment === 'charge') {
+        const cobranca = createCobrancaFromVenda(novaVenda);
+        novaVenda.cobrancaId = cobranca.id;
+      }
+
+      // Salva venda em osflow:vendas
+      vendas = [novaVenda, ...vendas];
+      lsWriteJSON(LS.vendas, vendas);
+
+      // Comprovante / feedback
+      if (fulfillment === 'pay_now') {
+        gerarComprovante(novaVenda);
+        mostrarNotificacao('✅ Venda realizada com sucesso!', 'success');
+      } else {
+        mostrarNotificacao('📄 Cobrança gerada! Venda aguardando pagamento.', 'warning');
+      }
+
+      // Limpa estado
+      carrinho = [];
+      persistCarrinho();
+      descontoAplicado = 0;
+      formaPagamentoSelecionada = null;
+
+      // Atualiza UI
+      carregarProdutosDoStorage();
+      carregarProdutosGrid();
+      atualizarCarrinho();
+      carregarVendas();
+      atualizarEstatisticas();
+
+      // Reset formulário lateral
+      document.getElementById('clienteSelect').value = '';
+      document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
+      document.getElementById('paymentFields').style.display = 'none';
+      document.getElementById('valorRecebido').value = '';
+      document.getElementById('troco').value = '';
+      const fulfillmentWrap = document.getElementById('fulfillmentWrap');
+      if (fulfillmentWrap) fulfillmentWrap.style.display = 'none';
+      document.getElementById('optPayNow').checked = true;
+    }
+
+    // ============================
+    // COMPROVANTE / TABELA VENDAS
+    // ============================
+    function gerarComprovante(venda) {
+      const comprovante = document.getElementById('modalComprovanteCorpo');
+
+      const dataFormatada = new Date(venda.data).toLocaleString('pt-BR');
+      const itensHTML = venda.itens.map(item => `
+        <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2); font-size: 0.875rem;">
+          <div>${item.nome} (${item.quantidade}x)</div>
+          <div>R$ ${(item.preco * item.quantidade).toFixed(2)}</div>
+        </div>
+      `).join('');
+
+      comprovante.innerHTML = `
+        <div style="text-align: center; margin-bottom: var(--space-4);">
+          <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-600);">OS FLOW</div>
+          <div style="font-size: 0.75rem; color: var(--text-tertiary);">Sistema de Gestão</div>
+        </div>
+
+        <div style="margin-bottom: var(--space-4);">
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+            <span style="font-weight: 600;">Venda:</span>
+            <span>${venda.numero}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+            <span style="font-weight: 600;">Data:</span>
+            <span>${dataFormatada}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-4);">
+            <span style="font-weight: 600;">Cliente:</span>
+            <span>${venda.clienteNome}</span>
+          </div>
+        </div>
+
+        <div style="border-top: 2px dashed var(--border-light); border-bottom: 2px dashed var(--border-light); padding: var(--space-4) 0; margin-bottom: var(--space-4);">
+          ${itensHTML}
+        </div>
+
+        <div style="margin-bottom: var(--space-4);">
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+            <span>Subtotal:</span>
+            <span>R$ ${Number(venda.subtotal || 0).toFixed(2)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-2);">
+            <span>Desconto:</span>
+            <span>R$ ${Number(venda.desconto || 0).toFixed(2)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 1.125rem; font-weight: 700; padding-top: var(--space-2); border-top: 2px solid var(--border-light);">
+            <span>TOTAL:</span>
+            <span>R$ ${Number(venda.total || 0).toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div style="text-align: center; padding: var(--space-4); background: var(--gray-50); border-radius: var(--radius-lg);">
+          <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-1);">Forma de Pagamento</div>
+          <div style="font-size: 1rem; color: var(--primary-600); font-weight: 700;">${formatarPagamento(venda.formaPagamento)}</div>
+        </div>
+
+        <div style="text-align: center; margin-top: var(--space-6); font-size: 0.75rem; color: var(--text-tertiary);">
+          Obrigado pela preferência!<br>Volte sempre!
+        </div>
+      `;
+
+      abrirModalComprovante();
+    }
+
+    function formatarPagamento(forma) {
+      const formas = {
+        dinheiro: '💵 Dinheiro',
+        cartao: '💳 Cartão',
+        pix: '🧾 PIX',
+        boleto: '📄 Boleto'
+      };
+      return formas[forma] || forma;
+    }
+
+    function statusLabel(status) {
+      if (status === 'completed') return { cls: 'status-completed', text: 'Concluída' };
+      if (status === 'pending') return { cls: 'status-pending', text: 'Aguardando' };
+      if (status === 'cancelled') return { cls: 'status-cancelled', text: 'Cancelada' };
+      return { cls: 'status-pending', text: status || '—' };
+    }
+
+    function carregarVendas() {
+      // sempre recarrega do storage
+      vendas = lsReadJSON(LS.vendas, []) || [];
+
+      const tbody = document.getElementById('vendasLista');
+      const emptyState = document.getElementById('semVendas');
+
+      if (!Array.isArray(vendas) || vendas.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      const vendasOrdenadas = [...vendas].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+      tbody.innerHTML = vendasOrdenadas.slice(0, 10).map(venda => {
+        const data = new Date(venda.data);
+        const dataFormatada = data.toLocaleDateString('pt-BR');
+        const horaFormatada = data.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+        const totalItens = (venda.itens || []).reduce((total, item) => total + (item.quantidade || 0), 0);
+        const st = statusLabel(venda.status);
+
+        return `
+          <tr>
+            <td><strong>${venda.numero}</strong></td>
+            <td>${venda.clienteNome}</td>
+            <td>
+              <div>${dataFormatada}</div>
+              <div style="font-size: 0.75rem; color: var(--text-tertiary);">${horaFormatada}</div>
+            </td>
+            <td>${totalItens} itens</td>
+            <td><strong>R$ ${Number(venda.total || 0).toFixed(2)}</strong></td>
+            <td>
+              <span class="sale-status ${st.cls}">${st.text}</span>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="btn btn-icon btn-view" onclick="verDetalhesVenda(${venda.id})"><span>👁️</span></button>
+                <button class="btn btn-icon btn-print" onclick="imprimirVenda(${venda.id})"><span>🖨️</span></button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function verDetalhesVenda(vendaId) {
+      const venda = (lsReadJSON(LS.vendas, []) || []).find(v => v.id === vendaId);
+      if (!venda) return;
+
+      if (venda.status === 'pending' && venda.cobrancaId) {
+        mostrarNotificacao(`📄 Venda aguardando pagamento (Cobrança #${venda.cobrancaId})`, 'warning');
+        return;
+      }
+
+      mostrarNotificacao('📋 Abrindo detalhes da venda...', 'info');
+    }
+
+    function imprimirVenda(vendaId) {
+      const venda = (lsReadJSON(LS.vendas, []) || []).find(v => v.id === vendaId);
+      if (!venda) return;
+
+      if (venda.status !== 'completed') {
+        mostrarNotificacao('ℹ️ Somente vendas concluídas geram comprovante.', 'info');
+        return;
+      }
+
+      gerarComprovante(venda);
+    }
+
+    function imprimirComprovante() { window.print(); }
+
+    // ============================
+    // ESTATÍSTICAS (REAIS a partir de osflow:vendas)
+    // - conta somente vendas concluídas
+    // ============================
+    function atualizarEstatisticas() {
+      const list = lsReadJSON(LS.vendas, []) || [];
+      const vendasConcluidas = list.filter(v => v && v.status === 'completed');
+
+      const mesAtual = new Date().getMonth();
+      const anoAtual = new Date().getFullYear();
+
+      const vendasMes = vendasConcluidas.filter(v => {
+        const dataVenda = new Date(v.data);
+        return dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual;
+      });
+
+      const totalVendasMes = vendasMes.reduce((total, v) => total + Number(v.total || 0), 0);
+      const totalProdutosVendidos = vendasMes.reduce((total, v) => {
+        return total + (v.itens || []).reduce((sum, item) => sum + Number(item.quantidade || 0), 0);
+      }, 0);
+
+      const mesAnterior = mesAtual === 0 ? 11 : mesAtual - 1;
+      const anoAnterior = mesAtual === 0 ? anoAtual - 1 : anoAtual;
+
+      const vendasMesAnterior = vendasConcluidas.filter(v => {
+        const dataVenda = new Date(v.data);
+        return dataVenda.getMonth() === mesAnterior && dataVenda.getFullYear() === anoAnterior;
+      });
+
+      const totalVendasMesAnterior = vendasMesAnterior.reduce((total, v) => total + Number(v.total || 0), 0);
+      const crescimento = totalVendasMesAnterior > 0
+        ? ((totalVendasMes - totalVendasMesAnterior) / totalVendasMesAnterior * 100).toFixed(0)
+        : (totalVendasMes > 0 ? '100' : '0');
+
+      const clientesMes = new Set(vendasMes.map(v => v.clienteId).filter(Boolean));
+
+      document.getElementById('total-vendas-mes').textContent = `R$ ${(totalVendasMes / 1000).toFixed(1)}k`;
+      document.getElementById('crescimento').textContent = `${Number(crescimento) >= 0 ? '+' : ''}${crescimento}%`;
+      document.getElementById('produtos-vendidos').textContent = String(totalProdutosVendidos);
+      document.getElementById('clientes-mes').textContent = String(clientesMes.size);
+
+      const hojeStr = new Date().toDateString();
+      const vendasHoje = vendasConcluidas.filter(v => new Date(v.data).toDateString() === hojeStr);
+      const valorHoje = vendasHoje.reduce((total, v) => total + Number(v.total || 0), 0);
+
+      document.getElementById('vendas-hoje').textContent = String(vendasHoje.length);
+      document.getElementById('valor-hoje').textContent = `R$ ${valorHoje.toFixed(0)}`;
+    }
+
+    // ============================
+    // AÇÕES AUX
+    // ============================
+    function abrirCaixa() {
+      mostrarNotificacao('💵 Abrindo caixa...', 'info');
+      setTimeout(() => mostrarNotificacao('✅ Caixa aberto com sucesso!', 'success'), 1000);
+    }
+
+    function gerarRelatorio() {
+      mostrarNotificacao('📊 Gerando relatório de vendas...', 'info');
+      setTimeout(() => mostrarNotificacao('✅ Relatório gerado e salvo!', 'success'), 1500);
+    }
+
+    function novaVenda() {
+      limparCarrinho();
+      mostrarNotificacao('🆕 Nova venda iniciada!', 'info');
+    }
+
+    function cadastrarCliente() {
+      window.open('cadastrar-clientes.html', '_blank');
+    }
+
+    function verTodasVendas() {
+      mostrarNotificacao('📋 Carregando todas as vendas...', 'info');
+    }
+
+    // ============================
+    // MODAIS
+    // ============================
+    function abrirModal() { document.getElementById('modalConfirmacao').style.display = 'flex'; }
+
+    function fecharModal() {
+      const modal = document.getElementById('modalConfirmacao');
+      modal.style.animation = 'fadeOut 0.3s ease-out forwards';
+      setTimeout(() => { modal.style.display = 'none'; modal.style.animation = ''; }, 300);
+    }
+
+    function abrirModalComprovante() { document.getElementById('modalComprovante').style.display = 'flex'; }
+
+    function fecharModalComprovante() {
+      const modal = document.getElementById('modalComprovante');
+      modal.style.animation = 'fadeOut 0.3s ease-out forwards';
+      setTimeout(() => { modal.style.display = 'none'; modal.style.animation = ''; }, 300);
+    }
+
+    function confirmarAcao() { fecharModal(); }
+
+    // ============================
+    // NOTIFICAÇÕES
+    // ============================
+    function mostrarNotificacao(mensagem, tipo = 'info') {
+      const cores = {
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        danger: 'var(--danger)',
+        info: 'var(--primary-500)'
+      };
+
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${cores[tipo] || cores.info};
+        color: white;
+        padding: var(--space-3) var(--space-4);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        animation: slideUp 0.3s ease-out;
+      `;
+      notification.innerHTML = mensagem;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease-out forwards';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // ============================
+    // ATALHOS
+    // ============================
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') { e.preventDefault(); novaVenda(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); toggleSidebar(); }
+      if (e.key === 'F2') { e.preventDefault(); abrirCaixa(); }
+      if (e.key === 'F5') { e.preventDefault(); finalizarVenda(); }
+      if (e.key === 'Escape') { e.preventDefault(); limparCarrinho(); }
+    });
+
+    // Atualiza produtos/clientes/vendas/cobranças ao mudar storage em outra aba
+    window.addEventListener('storage', (e) => {
+      if (e.key === LS.produtos) {
+        carregarProdutosDoStorage();
+        carregarProdutosGrid();
+      }
+      if (e.key === LS.clientes) {
+        carregarClientesSelect();
+      }
+      if (e.key === LS.sidebarCollapsed) {
+        restoreSidebarState();
+      }
+      if (e.key === LS.vendas) {
+        vendas = lsReadJSON(LS.vendas, []) || [];
+        carregarVendas();
+        atualizarEstatisticas();
+      }
+      // Se cobrança mudar e sua tela quiser refletir (ex: venda virou completed), o cobranca.html deve atualizar osflow:vendas
+      if (e.key === LS.cobrancas) {
+        // opcional: apenas recarrega vendas, caso o cobranca.html tenha atualizado vendas também
+        vendas = lsReadJSON(LS.vendas, []) || [];
+        carregarVendas();
+        atualizarEstatisticas();
+      }
+    });
+  </script>
+</body>
+</html>

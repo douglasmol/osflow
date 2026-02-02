@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>OS Flow • Arquivos</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-50: #f0f9ff;
+      --primary-100: #e0f2fe;
+      --primary-200: #bae6fd;
+      --primary-300: #7dd3fc;
+      --primary-400: #38bdf8;
+      --primary-500: #0ea5e9;
+      --primary-600: #0284c7;
+      --primary-700: #0369a1;
+      --primary-800: #075985;
+      --primary-900: #0c4a6e;
+
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --info: #0ea5e9;
+      --info-light: #e0f2fe;
+      --purple: #8b5cf6;
+      --purple-light: #ede9fe;
+      --teal: #14b8a6;
+      --teal-light: #ccfbf1;
+
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+
+      --bg-body: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+      --bg-surface: #ffffff;
+      --bg-sidebar: rgba(255, 255, 255, 0.95);
+
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-tertiary: #6b7280;
+      --text-muted: #9ca3af;
+      --text-inverse: #ffffff;
+
+      --border-light: #e5e7eb;
+      --border-medium: #d1d5db;
+
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --shadow-primary: 0 4px 14px 0 rgba(14, 165, 233, 0.2);
+
+      --font-primary: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-secondary: 'Manrope', system-ui, -apple-system, sans-serif;
+
+      --space-0: 0;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-full: 9999px;
+
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      --sidebar-width: 260px;
+      --sidebar-collapsed: 72px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body{
+      font-family: var(--font-secondary);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    .layout{
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      min-height: 100vh;
+      transition: grid-template-columns var(--transition-base);
+    }
+    .layout.collapsed{ grid-template-columns: var(--sidebar-collapsed) 1fr; }
+
+    /* Sidebar */
+    .sidebar-wrapper{
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+      width: var(--sidebar-width);
+      transition: all var(--transition-base);
+      overflow: hidden;
+    }
+    .layout.collapsed .sidebar-wrapper{ width: var(--sidebar-collapsed); }
+
+    .sidebar{ padding: var(--space-6) 0; display:flex; flex-direction:column; height:100%; }
+
+    .sidebar-logo{
+      padding: 0 var(--space-4) var(--space-6);
+      display:flex; align-items:center; gap: var(--space-3);
+      margin-bottom: var(--space-6);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: var(--space-6);
+      min-height: 60px;
+    }
+    .layout.collapsed .sidebar-logo{ padding: 0 var(--space-3) var(--space-6); justify-content:center; }
+
+    .sidebar-logo-icon{
+      width:40px;height:40px;border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--text-inverse);
+      font-family: var(--font-primary);
+      font-weight: 800;
+      box-shadow: var(--shadow-primary);
+      cursor:pointer;
+      transition: transform var(--transition-base);
+      flex-shrink:0;
+    }
+    .sidebar-logo-icon:hover{ transform: scale(1.05); }
+
+    .sidebar-logo-text{
+      overflow:hidden;
+      transition: opacity var(--transition-base), max-width var(--transition-base);
+      max-width: 200px;
+    }
+    .layout.collapsed .sidebar-logo-text{ opacity:0; max-width:0; }
+    .sidebar-logo-text h1{
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .sidebar-logo-text small{
+      display:block;
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .menu{
+      list-style:none;
+      padding: 0 var(--space-2);
+      flex:1;
+      font-size: 0.875rem;
+    }
+    .layout.collapsed .menu{ padding: 0 var(--space-1); }
+    .menu li{ margin-bottom: var(--space-1); }
+    .menu a{
+      display:flex; align-items:center; gap: var(--space-3);
+      padding: var(--space-3) var(--space-3);
+      color: var(--text-secondary);
+      text-decoration:none;
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      position: relative;
+    }
+    .layout.collapsed .menu a{ justify-content:center; padding: var(--space-3); }
+    .menu a:hover{
+      background: var(--primary-50);
+      color: var(--primary-600);
+      transform: translateX(4px);
+    }
+    .layout.collapsed .menu a:hover{ transform: translateX(0) scale(1.05); }
+    .menu a.active{
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-primary);
+      font-weight: 600;
+    }
+    .menu-icon{ width:20px; text-align:center; font-size: 1.125rem; flex-shrink:0; }
+    .menu-text{
+      overflow:hidden;
+      transition: opacity var(--transition-base), max-width var(--transition-base);
+      max-width:200px;
+    }
+    .layout.collapsed .menu-text{ opacity:0; max-width:0; }
+    .menu-tooltip{
+      position:absolute;
+      left:100%;
+      top:50%;
+      transform: translateY(-50%);
+      background: var(--gray-800);
+      color:#fff;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity:0; visibility:hidden;
+      transition: all var(--transition-fast);
+      pointer-events:none;
+      box-shadow: var(--shadow-md);
+      z-index: 1000;
+    }
+    .layout.collapsed .menu a:hover .menu-tooltip{
+      opacity:1; visibility:visible;
+      transform: translateY(-50%) translateX(8px);
+    }
+
+    .sidebar-footer{
+      padding: var(--space-3) var(--space-4);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-light);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow:hidden;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+    }
+    .layout.collapsed .sidebar-footer{
+      padding: var(--space-2);
+      font-size: 0.6rem;
+      flex-direction: column;
+    }
+    .layout.collapsed .sidebar-footer span:not(:first-child){
+      opacity:0; width:0; margin:0;
+    }
+
+    /* Topbar */
+    .main-wrapper{ display:flex; flex-direction:column; min-width:0; }
+    .topbar{
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--space-3) var(--space-6);
+      display:flex; align-items:center; justify-content:space-between;
+      position: sticky; top:0; z-index:90;
+      box-shadow: var(--shadow-sm);
+      min-height: 60px;
+    }
+    .topbar-title{
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display:flex; align-items:center; gap: var(--space-3);
+    }
+    .breadcrumb{
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      display:flex; align-items:center; gap: var(--space-2);
+      font-weight: 500;
+    }
+    .breadcrumb::before{
+      content:'|';
+      color: var(--border-medium);
+      margin-right: var(--space-2);
+      font-weight: 400;
+    }
+    .breadcrumb span{
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .user-info{
+      display:flex; align-items:center; gap: var(--space-3);
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .user-avatar{
+      width:36px;height:36px;border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--teal) 100%);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--text-inverse);
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
+      cursor:pointer;
+      transition: transform var(--transition-base);
+    }
+    .user-avatar:hover{ transform: scale(1.05); }
+
+    .content{ padding: var(--space-6); flex:1; }
+
+    /* Header */
+    .page-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom: var(--space-8);
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .page-header h1{
+      font-family: var(--font-primary);
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display:flex;
+      align-items:center;
+      gap: var(--space-3);
+    }
+    .page-header h1:before{ content:'📁'; font-size: 1.5rem; }
+    .page-actions{ display:flex; gap: var(--space-3); flex-wrap: wrap; }
+
+    .btn{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor:pointer;
+      transition: all var(--transition-base);
+      display:inline-flex;
+      align-items:center;
+      gap: var(--space-2);
+    }
+    .btn:hover{
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-primary{
+      background: var(--primary-500);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-primary);
+    }
+    .btn-primary:hover{ background: var(--primary-600); box-shadow: var(--shadow-lg); }
+    .btn-danger{
+      background: var(--danger);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.2);
+    }
+    .btn-danger:hover{ background:#dc2626; }
+    .btn-success{
+      background: var(--success);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.2);
+    }
+    .btn-success:hover{ background:#0da271; }
+
+    .btn-disabled,
+    .btn:disabled{
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Panels */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap: var(--space-8);
+      align-items:start;
+      margin-bottom: var(--space-8);
+    }
+    @media (max-width: 1024px){ .grid{ grid-template-columns:1fr; } }
+
+    .panel{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-base);
+    }
+    .panel:hover{ box-shadow: var(--shadow-lg); border-color: var(--primary-300); }
+
+    .panel-header{
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--border-light);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: var(--space-4);
+    }
+    .panel-header h2, .panel-header h3{
+      margin:0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      display:flex;
+      align-items:center;
+      gap: var(--space-3);
+    }
+    .panel-header h2:before{ content:'⬆️'; font-size: 1rem; }
+    .panel-header h3:before{ content:'📊'; font-size: 1rem; }
+    .panel-sub{
+      margin-top: var(--space-1);
+      font-size: 0.875rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .form-group{ margin-bottom: var(--space-4); }
+    .form-label{
+      display:block;
+      margin-bottom: var(--space-2);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .form-label.required:after{ content:' *'; color: var(--danger); }
+
+    .form-input{
+      width:100%;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+      transition: all var(--transition-base);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+    .form-input:focus{
+      outline:none;
+      border-color: var(--primary-400);
+      box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
+    }
+
+    .form-select{
+      appearance:none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat:no-repeat;
+      background-position: right var(--space-4) center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
+    }
+
+    .hint{
+      margin-top: var(--space-2);
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .dropzone{
+      border: 2px dashed rgba(14,165,233,0.35);
+      background: var(--primary-50);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      text-align:center;
+      transition: all var(--transition-base);
+      cursor:pointer;
+    }
+    .dropzone:hover{
+      border-color: var(--primary-500);
+      background: var(--primary-100);
+      transform: translateY(-2px);
+    }
+    .dropzone.dragover{
+      border-color: var(--success);
+      background: var(--success-light);
+    }
+    .dropzone-title{
+      font-family: var(--font-primary);
+      font-weight: 800;
+      margin-bottom: var(--space-2);
+    }
+    .dropzone-sub{
+      color: var(--text-tertiary);
+      font-size: 0.875rem;
+    }
+    .file-hint{
+      margin-top: var(--space-3);
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+
+    .form-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap: var(--space-3);
+      margin-top: var(--space-6);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--border-light);
+      flex-wrap: wrap;
+    }
+
+    /* Stats */
+    .stats-grid{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .stat-card{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-base);
+      text-align:center;
+    }
+    .stat-card:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-300);
+    }
+    .stat-icon{
+      width:40px;height:40px;border-radius: var(--radius-lg);
+      display:flex; align-items:center; justify-content:center;
+      margin: 0 auto var(--space-2);
+      color: var(--text-inverse);
+      font-size: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-value{
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      font-weight: 800;
+      line-height:1;
+      margin-bottom: var(--space-1);
+    }
+    .stat-label{
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    /* Browser */
+    .browser-panel{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+    }
+
+    .browser-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    .pathbar{
+      display:flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      align-items:center;
+    }
+    .crumb{
+      display:inline-flex;
+      align-items:center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-light);
+      background: var(--gray-50);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+    .crumb:hover{
+      background: var(--primary-50);
+      border-color: rgba(14,165,233,0.25);
+      color: var(--primary-700);
+    }
+    .crumb.active{
+      background: var(--primary-500);
+      border-color: transparent;
+      color: white;
+      box-shadow: var(--shadow-primary);
+      cursor: default;
+    }
+
+    .search-container{ display:flex; gap: var(--space-2); }
+    .search-input{
+      width: 320px;
+      padding: var(--space-2) var(--space-4);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+    }
+    .search-input:focus{
+      outline:none;
+      border-color: var(--primary-400);
+      box-shadow: 0 0 0 3px rgba(14,165,233,0.1);
+    }
+    @media (max-width: 768px){
+      .search-container{ width:100%; }
+      .search-input{ width:100%; }
+    }
+
+    .grid-cards{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .card{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      overflow:hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-base);
+      display:flex;
+      flex-direction:column;
+      min-height: 250px;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-300);
+    }
+
+    .thumb{
+      height: 140px;
+      background: var(--gray-100);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position: relative;
+      overflow:hidden;
+    }
+    .thumb img,
+    .thumb video{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+    .thumb-badge{
+      position:absolute;
+      left: var(--space-3);
+      top: var(--space-3);
+      background: rgba(17,24,39,0.75);
+      color:#fff;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 800;
+    }
+
+    .card-body{
+      padding: var(--space-4);
+      display:flex;
+      flex-direction:column;
+      gap: var(--space-2);
+      flex:1;
+    }
+    .card-title{
+      font-weight: 900;
+      font-size: 0.95rem;
+      line-height:1.2;
+    }
+    .card-meta{
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      display:flex;
+      flex-direction:column;
+      gap: 0.25rem;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: var(--radius-full);
+      font-size: 0.6875rem;
+      font-weight: 800;
+      border: 1px solid rgba(14,165,233,0.18);
+      background: var(--primary-50);
+      color: var(--primary-700);
+      width: fit-content;
+    }
+
+    .card-actions{
+      padding: var(--space-4);
+      border-top: 1px solid var(--border-light);
+      display:flex;
+      gap: var(--space-2);
+      justify-content:flex-end;
+      flex-wrap: wrap;
+    }
+    .btn-icon{
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius: var(--radius-md);
+    }
+    .btn-view{
+      background: var(--info-light);
+      border-color: transparent;
+      color: var(--info);
+    }
+    .btn-view:hover{ background: var(--info); color:#fff; }
+    .btn-download{
+      background: var(--teal-light);
+      border-color: transparent;
+      color: var(--teal);
+    }
+    .btn-download:hover{ background: var(--teal); color:#fff; }
+    .btn-delete{
+      background: var(--danger-light);
+      border-color: transparent;
+      color: var(--danger);
+    }
+    .btn-delete:hover{ background: var(--danger); color:#fff; }
+
+    .empty-state{
+      text-align:center;
+      padding: var(--space-12) var(--space-6);
+      color: var(--text-tertiary);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-xl);
+      background: var(--gray-50);
+    }
+    .empty-state-icon{
+      font-size: 3rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+    }
+
+    /* Modal */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(4px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:1000;
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+    .modal{
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      width: 820px;
+      max-width: 92vw;
+      box-shadow: var(--shadow-2xl);
+      border: 1px solid var(--border-light);
+      animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp{ from{ transform: translateY(20px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom: var(--space-4);
+      gap: var(--space-4);
+    }
+    .modal-header h3{
+      margin:0;
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 800;
+    }
+    .modal-close{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      width: 32px;
+      height: 32px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      cursor:pointer;
+      transition: all var(--transition-base);
+    }
+    .modal-close:hover{
+      background: var(--danger-light);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    .modal-body{
+      max-height: 70vh;
+      overflow:auto;
+      padding-right: var(--space-2);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px){
+      .layout{ grid-template-columns: 1fr; }
+      .sidebar-wrapper{
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border-light);
+        z-index: 1000;
+      }
+      .sidebar{ padding: var(--space-4) 0; flex-direction: row; align-items:center; }
+      .menu{ display:flex; overflow-x:auto; flex: 0 0 auto; }
+      .menu li{ margin:0; }
+      .menu a{ flex-direction: column; padding: var(--space-2); }
+      .menu-text{ font-size: 0.625rem; }
+      .content{ padding: var(--space-4); }
+      .topbar{ padding: var(--space-4); }
+      .page-header{ flex-direction: column; align-items:flex-start; }
+      .grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout" id="mainLayout">
+    <!-- SIDEBAR -->
+    <div class="sidebar-wrapper">
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon" onclick="toggleSidebar()">OS</div>
+          <div class="sidebar-logo-text">
+            <h1>OS Flow</h1>
+            <small>Dashboard Inteligente</small>
+          </div>
+        </div>
+
+        <ul class="menu">
+          <li><a href="index.html">
+            <span class="menu-icon">📊</span>
+            <span class="menu-text">Dashboard</span>
+            <span class="menu-tooltip">Dashboard</span>
+          </a></li>
+          <li><a href="cadastrar-clientes.html">
+            <span class="menu-icon">👥</span>
+            <span class="menu-text">Clientes</span>
+            <span class="menu-tooltip">Clientes</span>
+          </a></li>
+          <li><a href="produtos.html">
+            <span class="menu-icon">📦</span>
+            <span class="menu-text">Produtos</span>
+            <span class="menu-tooltip">Produtos</span>
+          </a></li>
+          <li><a href="servicos.html">
+            <span class="menu-icon">🔧</span>
+            <span class="menu-text">Serviços</span>
+            <span class="menu-tooltip">Serviços</span>
+          </a></li>
+          <li><a href="vendas.html">
+            <span class="menu-icon">💰</span>
+            <span class="menu-text">Vendas</span>
+            <span class="menu-tooltip">Vendas</span>
+          </a></li>
+          <li><a href="ordem-servico.html">
+            <span class="menu-icon">📋</span>
+            <span class="menu-text">Ordens</span>
+            <span class="menu-tooltip">Ordens</span>
+          </a></li>
+          <li><a href="garantias.html">
+            <span class="menu-icon">🛡️</span>
+            <span class="menu-text">Garantias</span>
+            <span class="menu-tooltip">Garantias</span>
+          </a></li>
+          <li><a href="arquivos.html" class="active">
+            <span class="menu-icon">📁</span>
+            <span class="menu-text">Arquivos</span>
+            <span class="menu-tooltip">Arquivos</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">💳</span>
+            <span class="menu-text">Financeiro</span>
+            <span class="menu-tooltip">Financeiro</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">📄</span>
+            <span class="menu-text">Cobrança</span>
+            <span class="menu-tooltip">Cobrança</span>
+          </a></li>
+          <li><a href="#">
+            <span class="menu-icon">⚙️</span>
+            <span class="menu-text">Configurações</span>
+            <span class="menu-tooltip">Configurações</span>
+          </a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+          v3.8.1 • © <span id="ano-atual"></span> • OS Flow
+        </div>
+      </aside>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-title">
+          Arquivos de OS
+          <div class="breadcrumb"><span>Anexos</span></div>
+        </div>
+        <div class="user-info">
+          <span>Bem-vindo, <strong>V1ctor Gomes</strong></span>
+          <div class="user-avatar">VG</div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="page-header">
+          <h1>Arquivos</h1>
+          <div class="page-actions">
+            <button class="btn" onclick="refreshAll()">🔄 Atualizar</button>
+            <button class="btn btn-primary" onclick="resetUploadWizard()">🆕 Novo Anexo</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- Upload -->
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>Anexar arquivos</h2>
+                <div class="panel-sub">Pasta por OS • Categorias: antes / depois / documento / diagnóstico / outros</div>
+              </div>
+            </div>
+
+            <form id="arquivoForm" onsubmit="salvarAnexos(event)">
+              <div class="form-group">
+                <label class="form-label required" for="clienteSelect">Cliente</label>
+                <select id="clienteSelect" class="form-input form-select" required onchange="onClienteChange()">
+                  <option value="">Selecione...</option>
+                </select>
+                <div class="hint">Lista vem do cadastro de clientes.</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required" for="osSelect">Ordem de Serviço (OS)</label>
+                <select id="osSelect" class="form-input form-select" required onchange="onOSChange()">
+                  <option value="">Selecione um cliente primeiro...</option>
+                </select>
+                <div class="hint" id="osHint">Somente OS desse cliente.</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required" for="categoria">Categoria</label>
+                <select id="categoria" class="form-input form-select" required>
+                  <option value="">Selecione...</option>
+                  <option value="antes">📷 Antes</option>
+                  <option value="depois">✅ Depois</option>
+                  <option value="diagnostico">🧪 Diagnóstico</option>
+                  <option value="documento">📄 Documento</option>
+                  <option value="outros">📁 Outros</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="observacao">Observação</label>
+                <input type="text" id="observacao" class="form-input" placeholder="Ex: Tela trincada no canto superior">
+              </div>
+
+              <input id="fileInput" type="file" accept="image/*,video/*" multiple style="display:none" />
+
+              <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+                <div class="dropzone-title">Arraste e solte fotos/vídeos aqui</div>
+                <div class="dropzone-sub">ou clique para selecionar arquivos</div>
+                <div class="file-hint">Armazenamento local via IndexedDB (vinculado à OS selecionada).</div>
+              </div>
+
+              <div style="margin-top: var(--space-4); font-size: 0.875rem; color: var(--text-tertiary);" id="selectedFilesInfo">
+                Nenhum arquivo selecionado.
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-danger" onclick="resetUploadWizard()">🗑️ Limpar</button>
+                <button type="submit" class="btn btn-success" id="btnSalvarAnexo">💾 Salvar Anexos</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Stats -->
+          <aside class="panel">
+            <div class="panel-header">
+              <h3>Estatísticas</h3>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);">📁</div>
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">Arquivos</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);">🖼️</div>
+                <div class="stat-value" id="statImagens">0</div>
+                <div class="stat-label">Imagens</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, var(--purple) 0%, #a78bfa 100%);">🎥</div>
+                <div class="stat-value" id="statVideos">0</div>
+                <div class="stat-label">Vídeos</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%);">💾</div>
+                <div class="stat-value" id="statSize">0 MB</div>
+                <div class="stat-label">Tamanho</div>
+              </div>
+            </div>
+
+            <div style="font-size: 0.875rem; color: var(--text-tertiary);">
+              Regras: anexos só podem ser salvos em uma OS existente, com cliente válido e equipamento definido (Marca/Modelo).
+            </div>
+          </aside>
+        </div>
+
+        <!-- Browser -->
+        <section class="browser-panel">
+          <div class="browser-header">
+            <div>
+              <div style="font-family: var(--font-primary); font-weight: 900; font-size: 1.25rem;">📂 Navegador de Pastas</div>
+              <div style="color: var(--text-tertiary); font-size:0.875rem; margin-top:0.25rem;">
+                Cliente → OS → Categoria → Arquivos
+              </div>
+            </div>
+            <div class="search-container">
+              <input id="searchInput" class="search-input" type="text" placeholder="Buscar por OS, cliente, nome do arquivo..." onkeyup="renderBrowser()">
+              <button class="btn" onclick="renderBrowser()">🔍 Buscar</button>
+            </div>
+          </div>
+
+          <div class="pathbar" id="pathbar"></div>
+
+          <div id="browserGrid" class="grid-cards"></div>
+
+          <div id="emptyState" class="empty-state" style="display:none;">
+            <div class="empty-state-icon">📭</div>
+            <h3>Nenhum item para mostrar</h3>
+            <p>Cadastre clientes/OS e envie arquivos vinculados à OS.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Preview -->
+  <div class="modal-backdrop" id="modalDetalhes">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitulo">Detalhes</h3>
+        <button class="modal-close" onclick="fecharModalDetalhes()">×</button>
+      </div>
+      <div class="modal-body" id="modalCorpo"></div>
+      <div style="display:flex; justify-content:flex-end; gap: var(--space-3); margin-top: var(--space-6);">
+        <button class="btn btn-primary" onclick="fecharModalDetalhes()">✅ OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Confirmação -->
+  <div class="modal-backdrop" id="modalConfirmacao">
+    <div class="modal" style="width: 520px;">
+      <div class="modal-header">
+        <h3 id="modalConfTitulo">Confirmar Exclusão</h3>
+        <button class="modal-close" onclick="fecharModalConfirmacao()">×</button>
+      </div>
+      <div class="modal-body" id="modalConfCorpo"></div>
+      <div style="display:flex; justify-content:flex-end; gap: var(--space-3); margin-top: var(--space-6);">
+        <button class="btn" onclick="fecharModalConfirmacao()">Cancelar</button>
+        <button class="btn btn-danger" id="btnConfirmarExcluir">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================
+    // LocalStorage padronizado + migração
+    // ============================
+    const LS = Object.freeze({
+      clientes: 'osflow:clientes',
+      os: 'osflow:os',
+      sidebarCollapsed: 'osflow:ui:sidebarCollapsed',
+
+      // legado
+      legacyClientes: 'clientesOSFlow',
+      legacyOs: 'osflow_os',
+      legacySidebarCollapsed: 'sidebarCollapsed'
+    });
+
+    function lsReadJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch {
+        return fallback;
+      }
+    }
+
+    function migrateLocalStorageKeys() {
+      if (!localStorage.getItem(LS.clientes) && localStorage.getItem(LS.legacyClientes)) {
+        localStorage.setItem(LS.clientes, localStorage.getItem(LS.legacyClientes));
+      }
+      if (!localStorage.getItem(LS.os) && localStorage.getItem(LS.legacyOs)) {
+        localStorage.setItem(LS.os, localStorage.getItem(LS.legacyOs));
+      }
+      if (!localStorage.getItem(LS.sidebarCollapsed) && localStorage.getItem(LS.legacySidebarCollapsed)) {
+        localStorage.setItem(LS.sidebarCollapsed, localStorage.getItem(LS.legacySidebarCollapsed));
+      }
+    }
+
+    migrateLocalStorageKeys();
+
+    // ============================
+    // Notificação
+    // ============================
+    function mostrarNotificacao(mensagem, tipo = 'info') {
+      const cores = {
+        success: '#10b981',
+        warning: '#f59e0b',
+        danger:  '#ef4444',
+        info:    '#0ea5e9'
+      };
+
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${cores[tipo] || cores.info};
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.12);
+        z-index: 10000;
+        font-size: 0.875rem;
+        font-weight: 700;
+        max-width: 380px;
+      `;
+      notification.innerHTML = mensagem;
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 2800);
+    }
+
+    // ---------- Helpers ----------
+    function escapeHTML(s) {
+      return String(s ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatBytes(bytes) {
+      const b = Number(bytes || 0);
+      const mb = b / (1024 * 1024);
+      if (mb < 1024) return mb.toFixed(1) + ' MB';
+      return (mb / 1024).toFixed(2) + ' GB';
+    }
+
+    function categoriaLabel(c) {
+      const map = {
+        antes: '📷 Antes',
+        depois: '✅ Depois',
+        diagnostico: '🧪 Diagnóstico',
+        documento: '📄 Documento',
+        outros: '📁 Outros'
+      };
+      return map[c] || c || '-';
+    }
+
+    // ---------- Sidebar ----------
+    function toggleSidebar() {
+      const layout = document.getElementById('mainLayout');
+      if (!layout) return;
+
+      layout.classList.toggle('collapsed');
+      localStorage.setItem(LS.sidebarCollapsed, layout.classList.contains('collapsed'));
+    }
+
+    // ============================
+    // IndexedDB
+    // ============================
+    const DB_NAME = 'OSFlowFilesDB';
+    const DB_VERSION = 2; // nova versão para índices novos
+    const STORE = 'attachments';
+    let db = null;
+
+    function dbInit() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+        request.onupgradeneeded = () => {
+          const _db = request.result;
+
+          if (!_db.objectStoreNames.contains(STORE)) {
+            const store = _db.createObjectStore(STORE, { keyPath: 'id' });
+            store.createIndex('createdAt', 'createdAt', { unique: false });
+            store.createIndex('clienteId', 'clienteId', { unique: false });
+            store.createIndex('clienteNome', 'clienteNome', { unique: false });
+            store.createIndex('osId', 'osId', { unique: false });
+            store.createIndex('osNumero', 'osNumero', { unique: false });
+            store.createIndex('categoria', 'categoria', { unique: false });
+          } else {
+            const store = request.transaction.objectStore(STORE);
+            // tenta criar índices se não existirem (upgrade)
+            try { store.createIndex('clienteId', 'clienteId', { unique: false }); } catch {}
+            try { store.createIndex('clienteNome', 'clienteNome', { unique: false }); } catch {}
+            try { store.createIndex('osId', 'osId', { unique: false }); } catch {}
+            try { store.createIndex('osNumero', 'osNumero', { unique: false }); } catch {}
+          }
+        };
+
+        request.onsuccess = () => {
+          db = request.result;
+          resolve();
+        };
+
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    function dbTx(mode = 'readonly') {
+      const tx = db.transaction(STORE, mode);
+      return tx.objectStore(STORE);
+    }
+
+    function dbPut(record) {
+      return new Promise((resolve, reject) => {
+        const store = dbTx('readwrite');
+        const req = store.put(record);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function dbDelete(id) {
+      return new Promise((resolve, reject) => {
+        const store = dbTx('readwrite');
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function dbGet(id) {
+      return new Promise((resolve, reject) => {
+        const store = dbTx('readonly');
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function dbGetAll() {
+      return new Promise((resolve, reject) => {
+        const store = dbTx('readonly');
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    // ============================
+    // Dados: clientes + OS
+    // ============================
+    function getClientes() {
+      return lsReadJSON(LS.clientes, []);
+    }
+
+    function getOSList() {
+      return lsReadJSON(LS.os, []);
+    }
+
+    function getValidOSForCliente(clienteId) {
+      const clientes = getClientes();
+      const clienteExists = clientes.some(c => String(c.id) === String(clienteId));
+      if (!clienteExists) return [];
+
+      const all = getOSList();
+      return all.filter(os => {
+        const osClienteId = os?.cliente?.clienteId || '';
+        const device = (os?.detalhes?.equipamento?.marcaModelo || '').trim();
+        return String(osClienteId) === String(clienteId) && !!device;
+      });
+    }
+
+    function getOSById(id) {
+      return getOSList().find(o => String(o.id) === String(id)) || null;
+    }
+
+    function osFolderLabel(os) {
+      const numero = os?.numero || 'OS';
+      const device = (os?.detalhes?.equipamento?.marcaModelo || '').trim();
+      return `${numero} • ${device || 'Equipamento não definido'}`;
+    }
+
+    // ============================
+    // Estado de UI do browser
+    // ============================
+    const NAV = {
+      level: 'clientes', // clientes | os | categorias | arquivos
+      clienteId: '',
+      osId: '',
+      categoria: ''
+    };
+
+    let selectedFiles = [];
+    let cacheRecords = []; // anexos
+    let cacheClientes = [];
+    let cacheOS = [];
+
+    // ============================
+    // Upload handlers
+    // ============================
+    function bindUploadHandlers() {
+      const input = document.getElementById('fileInput');
+      const dropzone = document.getElementById('dropzone');
+
+      if (!input || !dropzone) return;
+
+      input.addEventListener('change', () => {
+        selectedFiles = Array.from(input.files || []);
+        updateSelectedFilesInfo();
+      });
+
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+
+        const files = Array.from(e.dataTransfer.files || []);
+        selectedFiles = files.filter(f => f.type.startsWith('image/') || f.type.startsWith('video/'));
+        input.value = '';
+        updateSelectedFilesInfo();
+      });
+    }
+
+    function updateSelectedFilesInfo() {
+      const el = document.getElementById('selectedFilesInfo');
+      if (!el) return;
+
+      if (!selectedFiles.length) {
+        el.textContent = 'Nenhum arquivo selecionado.';
+        return;
+      }
+      const totalBytes = selectedFiles.reduce((acc, f) => acc + (f.size || 0), 0);
+      el.innerHTML = `<strong>${selectedFiles.length}</strong> arquivo(s) selecionado(s) • ${escapeHTML(formatBytes(totalBytes))}`;
+    }
+
+    function resetUploadWizard() {
+      const form = document.getElementById('arquivoForm');
+      if (form) form.reset();
+
+      selectedFiles = [];
+      const input = document.getElementById('fileInput');
+      if (input) input.value = '';
+
+      document.getElementById('osSelect').innerHTML = `<option value="">Selecione um cliente primeiro...</option>`;
+      document.getElementById('osHint').textContent = 'Somente OS desse cliente.';
+      updateSelectedFilesInfo();
+      mostrarNotificacao('🆕 Formulário limpo.', 'info');
+    }
+
+    function fillClienteSelect() {
+      const select = document.getElementById('clienteSelect');
+      if (!select) return;
+
+      const clientes = [...cacheClientes].sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+      select.innerHTML = `<option value="">Selecione...</option>` + clientes.map(c => `
+        <option value="${escapeHTML(String(c.id))}">${escapeHTML(c.nome || 'Cliente')}</option>
+      `).join('');
+    }
+
+    function onClienteChange() {
+      const clienteId = document.getElementById('clienteSelect').value;
+      const osSelect = document.getElementById('osSelect');
+      const osHint = document.getElementById('osHint');
+
+      if (!clienteId) {
+        osSelect.innerHTML = `<option value="">Selecione um cliente primeiro...</option>`;
+        osHint.textContent = 'Somente OS desse cliente.';
+        return;
+      }
+
+      const osList = getValidOSForCliente(clienteId);
+      if (!osList.length) {
+        osSelect.innerHTML = `<option value="">Nenhuma OS válida para este cliente</option>`;
+        osHint.textContent = 'Para anexar, a OS deve existir e ter Marca/Modelo preenchido.';
+        return;
+      }
+
+      osHint.textContent = `Encontradas ${osList.length} OS com equipamento definido.`;
+      osSelect.innerHTML = `<option value="">Selecione...</option>` + osList
+        .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map(o => `<option value="${escapeHTML(String(o.id))}">${escapeHTML(osFolderLabel(o))}</option>`)
+        .join('');
+    }
+
+    function onOSChange() {
+      // no-op hoje: só guardamos seleção no submit
+    }
+
+    async function salvarAnexos(event) {
+      event.preventDefault();
+
+      const clienteId = document.getElementById('clienteSelect')?.value || '';
+      const osId = document.getElementById('osSelect')?.value || '';
+      const categoria = document.getElementById('categoria')?.value || '';
+      const observacao = (document.getElementById('observacao')?.value || '').trim();
+
+      if (!clienteId || !osId || !categoria) {
+        mostrarNotificacao('⚠️ Selecione Cliente, OS e Categoria.', 'danger');
+        return;
+      }
+      if (!selectedFiles.length) {
+        mostrarNotificacao('📎 Selecione pelo menos 1 arquivo.', 'danger');
+        return;
+      }
+
+      // valida cliente e OS
+      const cliente = cacheClientes.find(c => String(c.id) === String(clienteId));
+      if (!cliente) {
+        mostrarNotificacao('❌ Cliente inválido (não encontrado).', 'danger');
+        return;
+      }
+
+      const os = getOSById(osId);
+      if (!os) {
+        mostrarNotificacao('❌ OS inválida (não encontrada).', 'danger');
+        return;
+      }
+      if (String(os?.cliente?.clienteId || '') !== String(clienteId)) {
+        mostrarNotificacao('❌ Esta OS não pertence ao cliente selecionado.', 'danger');
+        return;
+      }
+
+      const equipamento = (os?.detalhes?.equipamento?.marcaModelo || '').trim();
+      if (!equipamento) {
+        mostrarNotificacao('❌ A OS selecionada não possui equipamento definido (Marca/Modelo).', 'danger');
+        return;
+      }
+
+      // groupKey por OS padronizado
+      const groupKey = `osflow:files:os|${String(os.id)}`;
+
+      try {
+        for (const file of selectedFiles) {
+          const id = crypto?.randomUUID
+            ? crypto.randomUUID()
+            : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+
+          const record = {
+            id,
+            groupKey,
+
+            clienteId: String(cliente.id),
+            clienteNome: cliente.nome || os?.cliente?.nome || '',
+            osId: String(os.id),
+            osNumero: os.numero || '',
+            equipamento: equipamento,
+
+            categoria,
+            observacao,
+
+            fileName: file.name,
+            mimeType: file.type,
+            size: file.size,
+            createdAt: new Date().toISOString(),
+
+            blob: file
+          };
+
+          await dbPut(record);
+        }
+
+        mostrarNotificacao('✅ Arquivo(s) anexado(s) com sucesso!', 'success');
+        resetUploadWizard();
+
+        await refreshAll();
+
+        // posiciona o browser na árvore do item salvo
+        NAV.level = 'categorias';
+        NAV.clienteId = String(cliente.id);
+        NAV.osId = String(os.id);
+        NAV.categoria = '';
+        renderBrowser();
+      } catch (err) {
+        console.error(err);
+        mostrarNotificacao('❌ Falha ao salvar arquivos (limite do navegador?).', 'danger');
+      }
+    }
+
+    // ============================
+    // Browser (Cliente → OS → Categoria → Arquivos)
+    // ============================
+    function setNav(level, next = {}) {
+      NAV.level = level;
+      if ('clienteId' in next) NAV.clienteId = next.clienteId;
+      if ('osId' in next) NAV.osId = next.osId;
+      if ('categoria' in next) NAV.categoria = next.categoria;
+      renderBrowser();
+    }
+
+    function buildPathbar() {
+      const el = document.getElementById('pathbar');
+      if (!el) return;
+
+      const crumbs = [];
+      crumbs.push({ label: '🏠 Clientes', level: 'clientes', active: NAV.level === 'clientes' });
+
+      if (NAV.clienteId) {
+        const c = cacheClientes.find(x => String(x.id) === String(NAV.clienteId));
+        crumbs.push({ label: `👥 ${c ? c.nome : 'Cliente'}`, level: 'os', active: NAV.level === 'os' });
+      }
+
+      if (NAV.osId) {
+        const os = cacheOS.find(x => String(x.id) === String(NAV.osId));
+        crumbs.push({ label: `📋 ${os ? osFolderLabel(os) : 'OS'}`, level: 'categorias', active: NAV.level === 'categorias' });
+      }
+
+      if (NAV.categoria) {
+        crumbs.push({ label: `${categoriaLabel(NAV.categoria)}`, level: 'arquivos', active: NAV.level === 'arquivos' });
+      }
+
+      el.innerHTML = crumbs.map((c, i) => `
+        <div class="crumb ${c.active ? 'active' : ''}" onclick="${c.active ? '' : `onCrumbClick(${i})`}">
+          ${escapeHTML(c.label)}
+        </div>
+      `).join('');
+
+      window.__crumbs = crumbs;
+    }
+
+    function onCrumbClick(index) {
+      const crumbs = window.__crumbs || [];
+      const target = crumbs[index];
+      if (!target) return;
+
+      if (target.level === 'clientes') {
+        setNav('clientes', { clienteId: '', osId: '', categoria: '' });
+        return;
+      }
+      if (target.level === 'os') {
+        setNav('os', { osId: '', categoria: '' });
+        return;
+      }
+      if (target.level === 'categorias') {
+        setNav('categorias', { categoria: '' });
+        return;
+      }
+    }
+
+    function getSearchTerm() {
+      return (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+    }
+
+    function getFilesForOS(osId) {
+      const groupKey = `osflow:files:os|${String(osId)}`;
+      return cacheRecords.filter(r => r.groupKey === groupKey || String(r.osId) === String(osId));
+    }
+
+    function summarizeFiles(records) {
+      const total = records.length;
+      const imagens = records.filter(r => (r.mimeType || '').startsWith('image/')).length;
+      const videos = records.filter(r => (r.mimeType || '').startsWith('video/')).length;
+      const bytes = records.reduce((acc, r) => acc + (r.size || 0), 0);
+      return { total, imagens, videos, bytes };
+    }
+
+    function renderClientesLevel() {
+      const grid = document.getElementById('browserGrid');
+      const empty = document.getElementById('emptyState');
+      if (!grid || !empty) return;
+
+      const term = getSearchTerm();
+
+      // Mostrar todos clientes cadastrados, mas destacando se possuem OS válida
+      const clientes = [...cacheClientes].sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+
+      const cards = clientes
+        .map(cliente => {
+          const osValidas = getValidOSForCliente(cliente.id);
+          const match = !term || `${cliente.nome}`.toLowerCase().includes(term);
+          if (!match) return null;
+
+          const stats = summarizeFiles(cacheRecords.filter(r => String(r.clienteId) === String(cliente.id)));
+          const label = cliente.nome || 'Cliente';
+
+          return `
+            <div class="card">
+              <div class="thumb">
+                <span class="thumb-badge">${osValidas.length} OS</span>
+                <div style="font-size:2.25rem;">👥</div>
+              </div>
+              <div class="card-body">
+                <div class="card-title">${escapeHTML(label)}</div>
+                <div class="card-meta">
+                  <div class="pill">Arquivos: ${stats.total}</div>
+                  <div>Imagens: ${stats.imagens} • Vídeos: ${stats.videos}</div>
+                  <div>Tamanho: ${escapeHTML(formatBytes(stats.bytes))}</div>
+                </div>
+              </div>
+              <div class="card-actions">
+                <button class="btn btn-primary" type="button" onclick="setNav('os', {clienteId: '${escapeHTML(String(cliente.id))}', osId:'', categoria:''})">
+                  📂 Abrir
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .filter(Boolean);
+
+      if (!cards.length) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      grid.innerHTML = cards.join('');
+    }
+
+    function renderOSLevel() {
+      const grid = document.getElementById('browserGrid');
+      const empty = document.getElementById('emptyState');
+      if (!grid || !empty) return;
+
+      const term = getSearchTerm();
+      const clienteId = NAV.clienteId;
+
+      if (!clienteId) {
+        setNav('clientes', { clienteId:'', osId:'', categoria:'' });
+        return;
+      }
+
+      const osList = getValidOSForCliente(clienteId)
+        .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      const cards = osList
+        .map(os => {
+          const label = osFolderLabel(os);
+          const files = getFilesForOS(os.id);
+          const stats = summarizeFiles(files);
+
+          const match = !term || `${label} ${os?.cliente?.nome || ''} ${os?.detalhes?.equipamento?.marcaModelo || ''}`.toLowerCase().includes(term);
+          if (!match) return null;
+
+          return `
+            <div class="card">
+              <div class="thumb">
+                <span class="thumb-badge">${stats.total} arquivo(s)</span>
+                <div style="font-size:2.25rem;">📋</div>
+              </div>
+              <div class="card-body">
+                <div class="card-title">${escapeHTML(label)}</div>
+                <div class="card-meta">
+                  <div class="pill">${escapeHTML(os.status || 'status')}</div>
+                  <div>Imagens: ${stats.imagens} • Vídeos: ${stats.videos}</div>
+                  <div>Tamanho: ${escapeHTML(formatBytes(stats.bytes))}</div>
+                </div>
+              </div>
+              <div class="card-actions">
+                <button class="btn" type="button" onclick="window.open('ordem-servico.html','_blank')">↗️ OS</button>
+                <button class="btn btn-primary" type="button" onclick="setNav('categorias', {osId: '${escapeHTML(String(os.id))}', categoria:''})">
+                  🗂️ Categorias
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .filter(Boolean);
+
+      if (!cards.length) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        empty.innerHTML = `
+          <div class="empty-state-icon">📋</div>
+          <h3>Nenhuma OS válida</h3>
+          <p>Para aparecer aqui, a OS deve ter <strong>Marca/Modelo</strong> preenchido e estar vinculada ao cliente.</p>
+        `;
+        return;
+      }
+
+      empty.style.display = 'none';
+      empty.innerHTML = `
+        <div class="empty-state-icon">📭</div>
+        <h3>Nenhum item para mostrar</h3>
+        <p>Cadastre clientes/OS e envie arquivos vinculados à OS.</p>
+      `;
+      grid.innerHTML = cards.join('');
+    }
+
+    function renderCategoriasLevel() {
+      const grid = document.getElementById('browserGrid');
+      const empty = document.getElementById('emptyState');
+      if (!grid || !empty) return;
+
+      const osId = NAV.osId;
+      if (!osId) {
+        setNav('os', { osId:'', categoria:'' });
+        return;
+      }
+
+      const os = cacheOS.find(x => String(x.id) === String(osId)) || getOSById(osId);
+      if (!os) {
+        setNav('os', { osId:'', categoria:'' });
+        return;
+      }
+
+      const categories = ['antes','depois','diagnostico','documento','outros'];
+      const filesAll = getFilesForOS(osId);
+
+      const cards = categories.map(cat => {
+        const files = filesAll.filter(f => f.categoria === cat);
+        const stats = summarizeFiles(files);
+
+        return `
+          <div class="card">
+            <div class="thumb">
+              <span class="thumb-badge">${stats.total} arquivo(s)</span>
+              <div style="font-size:2.25rem;">🗂️</div>
+            </div>
+            <div class="card-body">
+              <div class="card-title">${escapeHTML(categoriaLabel(cat))}</div>
+              <div class="card-meta">
+                <div>Imagens: ${stats.imagens} • Vídeos: ${stats.videos}</div>
+                <div>Tamanho: ${escapeHTML(formatBytes(stats.bytes))}</div>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-primary" type="button" onclick="setNav('arquivos', {categoria: '${cat}'})">
+                📂 Abrir
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      empty.style.display = 'none';
+      grid.innerHTML = cards.join('');
+    }
+
+    function renderArquivosLevel() {
+      const grid = document.getElementById('browserGrid');
+      const empty = document.getElementById('emptyState');
+      if (!grid || !empty) return;
+
+      const osId = NAV.osId;
+      const categoria = NAV.categoria;
+
+      if (!osId || !categoria) {
+        setNav('categorias', { categoria:'' });
+        return;
+      }
+
+      const term = getSearchTerm();
+      const files = getFilesForOS(osId).filter(f => f.categoria === categoria);
+
+      const filtered = files.filter(r => {
+        if (!term) return true;
+        const hay = `${r.fileName} ${r.clienteNome} ${r.osNumero} ${r.equipamento} ${r.categoria} ${r.observacao}`.toLowerCase();
+        return hay.includes(term);
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        empty.innerHTML = `
+          <div class="empty-state-icon">📭</div>
+          <h3>Nenhum arquivo nesta categoria</h3>
+          <p>Envie arquivos pelo formulário acima, selecionando esta OS e esta categoria.</p>
+        `;
+        return;
+      }
+
+      empty.style.display = 'none';
+      empty.innerHTML = `
+        <div class="empty-state-icon">📭</div>
+        <h3>Nenhum item para mostrar</h3>
+        <p>Cadastre clientes/OS e envie arquivos vinculados à OS.</p>
+      `;
+
+      grid.innerHTML = filtered
+        .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .map(r => {
+          const isImage = (r.mimeType || '').startsWith('image/');
+          const isVideo = (r.mimeType || '').startsWith('video/');
+
+          const url = URL.createObjectURL(r.blob);
+          const thumb = isImage
+            ? `<img src="${url}" alt="${escapeHTML(r.fileName)}" onload="URL.revokeObjectURL(this.src)">`
+            : isVideo
+              ? `<video src="${url}" muted playsinline preload="metadata" onloadeddata="URL.revokeObjectURL(this.src)"></video>`
+              : `<div style="font-size:2rem;">📄</div>`;
+
+          const date = new Date(r.createdAt).toLocaleString('pt-BR');
+
+          return `
+            <div class="card">
+              <div class="thumb">
+                <span class="thumb-badge">${escapeHTML(categoriaLabel(r.categoria))}</span>
+                ${thumb}
+              </div>
+              <div class="card-body">
+                <div class="card-title">${escapeHTML(r.fileName)}</div>
+                <div class="card-meta">
+                  <div><strong>OS:</strong> ${escapeHTML(r.osNumero || '')}</div>
+                  <div><strong>Equipamento:</strong> ${escapeHTML(r.equipamento || '')}</div>
+                  <div><strong>Tamanho:</strong> ${escapeHTML(formatBytes(r.size || 0))}</div>
+                  <div><strong>Data:</strong> ${escapeHTML(date)}</div>
+                  ${r.observacao ? `<div><strong>Obs:</strong> ${escapeHTML(r.observacao)}</div>` : ''}
+                </div>
+              </div>
+              <div class="card-actions">
+                <button class="btn btn-icon btn-view" title="Ver" onclick="abrirDetalhesArquivo('${escapeHTML(String(r.id))}')">👁️</button>
+                <button class="btn btn-icon btn-download" title="Baixar" onclick="baixarArquivo('${escapeHTML(String(r.id))}')">⬇️</button>
+                <button class="btn btn-icon btn-delete" title="Excluir" onclick="confirmarExclusaoItem('${escapeHTML(String(r.id))}')">🗑️</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+    }
+
+    function renderBrowser() {
+      buildPathbar();
+
+      switch (NAV.level) {
+        case 'clientes':
+          renderClientesLevel();
+          break;
+        case 'os':
+          renderOSLevel();
+          break;
+        case 'categorias':
+          renderCategoriasLevel();
+          break;
+        case 'arquivos':
+          renderArquivosLevel();
+          break;
+        default:
+          setNav('clientes', { clienteId:'', osId:'', categoria:'' });
+      }
+    }
+
+    // ============================
+    // Stats
+    // ============================
+    function renderStatsGlobal(records) {
+      const total = records.length;
+      const imagens = records.filter(r => (r.mimeType || '').startsWith('image/')).length;
+      const videos = records.filter(r => (r.mimeType || '').startsWith('video/')).length;
+      const totalBytes = records.reduce((acc, r) => acc + (r.size || 0), 0);
+
+      document.getElementById('statTotal').textContent = String(total);
+      document.getElementById('statImagens').textContent = String(imagens);
+      document.getElementById('statVideos').textContent = String(videos);
+      document.getElementById('statSize').textContent = formatBytes(totalBytes);
+    }
+
+    // ============================
+    // Modal Preview / Download / Delete
+    // ============================
+    function abrirModalDetalhes() {
+      const modal = document.getElementById('modalDetalhes');
+      if (modal) modal.style.display = 'flex';
+    }
+    function fecharModalDetalhes() {
+      const modal = document.getElementById('modalDetalhes');
+      const corpo = document.getElementById('modalCorpo');
+      if (modal) modal.style.display = 'none';
+      if (corpo) corpo.innerHTML = '';
+    }
+
+    async function abrirDetalhesArquivo(id) {
+      const r = await dbGet(id);
+      if (!r) return;
+
+      const titulo = document.getElementById('modalTitulo');
+      const corpo = document.getElementById('modalCorpo');
+      if (!titulo || !corpo) return;
+
+      const isImage = (r.mimeType || '').startsWith('image/');
+      const isVideo = (r.mimeType || '').startsWith('video/');
+      const url = URL.createObjectURL(r.blob);
+
+      const media = isImage
+        ? `<img src="${url}" style="width:100%; max-height:420px; object-fit:contain; background:#000;" onload="URL.revokeObjectURL(this.src)">`
+        : isVideo
+          ? `<video src="${url}" controls style="width:100%; max-height:420px; object-fit:contain; background:#000;"></video>`
+          : `<div style="padding:2rem; text-align:center;">Arquivo sem preview</div>`;
+
+      titulo.textContent = `Preview: ${r.fileName}`;
+
+      corpo.innerHTML = `
+        <div style="border:1px solid #e5e7eb; border-radius:1rem; overflow:hidden; margin-bottom:1rem;">
+          ${media}
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:0.75rem; padding:0.75rem;">
+            <div style="font-size:0.75rem; color:#6b7280; font-weight:900; text-transform:uppercase;">Cliente</div>
+            <div style="font-weight:900; color:#111827;">${escapeHTML(r.clienteNome)}</div>
+          </div>
+          <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:0.75rem; padding:0.75rem;">
+            <div style="font-size:0.75rem; color:#6b7280; font-weight:900; text-transform:uppercase;">OS</div>
+            <div style="font-weight:900; color:#111827;">${escapeHTML(r.osNumero)}</div>
+          </div>
+          <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:0.75rem; padding:0.75rem;">
+            <div style="font-size:0.75rem; color:#6b7280; font-weight:900; text-transform:uppercase;">Categoria</div>
+            <div style="font-weight:900; color:#111827;">${escapeHTML(categoriaLabel(r.categoria))}</div>
+          </div>
+          <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:0.75rem; padding:0.75rem;">
+            <div style="font-size:0.75rem; color:#6b7280; font-weight:900; text-transform:uppercase;">Tamanho</div>
+            <div style="font-weight:900; color:#111827;">${escapeHTML(formatBytes(r.size || 0))}</div>
+          </div>
+          <div style="grid-column:1/-1; background:#f9fafb; border:1px solid #e5e7eb; border-radius:0.75rem; padding:0.75rem;">
+            <div style="font-size:0.75rem; color:#6b7280; font-weight:900; text-transform:uppercase;">Observação</div>
+            <div style="font-weight:700; color:#374151;">${escapeHTML(r.observacao || '-')}</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1rem;">
+          <button class="btn btn-success" onclick="baixarArquivo('${escapeHTML(String(r.id))}')">⬇️ Baixar</button>
+        </div>
+      `;
+
+      abrirModalDetalhes();
+    }
+
+    async function baixarArquivo(id) {
+      const r = await dbGet(id);
+      if (!r) return;
+
+      const url = URL.createObjectURL(r.blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = r.fileName || 'arquivo';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 600);
+    }
+
+    function abrirModalConfirmacao() {
+      const modal = document.getElementById('modalConfirmacao');
+      if (modal) modal.style.display = 'flex';
+    }
+    function fecharModalConfirmacao() {
+      const modal = document.getElementById('modalConfirmacao');
+      const corpo = document.getElementById('modalConfCorpo');
+      const btn = document.getElementById('btnConfirmarExcluir');
+
+      if (modal) modal.style.display = 'none';
+      if (corpo) corpo.innerHTML = '';
+      if (btn) btn.onclick = null;
+    }
+
+    function confirmarExclusaoItem(id) {
+      const r = cacheRecords.find(x => String(x.id) === String(id));
+      const nome = r ? r.fileName : 'arquivo';
+
+      const corpo = document.getElementById('modalConfCorpo');
+      const btn = document.getElementById('btnConfirmarExcluir');
+
+      if (!corpo || !btn) return;
+
+      corpo.innerHTML = `
+        <p>Excluir o arquivo <strong>${escapeHTML(nome)}</strong>?</p>
+        <p style="margin-top:0.75rem; color:#ef4444; font-size:0.875rem;">
+          ⚠️ Esta ação não pode ser desfeita.
+        </p>
+      `;
+
+      btn.onclick = async () => {
+        await dbDelete(id);
+        fecharModalConfirmacao();
+        mostrarNotificacao('🗑️ Arquivo excluído!', 'warning');
+        await refreshAll();
+      };
+
+      abrirModalConfirmacao();
+    }
+
+    // ============================
+    // Refresh
+    // ============================
+    async function refreshAll() {
+      cacheClientes = getClientes();
+      cacheOS = getOSList();
+
+      cacheRecords = await dbGetAll();
+      cacheRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      fillClienteSelect();
+      renderStatsGlobal(cacheRecords);
+      renderBrowser();
+    }
+
+    // ============================
+    // Expor pro HTML
+    // ============================
+    window.toggleSidebar = toggleSidebar;
+    window.salvarAnexos = salvarAnexos;
+    window.resetUploadWizard = resetUploadWizard;
+    window.refreshAll = refreshAll;
+    window.onClienteChange = onClienteChange;
+    window.onOSChange = onOSChange;
+
+    window.setNav = setNav;
+    window.onCrumbClick = onCrumbClick;
+
+    window.abrirDetalhesArquivo = abrirDetalhesArquivo;
+    window.fecharModalDetalhes = fecharModalDetalhes;
+
+    window.baixarArquivo = baixarArquivo;
+
+    window.confirmarExclusaoItem = confirmarExclusaoItem;
+    window.fecharModalConfirmacao = fecharModalConfirmacao;
+
+    // ============================
+    // Init
+    // ============================
+    document.addEventListener('DOMContentLoaded', async () => {
+      const anoEl = document.getElementById('ano-atual');
+      if (anoEl) anoEl.textContent = new Date().getFullYear();
+
+      const isCollapsed = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+      const layout = document.getElementById('mainLayout');
+      if (layout && isCollapsed) layout.classList.add('collapsed');
+
+      // bind submit
+      const form = document.getElementById('arquivoForm');
+      if (form && !form.__boundSubmit) {
+        form.addEventListener('submit', salvarAnexos);
+        form.__boundSubmit = true;
+      }
+
+      bindUploadHandlers();
+      updateSelectedFilesInfo();
+
+      await dbInit();
+      await refreshAll();
+
+      // atalhos
+      document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + B
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+          e.preventDefault();
+          toggleSidebar();
+        }
+
+        // ESC fecha modais
+        if (e.key === 'Escape') {
+          fecharModalConfirmacao();
+          fecharModalDetalhes();
+        }
+
+        // Ctrl/Cmd + S salva (se possível)
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+          const btnSave = document.querySelector('#btnSalvarAnexo');
+          if (btnSave) {
+            e.preventDefault();
+            btnSave.click();
+          }
+        }
+      });
+
+      // atualiza se mudar clientes/OS em outra aba
+      window.addEventListener('storage', (e) => {
+        if (e.key === LS.clientes || e.key === LS.os || e.key === LS.legacyClientes || e.key === LS.legacyOs) {
+          refreshAll();
+        }
+        if (e.key === LS.sidebarCollapsed) {
+          const isCollapsed2 = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+          const layout2 = document.getElementById('mainLayout');
+          if (!layout2) return;
+          if (isCollapsed2) layout2.classList.add('collapsed');
+          else layout2.classList.remove('collapsed');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

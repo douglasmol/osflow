@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>OS Flow • Dashboard Inteligente</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Paleta de Cores Profissional - Azul Claro como principal */
+      --primary-50: #f0f9ff;
+      --primary-100: #e0f2fe;
+      --primary-200: #bae6fd;
+      --primary-300: #7dd3fc;
+      --primary-400: #38bdf8;
+      --primary-500: #0ea5e9;
+      --primary-600: #0284c7;
+      --primary-700: #0369a1;
+      --primary-800: #075985;
+      --primary-900: #0c4a6e;
+
+      /* Cores Semânticas */
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --info: #0ea5e9;
+      --info-light: #e0f2fe;
+      --purple: #8b5cf6;
+      --purple-light: #ede9fe;
+      --teal: #14b8a6;
+      --teal-light: #ccfbf1;
+
+      /* Cores Neutras Profissionais */
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+
+      /* Cores de Fundo */
+      --bg-body: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+      --bg-surface: #ffffff;
+      --bg-surface-hover: #f8fafc;
+      --bg-sidebar: rgba(255, 255, 255, 0.95);
+      --bg-card: #ffffff;
+
+      /* Cores de Texto */
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-tertiary: #6b7280;
+      --text-muted: #9ca3af;
+      --text-inverse: #ffffff;
+
+      /* Bordas */
+      --border-light: #e5e7eb;
+      --border-medium: #d1d5db;
+      --border-accent: var(--primary-400);
+
+      /* Sombras Profissionais */
+      --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --shadow-primary: 0 4px 14px 0 rgba(14, 165, 233, 0.2);
+
+      /* Tipografia */
+      --font-primary: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-secondary: 'Manrope', system-ui, -apple-system, sans-serif;
+      --font-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
+
+      /* Espaçamento */
+      --space-0: 0;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+
+      /* Bordas */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-full: 9999px;
+
+      /* Transições */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Layout */
+      --sidebar-width: 260px;
+      --sidebar-collapsed: 72px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-secondary);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    /* Layout Principal */
+    .layout {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      min-height: 100vh;
+      transition: grid-template-columns var(--transition-base);
+    }
+
+    .layout.collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
+
+    /* ========== SIDEBAR ELEGANTE RECOLHÍVEL ========== */
+    .sidebar-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+      z-index: 100;
+      width: var(--sidebar-width);
+      transition: all var(--transition-base);
+      overflow: hidden;
+    }
+
+    .layout.collapsed .sidebar-wrapper { width: var(--sidebar-collapsed); }
+
+    .sidebar {
+      padding: var(--space-6) 0;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .sidebar-logo {
+      padding: 0 var(--space-4) var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: var(--space-6);
+      position: relative;
+      min-height: 60px;
+    }
+
+    .layout.collapsed .sidebar-logo { padding: 0 var(--space-3) var(--space-6); justify-content: center; }
+
+    .sidebar-logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-inverse);
+      font-family: var(--font-primary);
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: var(--shadow-primary);
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform var(--transition-base);
+    }
+
+    .sidebar-logo-icon:hover { transform: scale(1.05); }
+
+    .sidebar-logo-text {
+      overflow: hidden;
+      transition: opacity var(--transition-base), max-width var(--transition-base);
+      max-width: 200px;
+    }
+
+    .layout.collapsed .sidebar-logo-text { opacity: 0; max-width: 0; }
+
+    .sidebar-logo-text h1 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+
+    .sidebar-logo-text small {
+      display: block;
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .menu {
+      list-style: none;
+      margin: 0;
+      padding: 0 var(--space-2);
+      flex: 1;
+      font-size: 0.875rem;
+    }
+
+    .layout.collapsed .menu { padding: 0 var(--space-1); }
+
+    .menu li { margin-bottom: var(--space-1); }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-3);
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .layout.collapsed .menu a { justify-content: center; padding: var(--space-3); }
+
+    .menu a:hover {
+      background: var(--primary-50);
+      color: var(--primary-600);
+      transform: translateX(4px);
+    }
+
+    .layout.collapsed .menu a:hover { transform: translateX(0) scale(1.05); }
+
+    .menu a.active {
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-primary);
+      font-weight: 600;
+    }
+
+    .menu-icon { width: 20px; text-align: center; font-size: 1.125rem; flex-shrink: 0; }
+
+    .menu-text {
+      overflow: hidden;
+      transition: opacity var(--transition-base), max-width var(--transition-base);
+      max-width: 200px;
+    }
+
+    .layout.collapsed .menu-text { opacity: 0; max-width: 0; }
+
+    .menu-tooltip {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--gray-800);
+      color: white;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-fast);
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+    }
+
+    .layout.collapsed .menu a:hover .menu-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) translateX(8px);
+    }
+
+    .menu a { position: relative; }
+
+    .sidebar-footer {
+      padding: var(--space-3) var(--space-4);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-light);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      text-align: center;
+    }
+
+    .layout.collapsed .sidebar-footer {
+      padding: var(--space-2);
+      font-size: 0.6rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .sidebar-footer span { display: inline-block; transition: opacity var(--transition-base); text-align: center; }
+    .layout.collapsed .sidebar-footer span:not(:first-child) { opacity: 0; width: 0; margin: 0; }
+
+    /* ========== TOPBAR COMPACTO ========== */
+    .main-wrapper { display: flex; flex-direction: column; min-width: 0; background: transparent; }
+
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--space-3) var(--space-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      box-shadow: var(--shadow-sm);
+      min-height: 60px;
+    }
+
+    .topbar-left { display: flex; align-items: center; flex: 1; }
+
+    .topbar-title {
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .breadcrumb {
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 500;
+    }
+
+    .breadcrumb::before {
+      content: '|';
+      display: inline-block;
+      color: var(--border-medium);
+      margin-right: var(--space-2);
+      font-weight: 400;
+    }
+
+    .breadcrumb span {
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--teal) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-inverse);
+      font-weight: 700;
+      font-size: 0.875rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-base);
+      cursor: pointer;
+    }
+
+    .user-avatar:hover { transform: scale(1.05); }
+
+    .content { padding: var(--space-6); flex: 1; }
+
+    /* ========== CARDS DE ACESSO RÁPIDO ========== */
+    .top-cards-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    @media (max-width: 1400px) { .top-cards-row { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 1024px) { .top-cards-row { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .top-cards-row { grid-template-columns: 1fr; } }
+
+    .top-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      transition: all var(--transition-base);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .top-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary-300);
+    }
+
+    .top-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .top-card-title {
+      font-family: var(--font-primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .top-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-md);
+    }
+
+    .top-card-shortcut {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--gray-100);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      align-self: flex-start;
+      font-weight: 600;
+      border: 1px solid var(--border-light);
+    }
+
+    .top-card.blue .top-card-icon { background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); }
+    .top-card.yellow .top-card-icon { background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%); }
+    .top-card.cyan .top-card-icon { background: linear-gradient(135deg, var(--teal) 0%, #0d9488 100%); }
+    .top-card.pink .top-card-icon { background: linear-gradient(135deg, var(--danger) 0%, #f87171 100%); }
+    .top-card.clock .top-card-icon { background: linear-gradient(135deg, var(--purple) 0%, #a78bfa 100%); }
+    .top-card.gray .top-card-icon { background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-800) 100%); }
+
+    .clock-content { text-align: center; }
+
+    .clock-time {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: var(--space-1);
+      letter-spacing: 1px;
+    }
+
+    .clock-label {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========== DASHBOARD LAYOUT ========== */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: var(--space-8);
+    }
+
+    @media (max-width: 1200px) { .dashboard-layout { grid-template-columns: 1fr; } }
+
+    /* ========== PANELS ========== */
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      transition: all var(--transition-base);
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel:hover { box-shadow: var(--shadow-lg); border-color: var(--primary-300); }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-6);
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .panel-header-sub {
+      font-size: 0.875rem;
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
+      font-weight: 500;
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    .btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary {
+      background: var(--primary-500);
+      border-color: transparent;
+      color: var(--text-inverse);
+      box-shadow: var(--shadow-primary);
+    }
+
+    .btn-primary:hover { background: var(--primary-600); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+    /* ========== CALENDÁRIO ========== */
+    .calendar-month {
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+      padding: 0 var(--space-2);
+    }
+
+    .calendar {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 4px;
+      font-size: 0.875rem;
+    }
+
+    .calendar thead th {
+      text-align: center;
+      padding: var(--space-3) 0;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--gray-50);
+      border-radius: var(--radius-lg);
+    }
+
+    .calendar tbody td {
+      height: 80px;
+      padding: var(--space-3);
+      vertical-align: top;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      position: relative;
+      transition: all var(--transition-fast);
+    }
+
+    .calendar tbody td:hover {
+      background: var(--primary-50);
+      border-color: var(--primary-300);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .calendar-empty {
+      background: transparent;
+      border-color: transparent;
+      cursor: default;
+    }
+
+    .calendar-empty:hover { background: transparent; border-color: transparent; transform: none; box-shadow: none; }
+
+    .calendar-day-number {
+      font-family: var(--font-primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .calendar-day-outside .calendar-day-number { color: var(--text-muted); opacity: 0.5; }
+
+    .calendar-day-today { background: var(--primary-50); border-color: var(--primary-500); }
+    .calendar-day-today .calendar-day-number { color: var(--primary-600); }
+
+    .calendar-day-has-os { background: var(--primary-50); border-color: var(--primary-300); }
+
+    .calendar-os-count {
+      position: absolute;
+      bottom: var(--space-2);
+      left: var(--space-2);
+      font-size: 0.6875rem;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      background: var(--primary-500);
+      color: var(--text-inverse);
+      font-weight: 600;
+    }
+
+    .calendar-footer {
+      margin-top: var(--space-4);
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 var(--space-2);
+      font-weight: 500;
+    }
+
+    /* ========== TABELA ========== */
+    table.mini {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.875rem;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table.mini th,
+    table.mini td {
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    table.mini th {
+      background: var(--gray-50);
+      color: var(--text-secondary);
+      font-family: var(--font-primary);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    table.mini tr:last-child td { border-bottom: none; }
+    table.mini tr:hover td { background: var(--primary-50); }
+
+    .badge {
+      display: inline-block;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-inverse);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-status-recebido    { background: var(--gray-600); }
+    .badge-status-andamento   { background: var(--warning); }
+    .badge-status-aprovacao   { background: var(--purple); }
+    .badge-status-pronto      { background: var(--success); }
+    .badge-status-entregue    { background: var(--primary-500); }
+
+    /* ========== PAINEL DE ESTATÍSTICAS ========== */
+    .stats-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      margin-bottom: var(--space-8);
+    }
+
+    .stats-title {
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--space-6);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all var(--transition-base);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-300); }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-inverse);
+      margin-bottom: var(--space-3);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-icon.blue   { background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%); }
+    .stat-icon.yellow { background: linear-gradient(135deg, var(--warning) 0%, #fbbf24 100%); }
+    .stat-icon.purple { background: linear-gradient(135deg, var(--purple) 0%, #a78bfa 100%); }
+    .stat-icon.green  { background: linear-gradient(135deg, var(--success) 0%, #34d399 100%); }
+    .stat-icon.red    { background: linear-gradient(135deg, var(--danger) 0%, #f87171 100%); }
+    .stat-icon.teal   { background: linear-gradient(135deg, var(--teal) 0%, #0d9488 100%); }
+
+    .stat-value {
+      font-family: var(--font-primary);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    /* ========== PAINEL DE GRÁFICOS ========== */
+    .charts-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+    }
+
+    .charts-title {
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: var(--space-6);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+
+    @media (max-width: 1400px) { .charts-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 1024px) { .charts-grid { grid-template-columns: 1fr; } }
+
+    .chart-container {
+      background: var(--bg-surface);
+      border: 1px solid rgba(14,165,233,0.06);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      transition: all var(--transition-base);
+      box-shadow: var(--shadow-sm);
+      height: 280px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-container:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary-300); }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .chart-title {
+      font-family: var(--font-primary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .chart-value {
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--primary-600);
+    }
+
+    .chart-canvas-container {
+      width: 100%;
+      height: calc(100% - 50px);
+      position: relative;
+      flex: 1;
+    }
+
+    .chart-canvas { width: 100%; height: 100%; display: block; }
+
+    /* ========== PAINEL DE ÚLTIMAS ORDENS ========== */
+    .orders-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      max-height: 580px;
+    }
+
+    .orders-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .orders-panel-header h2 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .orders-panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: var(--space-2);
+      min-height: 0;
+    }
+
+    .order-item {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-light);
+      transition: all var(--transition-fast);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-2);
+      background: var(--bg-surface);
+    }
+
+    .order-item:hover { background: var(--primary-50); transform: translateX(2px); border-color: var(--primary-300); }
+
+    .order-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-2);
+    }
+
+    .order-number {
+      font-family: var(--font-primary);
+      font-weight: 700;
+      color: var(--primary-600);
+      font-size: 1rem;
+    }
+
+    .order-customer { color: var(--text-secondary); font-weight: 600; font-size: 0.875rem; }
+
+    .order-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-2);
+    }
+
+    .order-equipment { font-size: 0.875rem; color: var(--text-tertiary); }
+    .order-date { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+
+    /* ========== MODAL ========== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .modal {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      width: 480px;
+      max-width: 90vw;
+      box-shadow: var(--shadow-2xl);
+      border: 1px solid var(--border-light);
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-full);
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+    }
+
+    .modal-close:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+
+    .modal-body { max-height: 400px; overflow-y: auto; padding-right: var(--space-2); }
+
+    .os-day-item {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-light);
+      transition: all var(--transition-fast);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-2);
+      background: var(--bg-surface);
+    }
+
+    .os-day-item:hover { background: var(--gray-50); transform: translateX(2px); border-color: var(--primary-300); }
+
+    /* ========== ANIMAÇÕES ========== */
+    .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .float { animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
+    /* ========== RESPONSIVIDADE ========== */
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar-wrapper {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border-light);
+        z-index: 1000;
+      }
+      .sidebar { padding: var(--space-4) 0; flex-direction: row; align-items: center; }
+      .menu { display: flex; overflow-x: auto; flex: 0 0 auto; }
+      .menu li { margin: 0; }
+      .menu a { flex-direction: column; padding: var(--space-2); }
+      .menu-text { font-size: 0.625rem; }
+      .content { padding: var(--space-4); }
+      .topbar { padding: var(--space-4); }
+      .dashboard-layout { grid-template-columns: 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout" id="mainLayout">
+    <!-- SIDEBAR RECOLHÍVEL -->
+    <div class="sidebar-wrapper">
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon" onclick="toggleSidebar()">OS</div>
+          <div class="sidebar-logo-text">
+            <h1>OS Flow</h1>
+            <small>Dashboard Inteligente</small>
+          </div>
+        </div>
+        <ul class="menu">
+          <li><a href="index.html" class="active">
+            <span class="menu-icon">📊</span>
+            <span class="menu-text">Dashboard</span>
+            <span class="menu-tooltip">Dashboard</span>
+          </a></li>
+          <li><a href="cadastrar-clientes.html">
+            <span class="menu-icon">👥</span>
+            <span class="menu-text">Clientes</span>
+            <span class="menu-tooltip">Clientes</span>
+          </a></li>
+          <li><a href="produtos.html">
+            <span class="menu-icon">📦</span>
+            <span class="menu-text">Produtos</span>
+            <span class="menu-tooltip">Produtos</span>
+          </a></li>
+          <li><a href="servicos.html">
+            <span class="menu-icon">🔧</span>
+            <span class="menu-text">Serviços</span>
+            <span class="menu-tooltip">Serviços</span>
+          </a></li>
+          <li><a href="vendas.html">
+            <span class="menu-icon">💰</span>
+            <span class="menu-text">Vendas</span>
+            <span class="menu-tooltip">Vendas</span>
+          </a></li>
+          <li><a href="ordem-servico.html">
+            <span class="menu-icon">📋</span>
+            <span class="menu-text">Ordens</span>
+            <span class="menu-tooltip">Ordens</span>
+          </a></li>
+          <li><a href="garantias.html">
+            <span class="menu-icon">🛡️</span>
+            <span class="menu-text">Garantias</span>
+            <span class="menu-tooltip">Garantias</span>
+          </a></li>
+          <li><a href="arquivos.html">
+            <span class="menu-icon">📁</span>
+            <span class="menu-text">Arquivos</span>
+            <span class="menu-tooltip">Arquivos</span>
+          </a></li>
+          <li><a href="financeiro.html">
+            <span class="menu-icon">💳</span>
+            <span class="menu-text">Financeiro</span>
+            <span class="menu-tooltip">Financeiro</span>
+          </a></li>
+          <li><a href="configuracoes.html">
+            <span class="menu-icon">⚙️</span>
+            <span class="menu-text">Configurações</span>
+            <span class="menu-tooltip">Configurações</span>
+          </a></li>
+        </ul>
+        <div class="sidebar-footer">
+          v3.8.1 • © <span id="ano-atual"></span> • OS Flow
+        </div>
+      </aside>
+    </div>
+
+    <!-- ÁREA PRINCIPAL -->
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-title">
+            Visão Geral do Sistema
+            <div class="breadcrumb">
+              <span>Dashboard</span>
+            </div>
+          </div>
+        </div>
+        <div class="user-info">
+          <span>Bem-vindo, <strong id="topUserName">Usuário</strong></span>
+          <div class="user-avatar" id="topUserAvatar">U</div>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- CARDS DE ACESSO RÁPIDO -->
+        <section class="top-cards-row">
+          <div class="top-card blue pulse" onclick="window.location.href='cadastrar-clientes.html'">
+            <div class="top-card-header">
+              <div class="top-card-title">Clientes</div>
+              <div class="top-card-icon">👥</div>
+            </div>
+            <div class="top-card-shortcut">F1</div>
+          </div>
+
+          <div class="top-card yellow" onclick="window.location.href='produtos.html'">
+            <div class="top-card-header">
+              <div class="top-card-title">Estoque</div>
+              <div class="top-card-icon">📦</div>
+            </div>
+            <div class="top-card-shortcut">F2</div>
+          </div>
+
+          <div class="top-card cyan" onclick="window.location.href='servicos.html'">
+            <div class="top-card-header">
+              <div class="top-card-title">Serviços</div>
+              <div class="top-card-icon">🔧</div>
+            </div>
+            <div class="top-card-shortcut">F3</div>
+          </div>
+
+          <div class="top-card pink" onclick="novaOS()">
+            <div class="top-card-header">
+              <div class="top-card-title">Nova OS</div>
+              <div class="top-card-icon">✨</div>
+            </div>
+            <div class="top-card-shortcut">F4</div>
+          </div>
+
+          <div class="top-card clock float">
+            <div class="clock-content">
+              <div class="clock-time" id="clock-time">12:34</div>
+              <div class="clock-label">Horário do Sistema</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- LAYOUT PRINCIPAL -->
+        <section class="dashboard-layout">
+          <div>
+            <!-- CALENDÁRIO INTERATIVO -->
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>📅 Agenda Inteligente</h2>
+                  <div class="panel-header-sub">Visualize e gerencie suas ordens de serviço</div>
+                </div>
+                <div class="panel-actions">
+                  <button class="btn" onclick="goToToday()">Hoje</button>
+                  <button class="btn" onclick="changeMonth(-1)">◀</button>
+                  <button class="btn" onclick="changeMonth(1)">▶</button>
+                  <button class="btn btn-primary" onclick="novaOS()">
+                    <span>+</span> Nova Ordem
+                  </button>
+                </div>
+              </div>
+              <div class="calendar-month" id="calendar-month-label">
+                <span id="month-label">Janeiro 2024</span>
+              </div>
+              <table class="calendar">
+                <thead>
+                  <tr>
+                    <th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th>
+                  </tr>
+                </thead>
+                <tbody id="calendar-body"></tbody>
+              </table>
+              <div class="calendar-footer">
+                <div><span>🔍</span> Visualização de todas as ordens</div>
+                <div><span>⚡</span> Total: <strong id="total-os-mes">0</strong> ordens</div>
+              </div>
+            </section>
+
+            <!-- PAINEL DE GRÁFICOS -->
+            <section class="charts-panel">
+              <div class="charts-title">📈 Análise de Dados</div>
+              <div class="charts-grid">
+                <div class="chart-container">
+                  <div class="chart-header">
+                    <div class="chart-title">OS Últimos 7 Dias</div>
+                    <div class="chart-value">—</div>
+                  </div>
+                  <div class="chart-canvas-container">
+                    <canvas id="chart-os-7dias" class="chart-canvas"></canvas>
+                  </div>
+                </div>
+
+                <div class="chart-container">
+                  <div class="chart-header">
+                    <div class="chart-title">Status das Ordens</div>
+                    <div class="chart-value">—</div>
+                  </div>
+                  <div class="chart-canvas-container">
+                    <canvas id="chart-os-status" class="chart-canvas"></canvas>
+                  </div>
+                </div>
+
+                <div class="chart-container">
+                  <div class="chart-header">
+                    <div class="chart-title">Entradas vs Saídas</div>
+                    <div class="chart-value">—</div>
+                  </div>
+                  <div class="chart-canvas-container">
+                    <canvas id="chart-entrada-saida" class="chart-canvas"></canvas>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAINEL LATERAL -->
+          <div>
+            <!-- PAINEL DE ESTATÍSTICAS -->
+            <aside class="stats-panel">
+              <div class="stats-title">📊 Métricas do Sistema</div>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-icon blue">👥</div>
+                  <div class="stat-value" id="stat-clientes">0</div>
+                  <div class="stat-label">Clientes</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon yellow">📦</div>
+                  <div class="stat-value" id="stat-produtos">0</div>
+                  <div class="stat-label">Produtos</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon purple">🔧</div>
+                  <div class="stat-value" id="stat-servicos">0</div>
+                  <div class="stat-label">Serviços</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon teal">📋</div>
+                  <div class="stat-value" id="stat-os">0</div>
+                  <div class="stat-label">Ordens</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon green">💰</div>
+                  <div class="stat-value" id="stat-receita-dia">R$ 0</div>
+                  <div class="stat-label">Receita/Dia</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon red">📉</div>
+                  <div class="stat-value" id="stat-despesa-dia">R$ 0</div>
+                  <div class="stat-label">Despesa/Dia</div>
+                </div>
+              </div>
+            </aside>
+
+            <!-- PAINEL DE ÚLTIMAS ORDENS -->
+            <section class="orders-panel">
+              <div class="orders-panel-header">
+                <h2>⚡ Últimas Ordens</h2>
+                <button class="btn btn-primary" onclick="novaOS(event)">
+                  <span>+</span> Criar Nova
+                </button>
+              </div>
+              <div class="orders-panel-content" id="ultimas-ordens-list"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modal-os-dia">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-os-dia-titulo">📅 Ordens do Dia</h3>
+        <button class="modal-close" onclick="fecharModalOsDia()">×</button>
+      </div>
+      <div class="modal-body" id="modal-os-dia-body"></div>
+    </div>
+  </div>
+
+  <script>
+  // ============================
+  // LocalStorage padronizado + migração (padrão OS Flow)
+  // ============================
+  const LS = Object.freeze({
+    clientes: 'osflow:clientes',
+    produtos: 'osflow:produtos',
+    servicos: 'osflow:servicos',
+    os: 'osflow:os',
+    config: 'osflow:config',
+    sidebarCollapsed: 'osflow:ui:sidebarCollapsed',
+
+    // legado (migração)
+    legacyClientes: 'clientesOSFlow',
+    legacyProdutos: 'produtosOSFlow',
+    legacyServicos: 'servicosOSFlow',
+    legacyOs: 'osflow_os',
+    legacyConfig: 'osflow_config',
+    legacySidebarCollapsed: 'sidebarCollapsed'
+  });
+
+  function lsReadJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return fallback;
+      return JSON.parse(raw);
+    } catch {
+      return fallback;
+    }
+  }
+
+  function migrateLocalStorageKeys() {
+    if (!localStorage.getItem(LS.clientes) && localStorage.getItem(LS.legacyClientes)) {
+      localStorage.setItem(LS.clientes, localStorage.getItem(LS.legacyClientes));
+    }
+    if (!localStorage.getItem(LS.produtos) && localStorage.getItem(LS.legacyProdutos)) {
+      localStorage.setItem(LS.produtos, localStorage.getItem(LS.legacyProdutos));
+    }
+    if (!localStorage.getItem(LS.servicos) && localStorage.getItem(LS.legacyServicos)) {
+      localStorage.setItem(LS.servicos, localStorage.getItem(LS.legacyServicos));
+    }
+    if (!localStorage.getItem(LS.os) && localStorage.getItem(LS.legacyOs)) {
+      localStorage.setItem(LS.os, localStorage.getItem(LS.legacyOs));
+    }
+    if (!localStorage.getItem(LS.config) && localStorage.getItem(LS.legacyConfig)) {
+      localStorage.setItem(LS.config, localStorage.getItem(LS.legacyConfig));
+    }
+    if (!localStorage.getItem(LS.sidebarCollapsed) && localStorage.getItem(LS.legacySidebarCollapsed)) {
+      localStorage.setItem(LS.sidebarCollapsed, localStorage.getItem(LS.legacySidebarCollapsed));
+    }
+  }
+
+  migrateLocalStorageKeys();
+
+  // ============================
+  // Helpers
+  // ============================
+  function getConfig() {
+    return lsReadJSON(LS.config, { usuario: { nome: 'Usuário' } }) || { usuario: { nome: 'Usuário' } };
+  }
+
+  function updateTopUserFromConfig() {
+    const cfg = getConfig();
+    const name = (cfg?.usuario?.nome || 'Usuário').trim() || 'Usuário';
+    const initial = (name[0] || 'U').toUpperCase();
+
+    const elName = document.getElementById('topUserName');
+    const elAvatar = document.getElementById('topUserAvatar');
+    if (elName) elName.textContent = name;
+    if (elAvatar) elAvatar.textContent = initial;
+  }
+
+  // ============================
+  // Dados de OS (agora real via LS.os; fallback para mock)
+  // ============================
+  const ordersMock = [
+    { id: 101, customerName: 'João Silva',  deviceType: 'iPhone 14 Pro', status: 'Recebido', createdAt: '2024-01-02T09:15:00Z' },
+    { id: 102, customerName: 'Maria Souza', deviceType: 'MacBook Pro M2', status: 'Em reparo', createdAt: '2024-01-08T14:20:00Z' },
+    { id: 103, customerName: 'Carlos Lima', deviceType: 'Samsung OLED 65"', status: 'Aguardando aprovação', createdAt: '2024-01-14T11:05:00Z' },
+    { id: 104, customerName: 'Ana Paula',   deviceType: 'iPad Pro 12.9"', status: 'Pronto', createdAt: '2024-01-20T10:00:00Z' },
+    { id: 105, customerName: 'Pedro Rocha', deviceType: 'Dell XPS 15', status: 'Entregue', createdAt: '2024-01-25T08:40:00Z' },
+    { id: 106, customerName: 'Lucas Melo',  deviceType: 'Galaxy S23 Ultra', status: 'Em reparo', createdAt: '2024-01-27T11:30:00Z' },
+    { id: 107, customerName: 'Fernanda Costa', deviceType: 'PlayStation 5', status: 'Recebido', createdAt: '2024-01-28T14:15:00Z' },
+    { id: 108, customerName: 'Roberto Alves', deviceType: 'Notebook Lenovo', status: 'Pronto', createdAt: '2024-01-29T10:30:00Z' }
+  ];
+
+  function getBadgeClass(status) {
+    switch (status) {
+      case 'Em reparo':            return 'badge badge-status-andamento';
+      case 'Aguardando aprovação': return 'badge badge-status-aprovacao';
+      case 'Pronto':               return 'badge badge-status-pronto';
+      case 'Entregue':             return 'badge badge-status-entregue';
+      case 'Recebido':
+      default:                     return 'badge badge-status-recebido';
+    }
+  }
+
+  function formatData(iso) { return new Date(iso).toLocaleDateString('pt-BR'); }
+  function formatHora(iso) { return new Date(iso).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}); }
+
+  function mapOsToDashboardOrders(osList) {
+    // converte o schema da ordem-servico.html para o schema do dashboard
+    return (osList || []).map(o => {
+      const statusMap = {
+        recebido: 'Recebido',
+        diagnostico: 'Em reparo',
+        reparo: 'Em reparo',
+        aguardando_buscar: 'Aguardando aprovação',
+        pronto: 'Pronto',
+        finalizada: 'Entregue'
+      };
+      const device = (o?.detalhes?.equipamento?.marcaModelo || '').trim() || (o?.detalhes?.equipamento?.tipo || '').trim() || 'Equipamento';
+      return {
+        id: o.numero || o.id || '',
+        customerName: o?.cliente?.nome || 'Cliente',
+        deviceType: device,
+        status: statusMap[o.status] || 'Recebido',
+        createdAt: o.createdAt || new Date().toISOString()
+      };
+    });
+  }
+
+  function getOrdersForDashboard() {
+    const osList = lsReadJSON(LS.os, null);
+    if (Array.isArray(osList) && osList.length > 0) return mapOsToDashboardOrders(osList);
+    return ordersMock;
+  }
+
+  function renderUltimasOrdens(orders) {
+    const container = document.getElementById('ultimas-ordens-list');
+    container.innerHTML = '';
+
+    [...orders]
+      .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0,6)
+      .forEach(order => {
+        const orderItem = document.createElement('div');
+        orderItem.className = 'order-item';
+        orderItem.innerHTML = `
+          <div class="order-item-header">
+            <div>
+              <div class="order-number">#${order.id}</div>
+              <div class="order-customer">${order.customerName}</div>
+            </div>
+            <span class="${getBadgeClass(order.status)}">${order.status}</span>
+          </div>
+          <div class="order-details">
+            <div class="order-equipment">${order.deviceType}</div>
+            <div class="order-date">${formatData(order.createdAt)}</div>
+          </div>
+        `;
+        container.appendChild(orderItem);
+      });
+  }
+
+  // ============================
+  // Métricas reais (clientes + produtos + serviços + OS)
+  // ============================
+  function renderClientesCount() {
+    const clientes = lsReadJSON(LS.clientes, []) || [];
+    document.getElementById('stat-clientes').textContent = String(clientes.length);
+  }
+
+  function renderProdutosCount() {
+    const produtos = lsReadJSON(LS.produtos, []) || [];
+    document.getElementById('stat-produtos').textContent = String(produtos.length);
+  }
+
+  function renderServicosCount() {
+    const servicos = lsReadJSON(LS.servicos, []) || [];
+    document.getElementById('stat-servicos').textContent = String(servicos.length);
+  }
+
+  function renderOSCount() {
+    const os = lsReadJSON(LS.os, []) || [];
+    document.getElementById('stat-os').textContent = String(os.length);
+  }
+
+  function renderStats(orders) {
+    renderClientesCount();
+    renderProdutosCount();
+    renderServicosCount();
+    renderOSCount();
+
+    // Mantém placeholders até integrar financeiro real
+    document.getElementById('stat-receita-dia').textContent = 'R$ 2.845';
+    document.getElementById('stat-despesa-dia').textContent = 'R$ 890';
+
+    // Total do mês (com base nas ordens exibidas)
+    const mesAtual = new Date().getMonth();
+    const osMesAtual = orders.filter(o => new Date(o.createdAt).getMonth() === mesAtual);
+    document.getElementById('total-os-mes').textContent = osMesAtual.length;
+  }
+
+  // ============================
+  // RELÓGIO
+  // ============================
+  function updateClock() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    const ss = String(now.getSeconds()).padStart(2,'0');
+
+    const clockElement = document.getElementById('clock-time');
+    clockElement.textContent = `${hh}:${mm}`;
+
+    if (ss === '00') {
+      clockElement.classList.add('pulse');
+      setTimeout(() => clockElement.classList.remove('pulse'), 500);
+    }
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // ============================
+  // CALENDÁRIO
+  // ============================
+  let currentCalendarYear;
+  let currentCalendarMonth;
+
+  function initCalendar() {
+    const now = new Date();
+    currentCalendarYear  = now.getFullYear();
+    currentCalendarMonth = now.getMonth();
+    renderCalendar();
+
+    setTimeout(() => { initCharts(); }, 120);
+  }
+
+  function changeMonth(delta) {
+    currentCalendarMonth += delta;
+    if (currentCalendarMonth < 0) { currentCalendarMonth = 11; currentCalendarYear--; }
+    else if (currentCalendarMonth > 11) { currentCalendarMonth = 0; currentCalendarYear++; }
+    renderCalendar();
+  }
+
+  function goToToday() {
+    const now = new Date();
+    currentCalendarYear  = now.getFullYear();
+    currentCalendarMonth = now.getMonth();
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const tbody = document.getElementById('calendar-body');
+    tbody.innerHTML = '';
+
+    const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    document.getElementById('month-label').textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
+
+    const firstOfMonth = new Date(currentCalendarYear, currentCalendarMonth, 1);
+    const firstWeekDay = firstOfMonth.getDay();
+    const startDate = new Date(currentCalendarYear, currentCalendarMonth, 1 - firstWeekDay);
+    const todayStr = new Date().toISOString().slice(0,10);
+
+    const orders = getOrdersForDashboard();
+
+    let current = new Date(startDate);
+    for (let week = 0; week < 6; week++) {
+      const tr = document.createElement('tr');
+      for (let dow = 0; dow < 7; dow++) {
+        const td = document.createElement('td');
+        const isoDate = current.toISOString().slice(0,10);
+        const inCurrentMonth = current.getMonth() === currentCalendarMonth;
+
+        if (!inCurrentMonth) td.classList.add('calendar-empty', 'calendar-day-outside');
+
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'calendar-day-number';
+        dayDiv.textContent = current.getDate();
+        td.appendChild(dayDiv);
+
+        if (isoDate === todayStr) td.classList.add('calendar-day-today');
+
+        const osDoDia = orders.filter(o => String(o.createdAt).slice(0,10) === isoDate);
+        if (osDoDia.length > 0) {
+          td.classList.add('calendar-day-has-os');
+          const badge = document.createElement('div');
+          badge.className = 'calendar-os-count';
+          badge.textContent = osDoDia.length + ' OS';
+          td.appendChild(badge);
+        }
+
+        td.addEventListener('click', () => abrirModalOsDia(isoDate, osDoDia));
+        tr.appendChild(td);
+        current.setDate(current.getDate() + 1);
+      }
+      tbody.appendChild(tr);
+    }
+  }
+
+  // ============================
+  // MODAL OS DO DIA
+  // ============================
+  function abrirModalOsDia(dateStr, osDoDia) {
+    const modal = document.getElementById('modal-os-dia');
+    const titulo = document.getElementById('modal-os-dia-titulo');
+    const body = document.getElementById('modal-os-dia-body');
+
+    const dataFormatada = new Date(dateStr).toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    titulo.innerHTML = `📅 Ordens de <strong>${dataFormatada}</strong>`;
+    body.innerHTML = '';
+
+    if (!osDoDia || osDoDia.length === 0) {
+      const emptyState = document.createElement('div');
+      emptyState.className = 'os-day-item';
+      emptyState.innerHTML = `
+        <div style="text-align: center; padding: var(--space-8);">
+          <div style="font-size: 3rem; margin-bottom: var(--space-4);">📭</div>
+          <h4 style="margin-bottom: var(--space-2);">Nenhuma ordem neste dia</h4>
+          <p style="color: var(--text-tertiary); margin-bottom: var(--space-4);">
+            Não há ordens de serviço agendadas para esta data.
+          </p>
+          <button class="btn btn-primary" onclick="novaOS()">Criar Nova Ordem</button>
+        </div>
+      `;
+      body.appendChild(emptyState);
+    } else {
+      osDoDia
+        .sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt))
+        .forEach(o => {
+          const div = document.createElement('div');
+          div.className = 'os-day-item';
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-2);">
+              <div>
+                <strong style="color: var(--primary-600);">#${o.id}</strong>
+                <span style="color: var(--text-secondary);"> • ${o.customerName}</span>
+              </div>
+              <span class="${getBadgeClass(o.status)}">${o.status}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>${o.deviceType}</span>
+              <span style="color: var(--text-tertiary); font-size: 0.75rem;">
+                ⏰ ${formatHora(o.createdAt)}
+              </span>
+            </div>
+          `;
+          body.appendChild(div);
+        });
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function fecharModalOsDia() {
+    const modal = document.getElementById('modal-os-dia');
+    modal.style.animation = 'fadeOut 0.3s ease-out forwards';
+    setTimeout(() => {
+      modal.style.display = 'none';
+      modal.style.animation = '';
+    }, 300);
+  }
+
+  function novaOS(e) {
+    // comportamento padrão: abre página de OS
+    // (mantém animação/feedback e redireciona)
+    const btn = (e && (e.target || e.currentTarget)) ? (e.currentTarget || e.target) : null;
+
+    if (btn) {
+      const originalText = btn.innerHTML || 'Nova OS';
+      btn.innerHTML = '✨ Abrindo...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        window.location.href = 'ordem-servico.html';
+      }, 500);
+      return;
+    }
+
+    window.location.href = 'ordem-servico.html';
+  }
+
+  // ============================
+  // SIDEBAR
+  // ============================
+  function toggleSidebar() {
+    const layout = document.getElementById('mainLayout');
+    layout.classList.toggle('collapsed');
+
+    const isCollapsed = layout.classList.contains('collapsed');
+    localStorage.setItem(LS.sidebarCollapsed, isCollapsed);
+
+    setTimeout(() => { initCharts(); }, 320);
+  }
+
+  function restoreSidebarState() {
+    const isCollapsed = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+    const layout = document.getElementById('mainLayout');
+    if (isCollapsed) layout.classList.add('collapsed');
+  }
+
+  // ============================
+  // GRÁFICOS (placeholders)
+  // ============================
+  function setupHiDPICanvas(canvas) {
+    const ratio = window.devicePixelRatio || 1;
+    const clientWidth = Math.max(1, Math.floor(canvas.clientWidth));
+    const clientHeight = Math.max(1, Math.floor(canvas.clientHeight));
+    canvas.style.width = clientWidth + 'px';
+    canvas.style.height = clientHeight + 'px';
+    canvas.width = Math.floor(clientWidth * ratio);
+    canvas.height = Math.floor(clientHeight * ratio);
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    return { ctx, width: clientWidth, height: clientHeight };
+  }
+
+  function renderChartOs7Dias() {
+    const canvas = document.getElementById('chart-os-7dias');
+    if (!canvas) return;
+    const { ctx, width, height } = setupHiDPICanvas(canvas);
+    ctx.clearRect(0, 0, width, height);
+  }
+
+  function renderChartOsStatus() {
+    const canvas = document.getElementById('chart-os-status');
+    if (!canvas) return;
+    const { ctx, width, height } = setupHiDPICanvas(canvas);
+    ctx.clearRect(0, 0, width, height);
+  }
+
+  function renderChartEntradaSaida() {
+    const canvas = document.getElementById('chart-entrada-saida');
+    if (!canvas) return;
+    const { ctx, width, height } = setupHiDPICanvas(canvas);
+    ctx.clearRect(0, 0, width, height);
+  }
+
+  function initCharts() {
+    renderChartOs7Dias();
+    renderChartOsStatus();
+    renderChartEntradaSaida();
+  }
+
+  // ============================
+  // INICIALIZAÇÃO
+  // ============================
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('ano-atual').textContent = new Date().getFullYear();
+
+    restoreSidebarState();
+    updateTopUserFromConfig();
+
+    const orders = getOrdersForDashboard();
+    renderUltimasOrdens(orders);
+    renderStats(orders);
+    initCalendar();
+
+    // Atualizar métricas ao mudar storage (quando salvar em outra aba)
+    window.addEventListener('storage', (e) => {
+      if (
+        e.key === LS.clientes || e.key === LS.legacyClientes ||
+        e.key === LS.produtos || e.key === LS.legacyProdutos ||
+        e.key === LS.servicos || e.key === LS.legacyServicos ||
+        e.key === LS.os || e.key === LS.legacyOs
+      ) {
+        const orders2 = getOrdersForDashboard();
+        renderUltimasOrdens(orders2);
+        renderStats(orders2);
+        renderCalendar();
+      }
+
+      if (e.key === LS.config || e.key === LS.legacyConfig) {
+        updateTopUserFromConfig();
+      }
+
+      if (e.key === LS.sidebarCollapsed || e.key === LS.legacySidebarCollapsed) {
+        restoreSidebarState();
+      }
+    });
+
+    // Redimensionar gráficos quando a janela for redimensionada
+    window.addEventListener('resize', () => {
+      clearTimeout(window.__chartResizeTimer);
+      window.__chartResizeTimer = setTimeout(() => { initCharts(); }, 180);
+    });
+
+    // Atalho Ctrl+B
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+        e.preventDefault();
+        toggleSidebar();
+      }
+    });
+
+    // Animação de entrada
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.top-card, .panel, .stat-card, .order-item, .chart-container').forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(10px)';
+        setTimeout(() => {
+          el.style.transition = 'all 0.4s ease-out';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, i * 100);
+      });
+    });
+  });
+  </script>
+</body>
+</html>

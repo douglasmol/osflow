@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>OS Flow • Configurações</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-50:#f0f9ff; --primary-100:#e0f2fe; --primary-200:#bae6fd; --primary-300:#7dd3fc;
+      --primary-400:#38bdf8; --primary-500:#0ea5e9; --primary-600:#0284c7; --primary-700:#0369a1;
+      --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --purple:#8b5cf6; --teal:#14b8a6;
+
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --gray-800:#1f2937; --gray-900:#111827;
+
+      --bg-body: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+      --bg-surface:#ffffff;
+      --bg-sidebar: rgba(255,255,255,0.95);
+
+      --text-primary:#111827;
+      --text-secondary:#4b5563;
+      --text-tertiary:#6b7280;
+      --text-muted:#9ca3af;
+      --text-inverse:#ffffff;
+
+      --border-light:#e5e7eb;
+      --border-medium:#d1d5db;
+
+      --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      --shadow-primary: 0 4px 14px 0 rgba(14,165,233,0.2);
+
+      --font-primary:'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-secondary:'Manrope', system-ui, -apple-system, sans-serif;
+
+      --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem; --space-10:2.5rem;
+
+      --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --radius-full:9999px;
+
+      --transition-base: 250ms cubic-bezier(0.4,0,0.2,1);
+
+      --sidebar-width: 260px;
+      --sidebar-collapsed: 72px;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      font-family: var(--font-secondary);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    .layout { display:grid; grid-template-columns: var(--sidebar-width) 1fr; min-height:100vh; transition: grid-template-columns var(--transition-base); }
+    .layout.collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
+
+    .sidebar-wrapper {
+      position: sticky; top:0; height:100vh;
+      background: var(--bg-sidebar);
+      border-right:1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+      z-index:100;
+      width: var(--sidebar-width);
+      transition: all var(--transition-base);
+      overflow:hidden;
+    }
+    .layout.collapsed .sidebar-wrapper { width: var(--sidebar-collapsed); }
+    .sidebar { padding: var(--space-6) 0; display:flex; flex-direction:column; height:100%; }
+
+    .sidebar-logo {
+      padding:0 var(--space-4) var(--space-6);
+      display:flex; align-items:center; gap: var(--space-3);
+      border-bottom:1px solid var(--border-light);
+      padding-bottom: var(--space-6);
+      margin-bottom: var(--space-6);
+      min-height: 60px;
+    }
+    .layout.collapsed .sidebar-logo { padding:0 var(--space-3) var(--space-6); justify-content:center; }
+
+    .sidebar-logo-icon {
+      width:40px; height:40px; border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--text-inverse);
+      font-family: var(--font-primary);
+      font-weight:800;
+      box-shadow: var(--shadow-primary);
+      cursor:pointer;
+      transition: transform var(--transition-base);
+      flex-shrink: 0;
+    }
+    .sidebar-logo-icon:hover { transform: scale(1.05); }
+
+    .sidebar-logo-text { overflow:hidden; transition: opacity var(--transition-base), max-width var(--transition-base); max-width: 200px; }
+    .layout.collapsed .sidebar-logo-text { opacity:0; max-width: 0; }
+
+    .sidebar-logo-text h1 { font-family: var(--font-primary); font-size:1.25rem; font-weight:800; letter-spacing:-0.5px; }
+    .sidebar-logo-text small { display:block; font-size:0.6875rem; color: var(--text-tertiary); margin-top: var(--space-1); font-weight:500; }
+
+    .menu { list-style:none; padding:0 var(--space-2); flex:1; font-size: 0.875rem; }
+    .layout.collapsed .menu { padding:0 var(--space-1); }
+    .menu li { margin-bottom: var(--space-1); }
+    .menu a {
+      display:flex; align-items:center; gap: var(--space-3);
+      padding: var(--space-3);
+      color: var(--text-secondary);
+      text-decoration:none;
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      position: relative;
+    }
+    .layout.collapsed .menu a { justify-content:center; }
+    .menu a:hover { background: var(--primary-50); color: var(--primary-600); transform: translateX(4px); }
+    .layout.collapsed .menu a:hover { transform: translateX(0) scale(1.05); }
+    .menu a.active { background: var(--primary-500); color: var(--text-inverse); box-shadow: var(--shadow-primary); font-weight: 700; }
+
+    .menu-icon { width:20px; text-align:center; font-size:1.125rem; flex-shrink:0; }
+    .menu-text { overflow:hidden; transition: opacity var(--transition-base), max-width var(--transition-base); max-width:200px; }
+    .layout.collapsed .menu-text { opacity:0; max-width:0; }
+
+    .menu-tooltip {
+      position:absolute; left:100%; top:50%; transform: translateY(-50%);
+      background: var(--gray-800); color:#fff;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      opacity:0; visibility:hidden; transition: all 150ms ease;
+      pointer-events:none; box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .layout.collapsed .menu a:hover .menu-tooltip { opacity:1; visibility:visible; transform: translateY(-50%) translateX(8px); }
+
+    .sidebar-footer {
+      padding: var(--space-3) var(--space-4);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-light);
+      font-weight: 600;
+      text-align:center;
+      white-space: nowrap;
+      overflow:hidden;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    .layout.collapsed .sidebar-footer{
+      padding: var(--space-2);
+      font-size:0.6rem;
+      flex-direction:column;
+    }
+    .layout.collapsed .sidebar-footer span:not(:first-child){
+      opacity:0; width:0; margin:0;
+    }
+
+    .main-wrapper { display:flex; flex-direction:column; min-width:0; }
+    .topbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--space-3) var(--space-6);
+      display:flex; align-items:center; justify-content: space-between;
+      position: sticky; top:0; z-index:90;
+      box-shadow: var(--shadow-sm);
+      min-height: 60px;
+    }
+    .topbar-title { font-family: var(--font-primary); font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px; display:flex; align-items:center; gap: var(--space-3); }
+    .breadcrumb { font-size: 0.6875rem; color: var(--text-tertiary); font-weight: 600; display:flex; align-items:center; gap: var(--space-2); }
+    .breadcrumb::before { content:'|'; color: var(--border-medium); margin-right: var(--space-2); font-weight: 400; }
+    .breadcrumb span { background: var(--primary-500); color: var(--text-inverse); padding: var(--space-1) var(--space-2); border-radius: var(--radius-full); font-size:0.625rem; letter-spacing:.5px; text-transform:uppercase; }
+
+    .user-info { display:flex; align-items:center; gap: var(--space-3); font-size: 0.8125rem; color: var(--text-secondary); font-weight: 600; }
+    .user-avatar {
+      width:36px; height:36px; border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--teal) 100%);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--text-inverse);
+      font-weight: 800;
+      box-shadow: var(--shadow-sm);
+      cursor:pointer;
+    }
+
+    .content { padding: var(--space-6); flex:1; }
+
+    .page-header {
+      display:flex; justify-content: space-between; align-items:center;
+      margin-bottom: var(--space-8);
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .page-header h1 {
+      font-family: var(--font-primary);
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      display:flex; align-items:center; gap: var(--space-3);
+    }
+    .page-header h1:before { content:'⚙️'; }
+
+    .actions { display:flex; gap: var(--space-3); flex-wrap: wrap; }
+
+    .btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-primary);
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      display:inline-flex; align-items:center; gap: var(--space-2);
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--gray-50); border-color: var(--gray-300); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+    .btn-primary { background: var(--primary-500); border-color: transparent; color: var(--text-inverse); box-shadow: var(--shadow-primary); }
+    .btn-primary:hover { background: var(--primary-600); box-shadow: var(--shadow-lg); }
+    .btn-danger { background: var(--danger); border-color: transparent; color: var(--text-inverse); }
+    .btn-success { background: var(--success); border-color: transparent; color: var(--text-inverse); }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      margin-bottom: var(--space-6);
+    }
+    .panel-title {
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 800;
+      margin-bottom: var(--space-5);
+      display:flex; align-items:center; justify-content: space-between;
+      gap: var(--space-2);
+    }
+    .panel-title small { font-weight: 700; color: var(--text-tertiary); font-size: .75rem; }
+
+    .grid {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      align-items: start;
+    }
+    @media (max-width: 1200px) { .grid { grid-template-columns: 1fr; } }
+
+    .form-row { display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+    @media (max-width: 720px) { .form-row { grid-template-columns: 1fr; } }
+
+    .field { display:flex; flex-direction:column; gap: var(--space-2); margin-bottom: var(--space-4); }
+    label { font-size: 0.875rem; font-weight: 700; color: var(--text-secondary); }
+    .hint { font-size: 0.75rem; color: var(--text-tertiary); }
+
+    input, select, textarea {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-secondary);
+      font-size: 0.875rem;
+      transition: all var(--transition-base);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    input:focus, select:focus, textarea:focus { outline:none; border-color: var(--primary-400); box-shadow: 0 0 0 3px rgba(14,165,233,.12); }
+
+    .divider { height:1px; background: var(--border-light); margin: var(--space-6) 0; }
+
+    .table { width:100%; border-collapse: separate; border-spacing: 0; overflow:hidden; border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+    .table th, .table td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-light); text-align:left; font-size: .875rem; vertical-align: top; }
+    .table th { background: var(--gray-50); font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; color: var(--text-secondary); }
+
+    .pill {
+      display:inline-flex; align-items:center; gap: .5rem;
+      border-radius: var(--radius-full);
+      padding: .25rem .75rem;
+      font-size: .75rem;
+      font-weight: 800;
+      border: 1px solid var(--border-light);
+      background: var(--gray-50);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .empty { text-align:center; padding: var(--space-8); color: var(--text-tertiary); border: 1px dashed var(--border-medium); border-radius: var(--radius-xl); background: var(--gray-50); }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      padding: .75rem 1rem;
+      border-radius: var(--radius-xl);
+      color: white;
+      font-weight: 900;
+      box-shadow: var(--shadow-lg);
+      max-width: 420px;
+      animation: slideUp .2s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(10px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: .82rem; }
+
+    .row-actions { display:flex; gap: .5rem; flex-wrap: wrap; }
+    .btn-mini { padding: .35rem .6rem; border-radius: var(--radius-md); font-size: .75rem; font-weight: 800; border: 1px solid transparent; }
+    .btn-mini-danger { background: var(--danger); color: white; }
+    .btn-mini-primary { background: var(--primary-500); color: white; }
+    .btn-mini:hover { transform: translateY(-1px); }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn .2s ease-out;
+    }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    .modal {
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      width: 900px;
+      max-width: 96vw;
+      max-height: 88vh;
+      overflow: auto;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-light);
+      animation: slideUp .2s ease-out;
+    }
+    .modal-header { display:flex; align-items:center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); }
+    .modal-header h3 { font-family: var(--font-primary); font-size: 1.125rem; font-weight: 900; }
+    .modal-close {
+      width: 36px; height:36px; border-radius: var(--radius-full);
+      border: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      transition: all var(--transition-base);
+    }
+    .modal-close:hover { background: rgba(239,68,68,0.12); border-color: var(--danger); color: var(--danger); }
+    .modal-actions { display:flex; justify-content:flex-end; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; }
+
+    /* Tabs no modal */
+    .tabs {
+      display:flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: var(--space-3);
+      margin-bottom: var(--space-5);
+    }
+    .tab {
+      border: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      padding: .5rem .75rem;
+      border-radius: var(--radius-full);
+      font-family: var(--font-primary);
+      font-weight: 900;
+      font-size: .75rem;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      user-select: none;
+    }
+    .tab:hover { background: var(--gray-50); transform: translateY(-1px); }
+    .tab.active { background: var(--primary-500); color: var(--text-inverse); border-color: transparent; box-shadow: var(--shadow-primary); }
+
+    .tab-pane { display:none; }
+    .tab-pane.active { display:block; }
+
+    /* Adicionado: "password toggle" e bloco sensível */
+    .field-inline {
+      display:flex;
+      gap: var(--space-2);
+      align-items: center;
+    }
+    .btn-eye {
+      padding: var(--space-3);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      background: var(--gray-50);
+      cursor: pointer;
+      font-weight: 900;
+    }
+    .sensitive-box{
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4);
+      background: var(--gray-50);
+    }
+
+    /* Responsivo (igual padrão dos outros arquivos) */
+    @media (max-width: 768px){
+      .layout{ grid-template-columns: 1fr; }
+      .sidebar-wrapper{
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border-light);
+        z-index: 1000;
+      }
+      .sidebar{ padding: var(--space-4) 0; flex-direction: row; align-items:center; }
+      .menu{ display:flex; overflow-x:auto; flex: 0 0 auto; }
+      .menu li{ margin:0; }
+      .menu a{ flex-direction: column; padding: var(--space-2); }
+      .menu-text{ font-size: 0.625rem; }
+      .content{ padding: var(--space-4); }
+      .topbar{ padding: var(--space-4); }
+      .grid{ grid-template-columns: 1fr; }
+      .page-header{ flex-direction: column; align-items:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout" id="mainLayout">
+    <div class="sidebar-wrapper">
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon" onclick="toggleSidebar()">OS</div>
+          <div class="sidebar-logo-text">
+            <h1>OS Flow</h1>
+            <small>Dashboard Inteligente</small>
+          </div>
+        </div>
+
+        <ul class="menu">
+          <li><a href="index.html"><span class="menu-icon">📊</span><span class="menu-text">Dashboard</span><span class="menu-tooltip">Dashboard</span></a></li>
+          <li><a href="cadastrar-clientes.html"><span class="menu-icon">👥</span><span class="menu-text">Clientes</span><span class="menu-tooltip">Clientes</span></a></li>
+          <li><a href="produtos.html"><span class="menu-icon">📦</span><span class="menu-text">Produtos</span><span class="menu-tooltip">Produtos</span></a></li>
+          <li><a href="servicos.html"><span class="menu-icon">🔧</span><span class="menu-text">Serviços</span><span class="menu-tooltip">Serviços</span></a></li>
+          <li><a href="vendas.html"><span class="menu-icon">💰</span><span class="menu-text">Vendas</span><span class="menu-tooltip">Vendas</span></a></li>
+          <li><a href="ordem-servico.html"><span class="menu-icon">📋</span><span class="menu-text">Ordens</span><span class="menu-tooltip">Ordens</span></a></li>
+          <li><a href="garantias.html"><span class="menu-icon">🛡️</span><span class="menu-text">Garantias</span><span class="menu-tooltip">Garantias</span></a></li>
+          <li><a href="arquivos.html"><span class="menu-icon">📁</span><span class="menu-text">Arquivos</span><span class="menu-tooltip">Arquivos</span></a></li>
+          <li><a href="financeiro.html"><span class="menu-icon">💳</span><span class="menu-text">Financeiro</span><span class="menu-tooltip">Financeiro</span></a></li>
+          <li><a href="configuracoes.html" class="active"><span class="menu-icon">⚙️</span><span class="menu-text">Configurações</span><span class="menu-tooltip">Configurações</span></a></li>
+        </ul>
+
+        <div class="sidebar-footer">v3.8.1 • © <span id="ano-atual"></span> • OS Flow</div>
+      </aside>
+    </div>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-title">
+          Configurações
+          <div class="breadcrumb"><span>Sistema</span></div>
+        </div>
+        <div class="user-info">
+          <span>Bem-vindo, <strong id="topUserName">Usuário</strong></span>
+          <div class="user-avatar" id="topUserAvatar">U</div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="page-header">
+          <h1>Configurações</h1>
+          <div class="actions">
+            <button class="btn" type="button" onclick="resetarParaPadrao()">↩️ Restaurar padrão</button>
+            <button class="btn btn-primary" type="button" onclick="salvarTudo()">💾 Salvar tudo</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- COLUNA ESQUERDA -->
+          <div>
+            <section class="panel" id="panelUsuario">
+              <div class="panel-title">
+                <span>👤 Dados do Usuário</span>
+                <small>localStorage: <span class="mono">osflow:config</span></small>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="userNome">Nome</label>
+                  <input id="userNome" placeholder="Ex: Victor Gomes" />
+                </div>
+                <div class="field">
+                  <label for="userEmail">E-mail</label>
+                  <input id="userEmail" placeholder="usuario@email.com" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="userTelefone">Telefone</label>
+                  <input id="userTelefone" placeholder="(11) 99999-9999" />
+                </div>
+                <div class="field">
+                  <label for="userCargo">Cargo/Função</label>
+                  <input id="userCargo" placeholder="Administrador / Técnico..." />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="userAssinatura">Assinatura (texto)</label>
+                <textarea id="userAssinatura" placeholder="Texto que pode aparecer em impressões/termos..."></textarea>
+              </div>
+
+              <div class="row-actions">
+                <button class="btn" type="button" onclick="preencherUsuarioMock()">✨ Exemplo</button>
+              </div>
+            </section>
+
+            <section class="panel" id="panelEmpresa">
+              <div class="panel-title">
+                <span>🏢 Dados da Empresa</span>
+                <small>localStorage: <span class="mono">osflow:config</span></small>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="empNome">Nome Fantasia</label>
+                  <input id="empNome" placeholder="Ex: Assistência XYZ" />
+                </div>
+                <div class="field">
+                  <label for="empRazao">Razão Social</label>
+                  <input id="empRazao" placeholder="Ex: XYZ Tecnologia LTDA" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="empCnpj">CNPJ</label>
+                  <input id="empCnpj" placeholder="00.000.000/0001-00" />
+                </div>
+                <div class="field">
+                  <label for="empIe">IE (opcional)</label>
+                  <input id="empIe" placeholder="Inscrição Estadual" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="empTelefone">Telefone</label>
+                  <input id="empTelefone" placeholder="(11) 3333-3333" />
+                </div>
+                <div class="field">
+                  <label for="empEmail">E-mail</label>
+                  <input id="empEmail" placeholder="contato@empresa.com" />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="empEndereco">Endereço</label>
+                <textarea id="empEndereco" placeholder="Rua, número, bairro, cidade/UF, CEP"></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="empLogoDataUrl">Logo (DataURL)</label>
+                  <input id="empLogoDataUrl" placeholder="Cole aqui uma imagem em base64 (DataURL) — opcional" />
+                </div>
+                <div class="field">
+                  <label for="empWebsite">Website (opcional)</label>
+                  <input id="empWebsite" placeholder="https://..." />
+                </div>
+              </div>
+
+              <div class="row-actions">
+                <button class="btn" type="button" onclick="preencherEmpresaMock()">✨ Exemplo</button>
+              </div>
+            </section>
+          </div>
+
+          <!-- COLUNA DIREITA -->
+          <div>
+            <!-- Tipos (cadastro + lista) -->
+            <section class="panel" id="panelTipos">
+              <div class="panel-title">
+                <span>🧩 Tipos de Equipamento (Dinâmicos + Checklist)</span>
+                <small>Integra com a OS (ordem-servico.html)</small>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="novoTipoLabel">Nome do tipo (label)</label>
+                  <input id="novoTipoLabel" placeholder="Ex: TV" />
+                  <div class="hint">É o que aparece no select “Tipo” da OS.</div>
+                </div>
+                <div class="field">
+                  <label for="novoTipoId">Código (id) (opcional)</label>
+                  <input id="novoTipoId" placeholder="Ex: tv (se deixar vazio, gera automaticamente)" />
+                  <div class="hint">Usado internamente (sem espaços). Ex: <span class="mono">tv</span></div>
+                </div>
+              </div>
+
+              <div class="row-actions">
+                <button class="btn btn-primary" type="button" onclick="criarTipoEquipamento()">➕ Criar tipo</button>
+                <button class="btn" type="button" onclick="limparCriacaoTipo()">🧹 Limpar</button>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="field" style="margin-bottom:0;">
+                <label>Tipos cadastrados</label>
+                <div class="hint">
+                  A OS vai mostrar <strong>apenas</strong> os tipos cadastrados aqui no select “Tipo”.
+                </div>
+              </div>
+
+              <div style="overflow:auto;">
+                <table class="table" aria-label="Tipos cadastrados">
+                  <thead>
+                    <tr>
+                      <th>Tipo</th>
+                      <th>Campos</th>
+                      <th>Checklist</th>
+                      <th style="width: 280px;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tiposTbody"></tbody>
+                </table>
+              </div>
+
+              <div id="tiposEmpty" class="empty" style="display:none; margin-top: var(--space-4);">
+                Nenhum tipo cadastrado ainda. Crie o primeiro acima.
+              </div>
+            </section>
+
+            <!-- NOVO: Integrações / Tokens -->
+            <section class="panel" id="panelIntegracoes">
+              <div class="panel-title">
+                <span>🔑 Integrações (Cobrança)</span>
+                <small>Reservado p/ WhatsApp + Mercado Pago</small>
+              </div>
+
+              <div class="sensitive-box">
+                <div class="hint" style="margin-bottom: var(--space-4);">
+                  Esses campos ficam somente no <strong>localStorage</strong>. Use com cuidado (tokens no browser).
+                </div>
+
+                <div class="divider" style="margin: var(--space-4) 0;"></div>
+
+                <div class="field">
+                  <label>Mercado Pago</label>
+                  <div class="hint">Por enquanto é só reserva. Depois você define exatamente quais chaves serão usadas.</div>
+                </div>
+
+                <div class="form-row">
+                  <div class="field">
+                    <label for="mpAccessToken">Access Token</label>
+                    <div class="field-inline">
+                      <input id="mpAccessToken" type="password" placeholder="APP_USR-..." />
+                      <button class="btn-eye" type="button" onclick="toggleSecret('mpAccessToken')">👁</button>
+                    </div>
+                    <div class="hint">Sugestão de nome: <span class="mono">mercadopago.accessToken</span></div>
+                  </div>
+
+                  <div class="field">
+                    <label for="mpPublicKey">Public Key (opcional)</label>
+                    <div class="field-inline">
+                      <input id="mpPublicKey" type="password" placeholder="APP_USR-..." />
+                      <button class="btn-eye" type="button" onclick="toggleSecret('mpPublicKey')">👁</button>
+                    </div>
+                    <div class="hint">Sugestão de nome: <span class="mono">mercadopago.publicKey</span></div>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="mpWebhookSecret">Webhook Secret (opcional)</label>
+                  <div class="field-inline">
+                    <input id="mpWebhookSecret" type="password" placeholder="segredo do webhook..." />
+                    <button class="btn-eye" type="button" onclick="toggleSecret('mpWebhookSecret')">👁</button>
+                  </div>
+                </div>
+
+                <div class="divider" style="margin: var(--space-4) 0;"></div>
+
+                <div class="field">
+                  <label>WhatsApp</label>
+                  <div class="hint">Você ainda não decidiu a API. Deixei campos genéricos (token + phoneId) para reservar.</div>
+                </div>
+
+                <div class="form-row">
+                  <div class="field">
+                    <label for="waToken">Token</label>
+                    <div class="field-inline">
+                      <input id="waToken" type="password" placeholder="token..." />
+                      <button class="btn-eye" type="button" onclick="toggleSecret('waToken')">👁</button>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="waPhoneId">Phone Number ID / Sender ID</label>
+                    <input id="waPhoneId" placeholder="ex.: 1234567890" />
+                  </div>
+                </div>
+
+                <div class="field" style="margin-bottom:0;">
+                  <label for="waFromName">Nome do remetente (opcional)</label>
+                  <input id="waFromName" placeholder="Ex: OS Flow" />
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR TIPO (campos + checklist) -->
+  <div class="modal-backdrop" id="modalEditarTipo">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalEditarTipoTitulo">Editar tipo</h3>
+        <button class="modal-close" type="button" onclick="fecharModalTipo()">×</button>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" type="button" onclick="selectTab('tab-campos')" id="btn-tab-campos">Campos</button>
+        <button class="tab" type="button" onclick="selectTab('tab-checklist')" id="btn-tab-checklist">Checklist</button>
+      </div>
+
+      <!-- Tab: Campos -->
+      <div class="tab-pane active" id="tab-campos" role="tabpanel" aria-labelledby="btn-tab-campos">
+        <div class="panel-title" style="margin-top:0;">
+          <span>📌 Campos do equipamento</span>
+          <small>Viram inputs na OS (aba Dinâmicos)</small>
+        </div>
+
+        <div class="form-row">
+          <div class="field" style="margin-bottom:0;">
+            <label for="campoLabel">Nome do campo</label>
+            <input id="campoLabel" placeholder="Ex: Polegadas" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="campoKind">Tipo</label>
+            <select id="campoKind">
+              <option value="text">Texto</option>
+              <option value="number">Número</option>
+              <option value="select">Lista (select)</option>
+              <option value="textarea">Texto longo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field" id="campoOptionsWrap" style="display:none;">
+          <label for="campoOptions">Opções (vírgula)</label>
+          <input id="campoOptions" placeholder="Ex: 110V,220V,Bivolt" />
+        </div>
+
+        <div class="row-actions" style="margin-top: var(--space-4);">
+          <button class="btn btn-primary" type="button" onclick="adicionarCampoNoTipo()">➕ Adicionar campo</button>
+        </div>
+
+        <div style="overflow:auto; margin-top: var(--space-4);">
+          <table class="table" aria-label="Campos do tipo">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+                <th>Config</th>
+                <th style="width:140px;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="modalCamposTbody"></tbody>
+          </table>
+        </div>
+
+        <div id="modalCamposEmpty" class="empty" style="display:none; margin-top: var(--space-4);">
+          Nenhum campo cadastrado para este tipo.
+        </div>
+      </div>
+
+      <!-- Tab: Checklist -->
+      <div class="tab-pane" id="tab-checklist" role="tabpanel" aria-labelledby="btn-tab-checklist">
+        <div class="panel-title" style="margin-top:0;">
+          <span>✅ Checklist</span>
+          <small>Vira checklist na OS</small>
+        </div>
+
+        <div class="form-row">
+          <div class="field" style="margin-bottom:0;">
+            <label for="checkLabel">Item do checklist</label>
+            <input id="checkLabel" placeholder="Ex: Liga" />
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Ação</label>
+            <div class="row-actions">
+              <button class="btn btn-primary" type="button" onclick="adicionarChecklistNoTipo()">➕ Adicionar item</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="overflow:auto; margin-top: var(--space-4);">
+          <table class="table" aria-label="Checklist do tipo">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Tipo</th>
+                <th style="width:140px;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="modalChecklistTbody"></tbody>
+          </table>
+        </div>
+
+        <div id="modalChecklistEmpty" class="empty" style="display:none; margin-top: var(--space-4);">
+          Nenhum item cadastrado para este tipo.
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" type="button" onclick="fecharModalTipo()">Fechar</button>
+        <button class="btn btn-success" type="button" onclick="salvarTudo()">💾 Salvar tudo</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // LocalStorage padronizado + migração
+    // =========================
+    const LS = Object.freeze({
+      config: 'osflow:config',
+      sidebarCollapsed: 'osflow:ui:sidebarCollapsed',
+
+      // legado
+      legacyConfig: 'osflow_config',
+      legacySidebarCollapsed: 'sidebarCollapsed'
+    });
+
+    function lsReadJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch {
+        return fallback;
+      }
+    }
+
+    function lsWriteJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function migrateLocalStorageKeys() {
+      if (!localStorage.getItem(LS.config) && localStorage.getItem(LS.legacyConfig)) {
+        localStorage.setItem(LS.config, localStorage.getItem(LS.legacyConfig));
+      }
+      if (!localStorage.getItem(LS.sidebarCollapsed) && localStorage.getItem(LS.legacySidebarCollapsed)) {
+        localStorage.setItem(LS.sidebarCollapsed, localStorage.getItem(LS.legacySidebarCollapsed));
+      }
+    }
+
+    migrateLocalStorageKeys();
+
+    // =========================
+    // Constantes e Defaults
+    // =========================
+    const DEFAULT_CONFIG = {
+      version: 2,
+      updatedAt: '',
+      usuario: { nome:'', email:'', telefone:'', cargo:'', assinatura:'' },
+      empresa: { nomeFantasia:'', razaoSocial:'', cnpj:'', ie:'', telefone:'', email:'', endereco:'', website:'', logoDataUrl:'' },
+      templates: {
+        equipamentoTipos: [],
+        equipamentoCamposByTipo: {},
+        checklistByTipo: {}
+      },
+      integracoes: {
+        mercadopago: { accessToken:'', publicKey:'', webhookSecret:'' },
+        whatsapp: { token:'', phoneId:'', fromName:'' }
+      }
+    };
+
+    // =========================
+    // Estado do modal
+    // =========================
+    let tipoEditandoId = null;
+
+    // =========================
+    // Sidebar (padronizado)
+    // =========================
+    function toggleSidebar() {
+      const layout = document.getElementById('mainLayout');
+      if (!layout) return;
+      layout.classList.toggle('collapsed');
+      localStorage.setItem(LS.sidebarCollapsed, layout.classList.contains('collapsed'));
+    }
+
+    // =========================
+    // Toast
+    // =========================
+    function toast(message, type = 'info') {
+      const colors = {
+        info: 'var(--primary-500)',
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        danger: 'var(--danger)'
+      };
+
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.style.background = colors[type] || colors.info;
+      el.textContent = message;
+      document.body.appendChild(el);
+
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity .25s ease';
+        setTimeout(() => el.remove(), 250);
+      }, 2200);
+    }
+
+    // =========================
+    // Config helpers
+    // =========================
+    function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
+
+    function mergeDefaults(base, incoming) {
+      for (const k of Object.keys(incoming || {})) {
+        const v = incoming[k];
+        if (v && typeof v === 'object' && !Array.isArray(v)) base[k] = mergeDefaults(base[k] || {}, v);
+        else base[k] = v;
+      }
+      return base;
+    }
+
+    function getConfig() {
+      const parsed = lsReadJSON(LS.config, null);
+      if (!parsed) return deepClone(DEFAULT_CONFIG);
+      return mergeDefaults(deepClone(DEFAULT_CONFIG), parsed);
+    }
+
+    function setConfig(cfg) {
+      const next = deepClone(cfg);
+      next.updatedAt = new Date().toISOString();
+      lsWriteJSON(LS.config, next);
+    }
+
+    function getTemplates() {
+      const cfg = getConfig();
+      cfg.templates = cfg.templates || {};
+      cfg.templates.equipamentoTipos = cfg.templates.equipamentoTipos || [];
+      cfg.templates.equipamentoCamposByTipo = cfg.templates.equipamentoCamposByTipo || {};
+      cfg.templates.checklistByTipo = cfg.templates.checklistByTipo || {};
+      return cfg.templates;
+    }
+
+    function setTemplates(templates) {
+      const cfg = getConfig();
+      cfg.templates = templates;
+      setConfig(cfg);
+    }
+
+    // =========================
+    // UI: carregar/salvar
+    // =========================
+    function carregarTela() {
+      const cfg = getConfig();
+
+      document.getElementById('userNome').value = cfg.usuario.nome || '';
+      document.getElementById('userEmail').value = cfg.usuario.email || '';
+      document.getElementById('userTelefone').value = cfg.usuario.telefone || '';
+      document.getElementById('userCargo').value = cfg.usuario.cargo || '';
+      document.getElementById('userAssinatura').value = cfg.usuario.assinatura || '';
+
+      document.getElementById('empNome').value = cfg.empresa.nomeFantasia || '';
+      document.getElementById('empRazao').value = cfg.empresa.razaoSocial || '';
+      document.getElementById('empCnpj').value = cfg.empresa.cnpj || '';
+      document.getElementById('empIe').value = cfg.empresa.ie || '';
+      document.getElementById('empTelefone').value = cfg.empresa.telefone || '';
+      document.getElementById('empEmail').value = cfg.empresa.email || '';
+      document.getElementById('empEndereco').value = cfg.empresa.endereco || '';
+      document.getElementById('empWebsite').value = cfg.empresa.website || '';
+      document.getElementById('empLogoDataUrl').value = cfg.empresa.logoDataUrl || '';
+
+      // integrações
+      const mp = cfg.integracoes?.mercadopago || {};
+      const wa = cfg.integracoes?.whatsapp || {};
+
+      document.getElementById('mpAccessToken').value = mp.accessToken || '';
+      document.getElementById('mpPublicKey').value = mp.publicKey || '';
+      document.getElementById('mpWebhookSecret').value = mp.webhookSecret || '';
+
+      document.getElementById('waToken').value = wa.token || '';
+      document.getElementById('waPhoneId').value = wa.phoneId || '';
+      document.getElementById('waFromName').value = wa.fromName || '';
+
+      atualizarTopUser(cfg);
+      renderListaTipos();
+    }
+
+    function coletarTela() {
+      const cfg = getConfig();
+
+      cfg.usuario = {
+        nome: (document.getElementById('userNome').value || '').trim(),
+        email: (document.getElementById('userEmail').value || '').trim(),
+        telefone: (document.getElementById('userTelefone').value || '').trim(),
+        cargo: (document.getElementById('userCargo').value || '').trim(),
+        assinatura: (document.getElementById('userAssinatura').value || '').trim()
+      };
+
+      cfg.empresa = {
+        nomeFantasia: (document.getElementById('empNome').value || '').trim(),
+        razaoSocial: (document.getElementById('empRazao').value || '').trim(),
+        cnpj: (document.getElementById('empCnpj').value || '').trim(),
+        ie: (document.getElementById('empIe').value || '').trim(),
+        telefone: (document.getElementById('empTelefone').value || '').trim(),
+        email: (document.getElementById('empEmail').value || '').trim(),
+        endereco: (document.getElementById('empEndereco').value || '').trim(),
+        website: (document.getElementById('empWebsite').value || '').trim(),
+        logoDataUrl: (document.getElementById('empLogoDataUrl').value || '').trim()
+      };
+
+      cfg.integracoes = cfg.integracoes || {};
+      cfg.integracoes.mercadopago = {
+        accessToken: (document.getElementById('mpAccessToken').value || '').trim(),
+        publicKey: (document.getElementById('mpPublicKey').value || '').trim(),
+        webhookSecret: (document.getElementById('mpWebhookSecret').value || '').trim()
+      };
+      cfg.integracoes.whatsapp = {
+        token: (document.getElementById('waToken').value || '').trim(),
+        phoneId: (document.getElementById('waPhoneId').value || '').trim(),
+        fromName: (document.getElementById('waFromName').value || '').trim()
+      };
+
+      return cfg;
+    }
+
+    function atualizarTopUser(cfg) {
+      const name = cfg.usuario.nome || 'Usuário';
+      const initial = (name.trim()[0] || 'U').toUpperCase();
+      document.getElementById('topUserName').textContent = name;
+      document.getElementById('topUserAvatar').textContent = initial;
+    }
+
+    function salvarTudo() {
+      const cfg = coletarTela();
+      setConfig(cfg);
+      atualizarTopUser(cfg);
+      toast('Configurações salvas!', 'success');
+    }
+
+    function resetarParaPadrao() {
+      if (!confirm('Restaurar configurações para o padrão?')) return;
+      setConfig(deepClone(DEFAULT_CONFIG));
+      carregarTela();
+      toast('Restaurado para o padrão.', 'warning');
+    }
+
+    function preencherUsuarioMock() {
+      document.getElementById('userNome').value = 'Victor Gomes';
+      document.getElementById('userEmail').value = 'victor@osflow.com';
+      document.getElementById('userTelefone').value = '(11) 99999-9999';
+      document.getElementById('userCargo').value = 'Administrador';
+      document.getElementById('userAssinatura').value = 'Assinatura do responsável (exemplo).';
+      toast('Exemplo preenchido (usuário).', 'info');
+    }
+
+    function preencherEmpresaMock() {
+      document.getElementById('empNome').value = 'Assistência XYZ';
+      document.getElementById('empRazao').value = 'XYZ Tecnologia LTDA';
+      document.getElementById('empCnpj').value = '00.000.000/0001-00';
+      document.getElementById('empIe').value = '';
+      document.getElementById('empTelefone').value = '(11) 3333-3333';
+      document.getElementById('empEmail').value = 'contato@assistenciaxyz.com';
+      document.getElementById('empEndereco').value = 'Rua Exemplo, 123\nCentro\nSão Paulo/SP\n00000-000';
+      document.getElementById('empWebsite').value = 'https://assistenciaxyz.com';
+      document.getElementById('empLogoDataUrl').value = '';
+      toast('Exemplo preenchido (empresa).', 'info');
+    }
+
+    function toggleSecret(inputId) {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      el.type = el.type === 'password' ? 'text' : 'password';
+    }
+
+    // =========================
+    // Tipos de equipamento
+    // =========================
+    function slugify(s) {
+      return String(s || '')
+        .trim()
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+
+    function limparCriacaoTipo() {
+      document.getElementById('novoTipoLabel').value = '';
+      document.getElementById('novoTipoId').value = '';
+    }
+
+    function criarTipoEquipamento() {
+      const label = (document.getElementById('novoTipoLabel').value || '').trim();
+      let id = (document.getElementById('novoTipoId').value || '').trim();
+
+      if (!label) return toast('Digite o nome do tipo (ex.: TV).', 'warning');
+      id = slugify(id || label);
+      if (!id) return toast('Código inválido.', 'warning');
+
+      const templates = getTemplates();
+      const exists = templates.equipamentoTipos.some(t => t.id === id);
+      if (exists) return toast('Já existe um tipo com esse código.', 'warning');
+
+      const now = new Date().toISOString();
+      templates.equipamentoTipos.unshift({ id, label, createdAt: now, updatedAt: now });
+      templates.equipamentoCamposByTipo[id] = [];
+      templates.checklistByTipo[id] = [];
+
+      setTemplates(templates);
+      limparCriacaoTipo();
+      renderListaTipos();
+      toast('Tipo criado! Clique em Editar para adicionar campos/checklist.', 'success');
+    }
+
+    function renderListaTipos() {
+      const tbody = document.getElementById('tiposTbody');
+      const empty = document.getElementById('tiposEmpty');
+      if (!tbody || !empty) return;
+
+      const templates = getTemplates();
+      const tipos = templates.equipamentoTipos || [];
+
+      if (!tipos.length) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+
+      tbody.innerHTML = tipos.map(t => {
+        const campos = templates.equipamentoCamposByTipo[t.id] || [];
+        const checks = templates.checklistByTipo[t.id] || [];
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:900;">${escapeHTML(t.label)}</div>
+              <div class="hint"><span class="mono">${escapeHTML(t.id)}</span></div>
+            </td>
+            <td><span class="pill">${campos.length}</span></td>
+            <td><span class="pill">${checks.length}</span></td>
+            <td>
+              <div class="row-actions">
+                <button class="btn btn-mini btn-mini-primary" type="button" onclick="abrirModalTipo('${escapeJS(t.id)}')">✏️ Editar</button>
+                <button class="btn btn-mini btn-mini-danger" type="button" onclick="removerTipo('${escapeJS(t.id)}')">🗑️ Excluir</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function removerTipo(tipoId) {
+      const templates = getTemplates();
+      const tipo = templates.equipamentoTipos.find(t => t.id === tipoId);
+      if (!tipo) return;
+
+      if (!confirm(`Excluir o tipo "${tipo.label}"? Isso apaga campos e checklist desse tipo.`)) return;
+
+      templates.equipamentoTipos = templates.equipamentoTipos.filter(t => t.id !== tipoId);
+      delete templates.equipamentoCamposByTipo[tipoId];
+      delete templates.checklistByTipo[tipoId];
+
+      setTemplates(templates);
+      renderListaTipos();
+      toast('Tipo excluído.', 'warning');
+    }
+
+    // =========================
+    // Modal
+    // =========================
+    function abrirModalTipo(tipoId) {
+      const templates = getTemplates();
+      const tipo = templates.equipamentoTipos.find(t => t.id === tipoId);
+      if (!tipo) return;
+
+      tipoEditandoId = tipoId;
+
+      document.getElementById('modalEditarTipoTitulo').textContent = `Editar Tipo • ${tipo.label}`;
+      document.getElementById('modalEditarTipo').style.display = 'flex';
+
+      selectTab('tab-campos');
+
+      document.getElementById('campoLabel').value = '';
+      document.getElementById('campoKind').value = 'text';
+      document.getElementById('campoOptions').value = '';
+      updateCampoOptionsVisibility();
+
+      document.getElementById('checkLabel').value = '';
+
+      renderModalTipo();
+    }
+
+    function fecharModalTipo() {
+      document.getElementById('modalEditarTipo').style.display = 'none';
+      tipoEditandoId = null;
+    }
+
+    function selectTab(paneId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+      document.getElementById(paneId).classList.add('active');
+      document.getElementById('btn-' + paneId).classList.add('active');
+    }
+
+    function renderModalTipo() {
+      const templates = getTemplates();
+      const camposTbody = document.getElementById('modalCamposTbody');
+      const camposEmpty = document.getElementById('modalCamposEmpty');
+      const checksTbody = document.getElementById('modalChecklistTbody');
+      const checksEmpty = document.getElementById('modalChecklistEmpty');
+
+      if (!tipoEditandoId) return;
+
+      const fields = templates.equipamentoCamposByTipo[tipoEditandoId] || [];
+      const items = templates.checklistByTipo[tipoEditandoId] || [];
+
+      if (!fields.length) {
+        camposTbody.innerHTML = '';
+        camposEmpty.style.display = 'block';
+      } else {
+        camposEmpty.style.display = 'none';
+        camposTbody.innerHTML = fields.map((f, idx) => `
+          <tr>
+            <td>
+              <div style="font-weight:900;">${escapeHTML(f.label)}</div>
+              <div class="hint"><span class="mono">${escapeHTML(f.id)}</span></div>
+            </td>
+            <td><span class="pill">${escapeHTML(f.kind)}</span></td>
+            <td>${f.kind === 'select' ? `<span class="hint">${escapeHTML((f.options || []).join(', '))}</span>` : `<span class="hint">—</span>`}</td>
+            <td><button class="btn btn-mini btn-mini-danger" type="button" onclick="removerCampoNoTipo(${idx})">Remover</button></td>
+          </tr>
+        `).join('');
+      }
+
+      if (!items.length) {
+        checksTbody.innerHTML = '';
+        checksEmpty.style.display = 'block';
+      } else {
+        checksEmpty.style.display = 'none';
+        checksTbody.innerHTML = items.map((it, idx) => `
+          <tr>
+            <td>
+              <div style="font-weight:900;">${escapeHTML(it.label)}</div>
+              <div class="hint"><span class="mono">${escapeHTML(it.id)}</span></div>
+            </td>
+            <td><span class="pill">checkbox</span></td>
+            <td><button class="btn btn-mini btn-mini-danger" type="button" onclick="removerChecklistNoTipo(${idx})">Remover</button></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function toIdFromLabel(label) {
+      return String(label || '')
+        .trim()
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+
+    function updateCampoOptionsVisibility() {
+      const kind = document.getElementById('campoKind').value;
+      document.getElementById('campoOptionsWrap').style.display = kind === 'select' ? 'block' : 'none';
+    }
+
+    function adicionarCampoNoTipo() {
+      if (!tipoEditandoId) return;
+
+      const label = (document.getElementById('campoLabel').value || '').trim();
+      const kind = document.getElementById('campoKind').value;
+
+      if (!label) return toast('Digite o nome do campo.', 'warning');
+
+      const id = toIdFromLabel(label);
+      if (!id) return toast('Nome inválido.', 'warning');
+
+      const optionsRaw = (document.getElementById('campoOptions').value || '').trim();
+      const options = kind === 'select'
+        ? optionsRaw.split(',').map(s => s.trim()).filter(Boolean)
+        : [];
+
+      if (kind === 'select' && !options.length) return toast('Informe opções para o select.', 'warning');
+
+      const templates = getTemplates();
+      const fields = templates.equipamentoCamposByTipo[tipoEditandoId] || [];
+
+      if (fields.some(f => f.id === id)) return toast('Já existe um campo com esse nome (id).', 'warning');
+
+      fields.push({ id, label, kind, options });
+      templates.equipamentoCamposByTipo[tipoEditandoId] = fields;
+
+      const tipo = templates.equipamentoTipos.find(t => t.id === tipoEditandoId);
+      if (tipo) tipo.updatedAt = new Date().toISOString();
+
+      setTemplates(templates);
+
+      document.getElementById('campoLabel').value = '';
+      document.getElementById('campoKind').value = 'text';
+      document.getElementById('campoOptions').value = '';
+      updateCampoOptionsVisibility();
+
+      renderModalTipo();
+      renderListaTipos();
+      toast('Campo adicionado!', 'success');
+    }
+
+    function removerCampoNoTipo(index) {
+      if (!tipoEditandoId) return;
+
+      const templates = getTemplates();
+      const fields = templates.equipamentoCamposByTipo[tipoEditandoId] || [];
+      const f = fields[index];
+      if (!f) return;
+
+      if (!confirm(`Remover o campo "${f.label}"?`)) return;
+
+      fields.splice(index, 1);
+      templates.equipamentoCamposByTipo[tipoEditandoId] = fields;
+
+      const tipo = templates.equipamentoTipos.find(t => t.id === tipoEditandoId);
+      if (tipo) tipo.updatedAt = new Date().toISOString();
+
+      setTemplates(templates);
+
+      renderModalTipo();
+      renderListaTipos();
+      toast('Campo removido.', 'warning');
+    }
+
+    function adicionarChecklistNoTipo() {
+      if (!tipoEditandoId) return;
+
+      const label = (document.getElementById('checkLabel').value || '').trim();
+      if (!label) return toast('Digite o item do checklist.', 'warning');
+
+      const id = toIdFromLabel(label);
+      if (!id) return toast('Nome inválido.', 'warning');
+
+      const templates = getTemplates();
+      const items = templates.checklistByTipo[tipoEditandoId] || [];
+
+      if (items.some(x => x.id === id)) return toast('Já existe um item com esse nome (id).', 'warning');
+
+      items.push({ id, label });
+      templates.checklistByTipo[tipoEditandoId] = items;
+
+      const tipo = templates.equipamentoTipos.find(t => t.id === tipoEditandoId);
+      if (tipo) tipo.updatedAt = new Date().toISOString();
+
+      setTemplates(templates);
+
+      document.getElementById('checkLabel').value = '';
+      renderModalTipo();
+      renderListaTipos();
+      toast('Checklist adicionado!', 'success');
+    }
+
+    function removerChecklistNoTipo(index) {
+      if (!tipoEditandoId) return;
+
+      const templates = getTemplates();
+      const items = templates.checklistByTipo[tipoEditandoId] || [];
+      const it = items[index];
+      if (!it) return;
+
+      if (!confirm(`Remover o item "${it.label}"?`)) return;
+
+      items.splice(index, 1);
+      templates.checklistByTipo[tipoEditandoId] = items;
+
+      const tipo = templates.equipamentoTipos.find(t => t.id === tipoEditandoId);
+      if (tipo) tipo.updatedAt = new Date().toISOString();
+
+      setTemplates(templates);
+
+      renderModalTipo();
+      renderListaTipos();
+      toast('Item removido.', 'warning');
+    }
+
+    // =========================
+    // Utils
+    // =========================
+    function escapeHTML(s) {
+      return String(s ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+    function escapeJS(s) {
+      return String(s ?? '').replaceAll('\\','\\\\').replaceAll("'","\\'");
+    }
+
+    // =========================
+    // Init
+    // =========================
+    document.addEventListener('DOMContentLoaded', () => {
+      const anoEl = document.getElementById('ano-atual');
+      if (anoEl) anoEl.textContent = new Date().getFullYear();
+
+      const isCollapsed = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+      const layout = document.getElementById('mainLayout');
+      if (layout && isCollapsed) layout.classList.add('collapsed');
+
+      document.getElementById('campoKind').addEventListener('change', updateCampoOptionsVisibility);
+
+      carregarTela();
+
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleSidebar(); }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); salvarTudo(); }
+        if (e.key === 'Escape') fecharModalTipo();
+      });
+
+      // Sync: se outra aba alterar templates/config, atualiza
+      window.addEventListener('storage', (e) => {
+        if (e.key === LS.config || e.key === LS.legacyConfig) {
+          carregarTela();
+        }
+        if (e.key === LS.sidebarCollapsed) {
+          const isCollapsed2 = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+          const layout2 = document.getElementById('mainLayout');
+          if (!layout2) return;
+          if (isCollapsed2) layout2.classList.add('collapsed');
+          else layout2.classList.remove('collapsed');
+        }
+      });
+    });
+
+    // expor pro HTML
+    window.toggleSidebar = toggleSidebar;
+    window.resetarParaPadrao = resetarParaPadrao;
+    window.salvarTudo = salvarTudo;
+    window.preencherUsuarioMock = preencherUsuarioMock;
+    window.preencherEmpresaMock = preencherEmpresaMock;
+    window.toggleSecret = toggleSecret;
+
+    window.criarTipoEquipamento = criarTipoEquipamento;
+    window.limparCriacaoTipo = limparCriacaoTipo;
+    window.abrirModalTipo = abrirModalTipo;
+    window.fecharModalTipo = fecharModalTipo;
+    window.selectTab = selectTab;
+
+    window.adicionarCampoNoTipo = adicionarCampoNoTipo;
+    window.removerCampoNoTipo = removerCampoNoTipo;
+    window.adicionarChecklistNoTipo = adicionarChecklistNoTipo;
+    window.removerChecklistNoTipo = removerChecklistNoTipo;
+
+    window.removerTipo = removerTipo;
+  </script>
+</body>
+</html>

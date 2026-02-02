@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>OS Flow • Cobrança</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-50:#f0f9ff; --primary-100:#e0f2fe; --primary-200:#bae6fd; --primary-300:#7dd3fc;
+      --primary-400:#38bdf8; --primary-500:#0ea5e9; --primary-600:#0284c7; --primary-700:#0369a1;
+      --success:#10b981; --warning:#f59e0b; --danger:#ef4444; --purple:#8b5cf6; --teal:#14b8a6;
+
+      --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+      --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+      --gray-800:#1f2937; --gray-900:#111827;
+
+      --bg-body: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);
+      --bg-surface:#ffffff;
+      --bg-sidebar: rgba(255,255,255,0.95);
+
+      --text-primary:#111827;
+      --text-secondary:#4b5563;
+      --text-tertiary:#6b7280;
+      --text-muted:#9ca3af;
+      --text-inverse:#ffffff;
+
+      --border-light:#e5e7eb;
+      --border-medium:#d1d5db;
+
+      --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+      --shadow-primary: 0 4px 14px 0 rgba(14,165,233,0.2);
+
+      --font-primary:'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-secondary:'Manrope', system-ui, -apple-system, sans-serif;
+
+      --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.25rem; --space-6:1.5rem; --space-8:2rem; --space-10:2.5rem;
+
+      --radius-md:.5rem; --radius-lg:.75rem; --radius-xl:1rem; --radius-full:9999px;
+
+      --transition-base: 250ms cubic-bezier(0.4,0,0.2,1);
+
+      --sidebar-width: 260px;
+      --sidebar-collapsed: 72px;
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
+      font-family: var(--font-secondary);
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.5;
+    }
+
+    .layout { display:grid; grid-template-columns: var(--sidebar-width) 1fr; min-height:100vh; transition: grid-template-columns var(--transition-base); }
+    .layout.collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
+
+    .sidebar-wrapper{
+      position: sticky; top:0; height:100vh;
+      background: var(--bg-sidebar);
+      border-right:1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+      z-index:100;
+      width: var(--sidebar-width);
+      transition: all var(--transition-base);
+      overflow:hidden;
+    }
+    .layout.collapsed .sidebar-wrapper { width: var(--sidebar-collapsed); }
+    .sidebar{ padding: var(--space-6) 0; display:flex; flex-direction:column; height:100%; }
+
+    .sidebar-logo{
+      padding:0 var(--space-4) var(--space-6);
+      display:flex; align-items:center; gap: var(--space-3);
+      border-bottom:1px solid var(--border-light);
+      padding-bottom: var(--space-6);
+      margin-bottom: var(--space-6);
+      min-height: 60px;
+    }
+    .layout.collapsed .sidebar-logo{ padding:0 var(--space-3) var(--space-6); justify-content:center; }
+    .sidebar-logo-icon{
+      width:40px; height:40px; border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--text-inverse);
+      font-family: var(--font-primary);
+      font-weight:800;
+      box-shadow: var(--shadow-primary);
+      cursor:pointer;
+      transition: transform var(--transition-base);
+      flex-shrink:0;
+    }
+    .sidebar-logo-icon:hover{ transform: scale(1.05); }
+    .sidebar-logo-text{ overflow:hidden; transition: opacity var(--transition-base), max-width var(--transition-base); max-width: 200px; }
+    .layout.collapsed .sidebar-logo-text{ opacity:0; max-width:0; }
+    .sidebar-logo-text h1{ font-family: var(--font-primary); font-size:1.25rem; font-weight:800; letter-spacing:-0.5px; }
+    .sidebar-logo-text small{ display:block; font-size:0.6875rem; color: var(--text-tertiary); margin-top: var(--space-1); font-weight:500; }
+
+    .menu{ list-style:none; padding:0 var(--space-2); flex:1; font-size: .875rem; }
+    .layout.collapsed .menu{ padding:0 var(--space-1); }
+    .menu li{ margin-bottom: var(--space-1); }
+    .menu a{
+      display:flex; align-items:center; gap: var(--space-3);
+      padding: var(--space-3);
+      color: var(--text-secondary);
+      text-decoration:none;
+      border-radius: var(--radius-lg);
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      position: relative;
+    }
+    .layout.collapsed .menu a{ justify-content:center; }
+    .menu a:hover{ background: var(--primary-50); color: var(--primary-600); transform: translateX(4px); }
+    .layout.collapsed .menu a:hover{ transform: translateX(0) scale(1.05); }
+    .menu a.active{ background: var(--primary-500); color: var(--text-inverse); box-shadow: var(--shadow-primary); font-weight: 700; }
+    .menu-icon{ width:20px; text-align:center; font-size:1.125rem; flex-shrink:0; }
+    .menu-text{ overflow:hidden; transition: opacity var(--transition-base), max-width var(--transition-base); max-width:200px; }
+    .layout.collapsed .menu-text{ opacity:0; max-width:0; }
+    .menu-tooltip{
+      position:absolute; left:100%; top:50%; transform: translateY(-50%);
+      background: var(--gray-800); color:#fff;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: .75rem;
+      opacity:0; visibility:hidden;
+      transition: all 150ms ease;
+      pointer-events:none;
+      box-shadow: var(--shadow-md);
+      white-space: nowrap;
+    }
+    .layout.collapsed .menu a:hover .menu-tooltip{ opacity:1; visibility:visible; transform: translateY(-50%) translateX(8px); }
+
+    .sidebar-footer{
+      padding: var(--space-3) var(--space-4);
+      font-size: .6875rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-light);
+      font-weight: 600;
+      text-align:center;
+      white-space: nowrap;
+      overflow:hidden;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+    .layout.collapsed .sidebar-footer{ padding: var(--space-2); font-size:.6rem; flex-direction:column; }
+    .layout.collapsed .sidebar-footer span:not(:first-child){ opacity:0; width:0; margin:0; }
+
+    .main-wrapper{ display:flex; flex-direction:column; min-width:0; }
+    .topbar{
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--space-3) var(--space-6);
+      display:flex; align-items:center; justify-content: space-between;
+      position: sticky; top:0; z-index:90;
+      box-shadow: var(--shadow-sm);
+      min-height: 60px;
+    }
+    .topbar-title{
+      font-family: var(--font-primary);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display:flex; align-items:center; gap: var(--space-3);
+    }
+    .breadcrumb{
+      font-size: 0.6875rem;
+      color: var(--text-tertiary);
+      font-weight: 600;
+      display:flex; align-items:center; gap: var(--space-2);
+    }
+    .breadcrumb::before{ content:'|'; color: var(--border-medium); margin-right: var(--space-2); font-weight: 400; }
+    .breadcrumb span{ background: var(--primary-500); color: var(--text-inverse); padding: var(--space-1) var(--space-2); border-radius: var(--radius-full); font-size:0.625rem; letter-spacing:.5px; text-transform:uppercase; }
+
+    .user-info{ display:flex; align-items:center; gap: var(--space-3); font-size: .8125rem; color: var(--text-secondary); font-weight: 600; }
+    .user-avatar{
+      width:36px; height:36px; border-radius: var(--radius-full);
+      background: linear-gradient(135deg, var(--primary-500) 0%, var(--teal) 100%);
+      display:flex; align-items:center; justify-content:center;
+      color: var(--text-inverse);
+      font-weight: 800;
+      box-shadow: var(--shadow-sm);
+      cursor:pointer;
+    }
+
+    .content{ padding: var(--space-6); flex:1; }
+
+    .page-header{
+      display:flex; justify-content: space-between; align-items:center;
+      margin-bottom: var(--space-8);
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .page-header h1{
+      font-family: var(--font-primary);
+      font-size: 1.75rem;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      display:flex; align-items:center; gap: var(--space-3);
+    }
+    .page-header h1:before{ content:'📄'; }
+
+    .actions{ display:flex; gap: var(--space-3); flex-wrap: wrap; }
+    .btn{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-primary);
+      font-size: .875rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      display:inline-flex; align-items:center; gap: var(--space-2);
+      text-decoration: none;
+    }
+    .btn:hover{ background: var(--gray-50); border-color: var(--gray-300); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+    .btn-primary{ background: var(--primary-500); border-color: transparent; color: var(--text-inverse); box-shadow: var(--shadow-primary); }
+    .btn-primary:hover{ background: var(--primary-600); box-shadow: var(--shadow-lg); }
+    .btn-danger{ background: var(--danger); border-color: transparent; color: var(--text-inverse); }
+    .btn-success{ background: var(--success); border-color: transparent; color: var(--text-inverse); }
+
+    .grid{ display:grid; grid-template-columns: 1fr 420px; gap: var(--space-6); align-items:start; }
+    @media (max-width: 1100px){ .grid{ grid-template-columns: 1fr; } }
+
+    .panel{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-md);
+      margin-bottom: var(--space-6);
+    }
+    .panel-title{
+      font-family: var(--font-primary);
+      font-size: 1.125rem;
+      font-weight: 900;
+      margin-bottom: var(--space-5);
+      display:flex; align-items:center; justify-content: space-between;
+      gap: var(--space-2);
+    }
+    .panel-title small{ font-weight: 700; color: var(--text-tertiary); font-size: .75rem; }
+
+    .field{ display:flex; flex-direction:column; gap: var(--space-2); margin-bottom: var(--space-4); }
+    label{ font-size: .875rem; font-weight: 700; color: var(--text-secondary); }
+    .hint{ font-size: .75rem; color: var(--text-tertiary); }
+    input, select, textarea{
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      font-family: var(--font-secondary);
+      font-size: .875rem;
+      transition: all var(--transition-base);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+    textarea{ min-height: 110px; resize: vertical; }
+    input:focus, select:focus, textarea:focus{ outline:none; border-color: var(--primary-400); box-shadow: 0 0 0 3px rgba(14,165,233,.12); }
+
+    .form-row{ display:grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+    @media (max-width: 720px){ .form-row{ grid-template-columns: 1fr; } }
+
+    .divider{ height:1px; background: var(--border-light); margin: var(--space-6) 0; }
+
+    .table{ width:100%; border-collapse: separate; border-spacing: 0; overflow:hidden; border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+    .table th, .table td{ padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-light); text-align:left; font-size: .875rem; vertical-align: top; }
+    .table th{ background: var(--gray-50); font-size: .75rem; text-transform: uppercase; letter-spacing: .5px; color: var(--text-secondary); }
+    .table tr:hover td{ background: var(--primary-50); }
+
+    .pill{
+      display:inline-flex; align-items:center; gap: .5rem;
+      border-radius: var(--radius-full);
+      padding: .25rem .75rem;
+      font-size: .75rem;
+      font-weight: 900;
+      border: 1px solid var(--border-light);
+      background: var(--gray-50);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    .pill.success{ background: rgba(16,185,129,.10); border-color: rgba(16,185,129,.25); color: #0f766e; }
+    .pill.warning{ background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.25); color: #92400e; }
+    .pill.danger{ background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.25); color: #991b1b; }
+    .pill.info{ background: rgba(14,165,233,.10); border-color: rgba(14,165,233,.25); color: #075985; }
+
+    .row-actions{ display:flex; gap: .5rem; flex-wrap: wrap; align-items:center; }
+    .btn-mini{ padding: .35rem .6rem; border-radius: var(--radius-md); font-size: .75rem; font-weight: 900; border: 1px solid transparent; cursor:pointer; }
+    .btn-mini-primary{ background: var(--primary-500); color:white; }
+    .btn-mini-danger{ background: var(--danger); color:white; }
+    .btn-mini:hover{ transform: translateY(-1px); }
+    .btn-mini:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+
+    .empty{
+      text-align:center;
+      padding: var(--space-8);
+      color: var(--text-tertiary);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-xl);
+      background: var(--gray-50);
+    }
+
+    .toast{
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      padding: .75rem 1rem;
+      border-radius: var(--radius-xl);
+      color: white;
+      font-weight: 900;
+      box-shadow: var(--shadow-lg);
+      max-width: 520px;
+      animation: slideUp .2s ease-out;
+      display:flex;
+      gap:.75rem;
+      align-items:center;
+      justify-content: space-between;
+    }
+    @keyframes slideUp{ from { transform: translateY(10px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+
+    /* Modal simples */
+    .modal-backdrop{
+      position: fixed; inset: 0;
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn .2s ease-out;
+    }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes fadeOut { from { opacity:1; } to { opacity:0; } }
+    .modal{
+      background: var(--bg-surface);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      width: 900px;
+      max-width: 96vw;
+      max-height: 88vh;
+      overflow: auto;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-light);
+      animation: slideUp .2s ease-out;
+    }
+    .modal-header{ display:flex; align-items:center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); }
+    .modal-header h3{ font-family: var(--font-primary); font-size: 1.125rem; font-weight: 900; }
+    .modal-close{
+      width: 36px; height:36px; border-radius: var(--radius-full);
+      border: 1px solid var(--border-light);
+      background: var(--bg-surface);
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      transition: all var(--transition-base);
+    }
+    .modal-close:hover{ background: rgba(239,68,68,0.12); border-color: var(--danger); color: var(--danger); }
+    .modal-actions{ display:flex; justify-content:flex-end; gap: var(--space-3); margin-top: var(--space-6); flex-wrap: wrap; }
+
+    /* Responsivo mobile */
+    @media (max-width: 768px){
+      .layout{ grid-template-columns: 1fr; }
+      .sidebar-wrapper{
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border-light);
+        z-index: 1000;
+      }
+      .sidebar{ padding: var(--space-4) 0; flex-direction: row; align-items:center; }
+      .menu{ display:flex; overflow-x:auto; flex: 0 0 auto; }
+      .menu li{ margin:0; }
+      .menu a{ flex-direction: column; padding: var(--space-2); }
+      .menu-text{ font-size: 0.625rem; }
+      .content{ padding: var(--space-4); }
+      .topbar{ padding: var(--space-4); }
+      .page-header{ flex-direction: column; align-items:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="layout" id="mainLayout">
+    <div class="sidebar-wrapper">
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon" onclick="toggleSidebar()">OS</div>
+          <div class="sidebar-logo-text">
+            <h1>OS Flow</h1>
+            <small>Dashboard Inteligente</small>
+          </div>
+        </div>
+
+        <ul class="menu">
+          <li><a href="index.html"><span class="menu-icon">📊</span><span class="menu-text">Dashboard</span><span class="menu-tooltip">Dashboard</span></a></li>
+          <li><a href="cadastrar-clientes.html"><span class="menu-icon">👥</span><span class="menu-text">Clientes</span><span class="menu-tooltip">Clientes</span></a></li>
+          <li><a href="produtos.html"><span class="menu-icon">📦</span><span class="menu-text">Produtos</span><span class="menu-tooltip">Produtos</span></a></li>
+          <li><a href="servicos.html"><span class="menu-icon">🔧</span><span class="menu-text">Serviços</span><span class="menu-tooltip">Serviços</span></a></li>
+          <li><a href="vendas.html"><span class="menu-icon">💰</span><span class="menu-text">Vendas</span><span class="menu-tooltip">Vendas</span></a></li>
+          <li><a href="ordem-servico.html"><span class="menu-icon">📋</span><span class="menu-text">Ordens</span><span class="menu-tooltip">Ordens</span></a></li>
+          <li><a href="garantias.html"><span class="menu-icon">🛡️</span><span class="menu-text">Garantias</span><span class="menu-tooltip">Garantias</span></a></li>
+          <li><a href="arquivos.html"><span class="menu-icon">📁</span><span class="menu-text">Arquivos</span><span class="menu-tooltip">Arquivos</span></a></li>
+          <li><a href="financeiro.html"><span class="menu-icon">💳</span><span class="menu-text">Financeiro</span><span class="menu-tooltip">Financeiro</span></a></li>
+          <li><a href="cobranca.html" class="active"><span class="menu-icon">📄</span><span class="menu-text">Cobrança</span><span class="menu-tooltip">Cobrança</span></a></li>
+          <li><a href="configuracoes.html"><span class="menu-icon">⚙️</span><span class="menu-text">Configurações</span><span class="menu-tooltip">Configurações</span></a></li>
+        </ul>
+
+        <div class="sidebar-footer">v3.8.1 • © <span id="ano-atual"></span> • OS Flow</div>
+      </aside>
+    </div>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-title">
+          Cobrança
+          <div class="breadcrumb"><span>Recebíveis</span></div>
+        </div>
+        <div class="user-info">
+          <span>Bem-vindo, <strong id="topUserName">Usuário</strong></span>
+          <div class="user-avatar" id="topUserAvatar">U</div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="page-header">
+          <h1>Cobranças</h1>
+          <div class="actions">
+            <button class="btn" type="button" onclick="abrirModalNovaCobranca()">➕ Nova cobrança</button>
+            <button class="btn btn-primary" type="button" onclick="refresh()">🔄 Atualizar</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <!-- esquerda: lista -->
+          <div>
+            <section class="panel">
+              <div class="panel-title">
+                <span>📋 Lista de cobranças</span>
+                <small>localStorage: <span style="font-family: ui-monospace, Menlo, monospace;">osflow:cobrancas</span></small>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="filtroStatus">Status</label>
+                  <select id="filtroStatus" onchange="render()">
+                    <option value="">Todos</option>
+                    <option value="aberta">Aberta</option>
+                    <option value="atrasada">Atrasada</option>
+                    <option value="parcial">Parcial</option>
+                    <option value="paga">Paga</option>
+                    <option value="cancelada">Cancelada</option>
+                    <option value="rascunho">Rascunho</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="filtroBusca">Buscar</label>
+                  <input id="filtroBusca" placeholder="Cliente, venda, descrição..." oninput="render()" />
+                </div>
+              </div>
+
+              <div style="overflow:auto;">
+                <table class="table" aria-label="Cobranças">
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th>Origem</th>
+                      <th>Vencimento</th>
+                      <th>Valor</th>
+                      <th>Status</th>
+                      <th style="width: 300px;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cobrancasTbody"></tbody>
+                </table>
+              </div>
+
+              <div id="cobrancasEmpty" class="empty" style="display:none; margin-top: var(--space-4);">
+                Nenhuma cobrança ainda. Crie uma nova ou gere a partir de uma venda.
+              </div>
+            </section>
+          </div>
+
+          <!-- direita: detalhes / integrações -->
+          <div>
+            <section class="panel">
+              <div class="panel-title">
+                <span>🧩 Integrações (reservado)</span>
+                <small>Mercado Pago + WhatsApp</small>
+              </div>
+
+              <div class="field" style="margin-bottom:0;">
+                <label>Status de integração</label>
+                <div class="hint" id="integracoesHint">
+                  Conectores ainda não implementados. Configure tokens em <strong>Configurações</strong>.
+                </div>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="field">
+                <label>Mercado Pago</label>
+                <div class="hint" id="mpHint">—</div>
+              </div>
+
+              <div class="field" style="margin-bottom:0;">
+                <label>WhatsApp</label>
+                <div class="hint" id="waHint">—</div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-title">
+                <span>⏰ Lembretes (local)</span>
+                <small>pendências do dia</small>
+              </div>
+
+              <div id="lembretesBox" class="empty">
+                Nenhum lembrete no momento.
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: Nova cobrança (manual) -->
+  <div class="modal-backdrop" id="modalNovaCobranca">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>➕ Nova cobrança (manual)</h3>
+        <button class="modal-close" type="button" onclick="fecharModalNovaCobranca()">×</button>
+      </div>
+
+      <div class="field">
+        <label for="mcOrigemTipo">Origem</label>
+        <select id="mcOrigemTipo" onchange="toggleOrigemRef()">
+          <option value="manual">Manual</option>
+          <option value="venda">Venda</option>
+          <option value="os">OS</option>
+        </select>
+        <div class="hint">Por enquanto, “Venda” e “OS” são só referência (sem importar itens automaticamente).</div>
+      </div>
+
+      <!-- somente cliente cadastrado -->
+      <div class="form-row">
+        <div class="field">
+          <label for="mcClienteSelect">Cliente (cadastrado)</label>
+          <select id="mcClienteSelect"></select>
+          <div class="hint">Somente clientes <strong>ativos</strong> aparecem aqui.</div>
+        </div>
+        <div class="field">
+          <label for="mcClienteId">ClienteId</label>
+          <input id="mcClienteId" placeholder="id do cliente" readonly />
+          <div class="hint">Preenchido automaticamente ao selecionar o cliente.</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="mcClienteNome">Cliente (nome)</label>
+        <input id="mcClienteNome" placeholder="Nome do cliente" readonly />
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="mcValor">Valor total</label>
+          <input id="mcValor" type="number" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="field">
+          <label for="mcVencimento">Vencimento</label>
+          <input id="mcVencimento" type="date" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="mcParcelas">Parcelas</label>
+          <input id="mcParcelas" type="number" min="1" max="36" value="1" />
+        </div>
+        <div class="field">
+          <label for="mcDescricao">Descrição</label>
+          <input id="mcDescricao" placeholder="Ex: Serviço / Venda / OS" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="panel-title" style="margin-top:0;">
+        <span>Reservas p/ API (não funcional)</span>
+        <small>somente placeholders</small>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label for="mcMpPreferenceId">MP preferenceId</label>
+          <input id="mcMpPreferenceId" placeholder="será preenchido pela API" disabled />
+        </div>
+        <div class="field">
+          <label for="mcWaMessageId">WA messageId</label>
+          <input id="mcWaMessageId" placeholder="será preenchido pela API" disabled />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn" type="button" onclick="fecharModalNovaCobranca()">Cancelar</button>
+        <button class="btn btn-success" type="button" onclick="criarCobrancaManual()">Criar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Detalhes -->
+  <div class="modal-backdrop" id="modalDetalhe">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="detalheTitulo">Detalhes</h3>
+        <button class="modal-close" type="button" onclick="fecharModalDetalhe()">×</button>
+      </div>
+
+      <div id="detalheCorpo"></div>
+
+      <div class="modal-actions">
+        <button class="btn" type="button" onclick="fecharModalDetalhe()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LS = Object.freeze({
+      config: 'osflow:config',
+      clientes: 'osflow:clientes',
+      produtos: 'osflow:produtos',
+      cobrancas: 'osflow:cobrancas',
+      vendas: 'osflow:vendas',
+      os: 'osflow:os',
+      sidebarCollapsed: 'osflow:ui:sidebarCollapsed',
+
+      // undo/ctrl+z
+      undoCobrancas: 'osflow:undo:cobrancas'
+    });
+
+    function lsReadJSON(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+      } catch {
+        return fallback;
+      }
+    }
+    function lsWriteJSON(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+    function toast(message, type = 'info', actionLabel = '', actionFn = null) {
+      const colors = {
+        info: 'var(--primary-500)',
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        danger: 'var(--danger)'
+      };
+      const el = document.createElement('div');
+      el.className = 'toast';
+      el.style.background = colors[type] || colors.info;
+
+      const left = document.createElement('div');
+      left.textContent = message;
+
+      el.appendChild(left);
+
+      if (actionLabel && typeof actionFn === 'function') {
+        const btn = document.createElement('button');
+        btn.className = 'btn-mini btn-mini-primary';
+        btn.type = 'button';
+        btn.textContent = actionLabel;
+        btn.onclick = () => {
+          try { actionFn(); } finally { el.remove(); }
+        };
+        el.appendChild(btn);
+      }
+
+      document.body.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transition = 'opacity .25s ease';
+        setTimeout(() => el.remove(), 250);
+      }, 3500);
+    }
+
+    function toggleSidebar() {
+      const layout = document.getElementById('mainLayout');
+      if (!layout) return;
+      layout.classList.toggle('collapsed');
+      localStorage.setItem(LS.sidebarCollapsed, layout.classList.contains('collapsed'));
+    }
+
+    function getConfig() {
+      const cfg = lsReadJSON(LS.config, {});
+      return cfg && typeof cfg === 'object' ? cfg : {};
+    }
+
+    function atualizarTopUser() {
+      const cfg = getConfig();
+      const name = cfg?.usuario?.nome || 'Usuário';
+      const initial = (name.trim()[0] || 'U').toUpperCase();
+      document.getElementById('topUserName').textContent = name;
+      document.getElementById('topUserAvatar').textContent = initial;
+
+      const mp = cfg?.integracoes?.mercadopago || {};
+      const wa = cfg?.integracoes?.whatsapp || {};
+
+      document.getElementById('mpHint').textContent =
+        mp.accessToken ? 'Token configurado (accessToken)' : 'Token não configurado';
+
+      document.getElementById('waHint').textContent =
+        wa.token ? 'Token configurado (WhatsApp)' : 'Token não configurado';
+    }
+
+    // -------------------------
+    // Undo (Ctrl+Z)
+    // -------------------------
+    function getUndoStack() {
+      const stack = lsReadJSON(LS.undoCobrancas, []);
+      return Array.isArray(stack) ? stack : [];
+    }
+    function pushUndo(entry) {
+      const stack = getUndoStack();
+      stack.unshift(entry);
+      if (stack.length > 20) stack.length = 20;
+      lsWriteJSON(LS.undoCobrancas, stack);
+    }
+    function popUndo() {
+      const stack = getUndoStack();
+      const entry = stack.shift();
+      lsWriteJSON(LS.undoCobrancas, stack);
+      return entry || null;
+    }
+
+    function desfazerUltimaAcaoCobranca() {
+      const entry = popUndo();
+      if (!entry) return toast('Nada para desfazer.', 'info');
+
+      if (entry.type === 'remove-cobranca') {
+        const list = getCobrancas();
+        if (!list.some(c => c && c.id === entry.payload.id)) {
+          list.unshift(entry.payload);
+          setCobrancas(list);
+          toast('Desfeito: cobrança restaurada.', 'success');
+          render();
+          renderLembretes();
+        } else {
+          toast('Nada a fazer: cobrança já existe.', 'info');
+        }
+        return;
+      }
+
+      toast('Ação de desfazer desconhecida.', 'warning');
+    }
+
+    // -------------------------
+    // Helpers: vendas/cobranças
+    // -------------------------
+    function normalizeStatus(c) {
+      if (!c) return 'rascunho';
+
+      // padrão do vendas.html (A):
+      // pending | paid | cancelled
+      if (c.status === 'paid') return 'paga';
+      if (c.status === 'cancelled') return 'cancelada';
+      if (c.status === 'pending') {
+        const venc = c?.datas?.vencimento || c?.dueDate || '';
+        if (venc) {
+          const d = new Date(venc + 'T00:00:00');
+          const hoje = new Date();
+          hoje.setHours(0,0,0,0);
+          if (!isNaN(d) && d < hoje) return 'atrasada';
+        }
+        return 'aberta';
+      }
+
+      // legado antigo desta página:
+      if (c.status === 'cancelada') return 'cancelada';
+      if (c.status === 'paga') return 'paga';
+      if (c.status === 'parcial') return 'parcial';
+      if (c.status === 'rascunho') return 'rascunho';
+
+      const venc = c?.datas?.vencimento || c?.dueDate || '';
+      const total = Number(c.valorTotal || c.valor || 0);
+
+      const pagos = (c.pagamentos || []).reduce((acc,p) => acc + Number(p.valor || 0), 0);
+      if (pagos >= total && total > 0) return 'paga';
+      if (pagos > 0 && pagos < total) return 'parcial';
+
+      if (venc) {
+        const d = new Date(venc + 'T00:00:00');
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+        if (!isNaN(d) && d < hoje) return 'atrasada';
+      }
+      return 'aberta';
+    }
+
+    function statusPill(status) {
+      const map = {
+        aberta: { cls:'info', label:'ABERTA' },
+        atrasada: { cls:'danger', label:'ATRASADA' },
+        parcial: { cls:'warning', label:'PARCIAL' },
+        paga: { cls:'success', label:'PAGA' },
+        cancelada: { cls:'danger', label:'CANCELADA' },
+        rascunho: { cls:'warning', label:'RASCUNHO' }
+      };
+      const it = map[status] || map.rascunho;
+      return `<span class="pill ${it.cls}">${it.label}</span>`;
+    }
+
+    function formatBRL(n) {
+      return Number(n || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+    }
+
+    function qs() {
+      const p = new URLSearchParams(window.location.search);
+      return Object.fromEntries(p.entries());
+    }
+
+    function getCobrancas() {
+      const list = lsReadJSON(LS.cobrancas, []);
+      return Array.isArray(list) ? list : [];
+    }
+    function setCobrancas(list) { lsWriteJSON(LS.cobrancas, list); }
+
+    function getVendas() {
+      const list = lsReadJSON(LS.vendas, []);
+      return Array.isArray(list) ? list : [];
+    }
+    function setVendas(list) { lsWriteJSON(LS.vendas, list); }
+
+    function getClientesAtivos() {
+      const list = lsReadJSON(LS.clientes, []);
+      return (Array.isArray(list) ? list : []).filter(c => c && c.status === 'ativo');
+    }
+
+    function refresh() {
+      atualizarTopUser();
+      render();
+      renderLembretes();
+    }
+
+    // -------------------------
+    // Render
+    // -------------------------
+    function render() {
+      const tbody = document.getElementById('cobrancasTbody');
+      const empty = document.getElementById('cobrancasEmpty');
+
+      const statusFilter = document.getElementById('filtroStatus').value || '';
+      const busca = (document.getElementById('filtroBusca').value || '').trim().toLowerCase();
+
+      let list = getCobrancas().map(c => {
+        const next = deepClone(c);
+        next.statusNormalized = normalizeStatus(next);
+        return next;
+      });
+
+      if (statusFilter) list = list.filter(c => c.statusNormalized === statusFilter);
+
+      if (busca) {
+        list = list.filter(c => {
+          const s = [
+            c?.cliente?.nome,
+            c?.clienteNome,
+            c?.origem?.tipo,
+            c?.origem?.refNumero,
+            c?.descricao,
+            c?.numeroVenda,
+            c?.vendaNumero,
+            c?.vendaId
+          ].join(' ').toLowerCase();
+          return s.includes(busca);
+        });
+      }
+
+      if (!list.length) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      tbody.innerHTML = list.map(c => {
+        const status = c.statusNormalized;
+
+        const valor = Number(
+          c.valorTotal ??
+          c.valor ??
+          0
+        );
+
+        const origemTipo =
+          c?.origem?.tipo ||
+          (c?.vendaId ? 'venda' : 'manual');
+
+        const origemRef =
+          c?.origem?.refNumero ||
+          c?.numeroVenda ||
+          c?.vendaNumero ||
+          '';
+
+        const venc =
+          c?.datas?.vencimento ||
+          c?.dueDate ||
+          '-';
+
+        const podePagar = status !== 'paga' && status !== 'cancelada';
+        const podeCancelar = status !== 'paga';
+
+        const clienteNome =
+          c?.cliente?.nome ||
+          c?.clienteNome ||
+          '-';
+
+        const clienteIdLabel =
+          c?.cliente?.clienteId ? `id: ${c.cliente.clienteId}` :
+          (c?.clienteId ? `id: ${c.clienteId}` : '');
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight:900;">${escapeHTML(clienteNome)}</div>
+              <div class="hint">${escapeHTML(clienteIdLabel)}</div>
+            </td>
+            <td>
+              <div style="font-weight:800;">${escapeHTML(String(origemTipo).toUpperCase())}</div>
+              <div class="hint">${escapeHTML(origemRef)}</div>
+            </td>
+            <td>${escapeHTML(venc)}</td>
+            <td><strong>${formatBRL(valor)}</strong></td>
+            <td>${statusPill(status)}</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn-mini btn-mini-primary" type="button" onclick="abrirDetalhe(${c.id})">Detalhes</button>
+                <button class="btn-mini btn-mini-primary" type="button" onclick="marcarComoPaga(${c.id})" ${podePagar ? '' : 'disabled'}>✅ Marcar paga</button>
+                <button class="btn-mini btn-mini-danger" type="button" onclick="cancelar(${c.id})" ${podeCancelar ? '' : 'disabled'}>Cancelar</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      const q = qs();
+      if (q.id) {
+        const id = Number(q.id);
+        if (!isNaN(id)) {
+          const exists = list.find(x => x.id === id);
+          if (exists) abrirDetalhe(id);
+          history.replaceState({}, document.title, 'cobranca.html');
+        }
+      }
+    }
+
+    function renderLembretes() {
+      const box = document.getElementById('lembretesBox');
+      const list = getCobrancas().map(c => ({...c, statusNormalized: normalizeStatus(c)}));
+
+      const hoje = new Date();
+      hoje.setHours(0,0,0,0);
+      const y = hoje.getFullYear();
+      const m = String(hoje.getMonth()+1).padStart(2,'0');
+      const d = String(hoje.getDate()).padStart(2,'0');
+      const hojeStr = `${y}-${m}-${d}`;
+
+      const atrasadas = list.filter(c => c.statusNormalized === 'atrasada').slice(0, 5);
+      const venceHoje = list.filter(c => {
+        const venc = c?.datas?.vencimento || c?.dueDate || '';
+        return (venc === hojeStr) && (c.statusNormalized === 'aberta' || c.statusNormalized === 'parcial');
+      }).slice(0, 5);
+
+      if (!atrasadas.length && !venceHoje.length) {
+        box.className = 'empty';
+        box.innerHTML = 'Nenhum lembrete no momento.';
+        return;
+      }
+
+      const lines = [];
+      if (venceHoje.length) {
+        lines.push(`<div style="font-weight:900; margin-bottom: .5rem;">Vence hoje</div>`);
+        lines.push(...venceHoje.map(c => `<div class="hint">• ${escapeHTML(c.cliente?.nome || c.clienteNome || '-')} — ${formatBRL(Number(c.valorTotal ?? c.valor ?? 0))}</div>`));
+        lines.push('<div class="divider" style="margin: 1rem 0;"></div>');
+      }
+      if (atrasadas.length) {
+        lines.push(`<div style="font-weight:900; margin-bottom: .5rem;">Atrasadas</div>`);
+        lines.push(...atrasadas.map(c => {
+          const venc = c?.datas?.vencimento || c?.dueDate || '-';
+          return `<div class="hint">• ${escapeHTML(c.cliente?.nome || c.clienteNome || '-')} — venc. ${escapeHTML(venc)}</div>`;
+        }));
+      }
+
+      box.className = '';
+      box.style.border = '1px solid var(--border-light)';
+      box.style.borderRadius = 'var(--radius-xl)';
+      box.style.background = 'var(--bg-surface)';
+      box.style.padding = 'var(--space-4)';
+      box.innerHTML = lines.join('');
+    }
+
+    // -------------------------
+    // Modal: nova cobrança
+    // -------------------------
+    function abrirModalNovaCobranca() {
+      document.getElementById('modalNovaCobranca').style.display = 'flex';
+
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth()+1).padStart(2,'0');
+      const dd = String(today.getDate()).padStart(2,'0');
+      document.getElementById('mcVencimento').value = `${yyyy}-${mm}-${dd}`;
+
+      carregarClientesNoModal();
+      toggleOrigemRef();
+    }
+
+    function fecharModalNovaCobranca() {
+      const m = document.getElementById('modalNovaCobranca');
+      m.style.animation = 'fadeOut .2s ease-out forwards';
+      setTimeout(() => { m.style.display = 'none'; m.style.animation = ''; }, 200);
+    }
+
+    function toggleOrigemRef() {}
+
+    function carregarClientesNoModal() {
+      const select = document.getElementById('mcClienteSelect');
+      const clientes = getClientesAtivos().sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+
+      const options = [
+        `<option value="">Selecionar cliente...</option>`,
+        ...clientes.map(c => `<option value="${c.id}">${escapeHTML(c.nome || '-')}</option>`)
+      ];
+      select.innerHTML = options.join('');
+
+      document.getElementById('mcClienteId').value = '';
+      document.getElementById('mcClienteNome').value = '';
+
+      select.onchange = () => {
+        const id = select.value;
+        const cliente = clientes.find(c => String(c.id) === String(id));
+        document.getElementById('mcClienteId').value = cliente ? String(cliente.id) : '';
+        document.getElementById('mcClienteNome').value = cliente ? (cliente.nome || '') : '';
+      };
+    }
+
+    function criarCobrancaManual() {
+      const origemTipo = document.getElementById('mcOrigemTipo').value || 'manual';
+
+      const clienteId = (document.getElementById('mcClienteId').value || '').trim();
+      const clienteNome = (document.getElementById('mcClienteNome').value || '').trim();
+
+      const valorTotal = Number(document.getElementById('mcValor').value || 0);
+      const vencimento = document.getElementById('mcVencimento').value || '';
+      const parcelas = Math.max(1, Math.min(36, parseInt(document.getElementById('mcParcelas').value || '1', 10)));
+      const descricao = (document.getElementById('mcDescricao').value || '').trim();
+
+      if (!clienteId) return toast('Selecione um cliente cadastrado.', 'warning');
+      if (!clienteNome) return toast('Cliente inválido.', 'warning');
+      if (!vencimento) return toast('Informe o vencimento.', 'warning');
+      if (!isFinite(valorTotal) || valorTotal <= 0) return toast('Informe um valor válido.', 'warning');
+
+      const clientesAtivos = getClientesAtivos();
+      const exists = clientesAtivos.find(c => String(c.id) === String(clienteId));
+      if (!exists) return toast('Cliente não encontrado/ativo. Atualize a lista.', 'warning');
+
+      const now = Date.now();
+      const valorParcela = valorTotal / parcelas;
+
+      const parcelasDetalhe = Array.from({ length: parcelas }).map((_, idx) => {
+        const n = idx + 1;
+        const d = new Date(vencimento + 'T00:00:00');
+        d.setMonth(d.getMonth() + idx);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return {
+          numero: n,
+          vencimento: `${y}-${m}-${day}`,
+          valor: Number(valorParcela.toFixed(2)),
+          status: 'aberta',
+          pagamentos: []
+        };
+      });
+
+      const cobranca = {
+        id: now,
+        vendaId: '',
+        numeroVenda: '',
+        status: 'pending',
+        paidAt: '',
+        origem: { tipo: origemTipo, refId: '', refNumero: '' },
+        cliente: { clienteId: String(clienteId), nome: clienteNome },
+        descricao: descricao || 'Cobrança manual',
+        valorTotal: Number(valorTotal.toFixed(2)),
+        datas: { emissao: new Date().toISOString(), vencimento },
+        parcelamento: { modo: parcelas > 1 ? 'parcelado' : 'avista', parcelas },
+        parcelasDetalhe,
+        pagamentos: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        integracoes: {
+          mercadopago: { preferenceId:'', paymentId:'', status:'', statusDetail:'', qrCode:'', ticketUrl:'' },
+          whatsapp: { messageId:'', status:'', sentAt:'', deliveredAt:'' }
+        }
+      };
+
+      const list = getCobrancas();
+      list.unshift(cobranca);
+      setCobrancas(list);
+
+      fecharModalNovaCobranca();
+      toast('Cobrança criada!', 'success');
+      render();
+      renderLembretes();
+    }
+
+    // -------------------------
+    // Detalhes
+    // -------------------------
+    function abrirDetalhe(id) {
+      const c = getCobrancas().find(x => x.id === id);
+      if (!c) return;
+
+      const status = normalizeStatus(c);
+      const valor = Number(c.valorTotal ?? c.valor ?? 0);
+
+      document.getElementById('detalheTitulo').textContent =
+        `Cobrança • ${c?.cliente?.nome || c?.clienteNome || '-'} • ${formatBRL(valor)}`;
+
+      const pagos = (c.pagamentos || []).reduce((acc,p) => acc + Number(p.valor || 0), 0);
+      const aberto = Math.max(0, valor - pagos);
+
+      const parcelas = (c.parcelasDetalhe || []).map(p => `
+        <tr>
+          <td>${p.numero}</td>
+          <td>${escapeHTML(p.vencimento || '-')}</td>
+          <td>${formatBRL(p.valor)}</td>
+          <td>${statusPill(p.status === 'paga' ? 'paga' : 'aberta')}</td>
+        </tr>
+      `).join('');
+
+      const vendaRef = c?.vendaId ? `<div class="hint">Venda vinculada: <strong>${escapeHTML(String(c.vendaId))}</strong></div>` : '';
+
+      const origemTipo = c?.origem?.tipo || (c?.vendaId ? 'venda' : 'manual');
+      const origemRef = c?.origem?.refNumero || c?.numeroVenda || c?.vendaNumero || '';
+
+      const venc = c?.datas?.vencimento || c?.dueDate || '';
+
+      const html = `
+        <div class="panel" style="box-shadow:none; margin-bottom:0;">
+          <div class="form-row">
+            <div class="field">
+              <label>Origem</label>
+              <input value="${escapeHTML((origemTipo + ' ' + origemRef).trim())}" readonly />
+              ${vendaRef}
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <input value="${escapeHTML(status)}" readonly />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>Vencimento</label>
+              <input value="${escapeHTML(venc)}" readonly />
+            </div>
+            <div class="field">
+              <label>Descrição</label>
+              <input value="${escapeHTML(c?.descricao || '')}" readonly />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>Pago (manual / histórico)</label>
+              <input value="${formatBRL(pagos)}" readonly />
+              <div class="hint">Você disse que o faturamento é manual. Então este campo é só informativo.</div>
+            </div>
+            <div class="field">
+              <label>Em aberto</label>
+              <input value="${formatBRL(aberto)}" readonly />
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="panel-title" style="margin-top:0;">
+            <span>Parcelas</span>
+            <small>${(c?.parcelamento?.parcelas || 1)}x</small>
+          </div>
+
+          <div style="overflow:auto;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Vencimento</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${parcelas || `<tr><td colspan="4" class="hint">Sem parcelas detalhadas.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row-actions">
+            <button class="btn btn-success" type="button" onclick="marcarComoPaga(${c.id})">✅ Marcar como paga</button>
+            <button class="btn btn-danger" type="button" onclick="cancelar(${c.id})">Cancelar</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="panel-title" style="margin-top:0;">
+            <span>Reservas de Integração</span>
+            <small>não funcional</small>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>Mercado Pago</label>
+              <textarea readonly>${escapeHTML(JSON.stringify(c.integracoes?.mercadopago || {}, null, 2))}</textarea>
+            </div>
+            <div class="field">
+              <label>WhatsApp</label>
+              <textarea readonly>${escapeHTML(JSON.stringify(c.integracoes?.whatsapp || {}, null, 2))}</textarea>
+            </div>
+          </div>
+
+          <div class="row-actions">
+            <button class="btn btn-primary" type="button" onclick="abrirEnviarWhatsApp(${c.id})">📲 Reservar envio (WhatsApp)</button>
+            <button class="btn btn-primary" type="button" onclick="abrirGerarMercadoPago(${c.id})">💳 Reservar MP</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('detalheCorpo').innerHTML = html;
+      document.getElementById('modalDetalhe').style.display = 'flex';
+    }
+
+    function fecharModalDetalhe() {
+      const m = document.getElementById('modalDetalhe');
+      m.style.animation = 'fadeOut .2s ease-out forwards';
+      setTimeout(() => { m.style.display = 'none'; m.style.animation = ''; }, 200);
+    }
+
+    // -------------------------
+    // Ação principal: pagar
+    // -------------------------
+    function marcarComoPaga(id) {
+      const list = getCobrancas();
+      const idx = list.findIndex(x => x.id === id);
+      if (idx < 0) return;
+
+      const c = list[idx];
+      const status = normalizeStatus(c);
+      if (status === 'cancelada') return toast('Cobrança cancelada. Não é possível marcar como paga.', 'warning');
+      if (status === 'paga') return toast('Cobrança já está paga.', 'info');
+
+      if (!confirm('Confirmar: marcar cobrança como paga?')) return;
+
+      const nowIso = new Date().toISOString();
+
+      // Padrão compatível com vendas.html (A)
+      c.status = 'paid';
+      c.paidAt = nowIso;
+
+      if (Array.isArray(c.parcelasDetalhe)) {
+        c.parcelasDetalhe = c.parcelasDetalhe.map(p => ({ ...p, status: 'paga' }));
+      }
+
+      // registra pagamento "manual"
+      c.pagamentos = Array.isArray(c.pagamentos) ? c.pagamentos : [];
+      if (!c.pagamentos.some(p => p && p.meta === 'auto-paid')) {
+        const valor = Number(c.valorTotal ?? c.valor ?? 0);
+        c.pagamentos.push({
+          id: Date.now(),
+          data: nowIso,
+          valor: Number(valor.toFixed(2)),
+          formaPagamento: 'auto',
+          obs: 'Marcada como paga (manual/operador)',
+          meta: 'auto-paid'
+        });
+      }
+
+      c.updatedAt = nowIso;
+      list[idx] = c;
+      setCobrancas(list);
+
+      // Integração com vendas (A):
+      // se a cobrança veio de uma venda pendente, concluir e dar baixa no estoque aqui
+      const vendaId = c.vendaId || c.vendaId === 0 ? c.vendaId : (c.vendaId || null);
+      if (vendaId) finalizarVendaPorCobranca(vendaId);
+
+      toast('Cobrança marcada como paga!', 'success');
+      render();
+      renderLembretes();
+    }
+
+    function finalizarVendaPorCobranca(vendaId) {
+      const vendas = getVendas();
+      const vIdx = vendas.findIndex(v => String(v.id) === String(vendaId));
+      if (vIdx < 0) {
+        toast('Aviso: venda vinculada não encontrada para atualizar.', 'warning');
+        return;
+      }
+
+      const venda = vendas[vIdx];
+      venda.status = 'completed';
+      venda.updatedAt = new Date().toISOString();
+
+      // garante baixa somente uma vez
+      if (!venda.stockDeductedAt) {
+        const produtos = lsReadJSON(LS.produtos, []) || [];
+
+        // valida estoque antes
+        for (const item of (venda.itens || [])) {
+          const p = produtos.find(pp => pp && pp.id === item.id);
+          const estoqueAtual = Number(p?.estoque_atual || 0);
+          if (!p) {
+            toast(`Produto não encontrado no cadastro: ${item.nome}`, 'warning');
+            return;
+          }
+          if (estoqueAtual < Number(item.quantidade || 0)) {
+            toast(`Estoque insuficiente para: ${item.nome}`, 'danger');
+            return;
+          }
+        }
+
+        // baixa estoque
+        for (const item of (venda.itens || [])) {
+          const pIdx = produtos.findIndex(pp => pp && pp.id === item.id);
+          const p = produtos[pIdx];
+
+          const novoEstoque = Math.max(0, Number(p.estoque_atual || 0) - Number(item.quantidade || 0));
+          p.estoque_atual = novoEstoque;
+
+          if (p.status !== 'inativo') {
+            if (novoEstoque === 0) p.status = 'esgotado';
+            else p.status = 'ativo';
+          }
+
+          produtos[pIdx] = p;
+        }
+
+        lsWriteJSON(LS.produtos, produtos);
+        venda.stockDeductedAt = new Date().toISOString();
+      }
+
+      vendas[vIdx] = venda;
+      setVendas(vendas);
+    }
+
+    // -------------------------
+    // Cancelar (CTRL+Z real)
+    // - remove do storage e oferece desfazer
+    // -------------------------
+    function cancelar(id) {
+      const list = getCobrancas();
+      const idx = list.findIndex(x => x.id === id);
+      if (idx < 0) return;
+
+      const c = list[idx];
+      const status = normalizeStatus(c);
+      if (status === 'paga') return toast('Cobrança paga não pode ser cancelada aqui.', 'warning');
+
+      if (!confirm('Cancelar esta cobrança? Ela será removida da lista e você poderá desfazer (Ctrl+Z).')) return;
+
+      pushUndo({ type: 'remove-cobranca', payload: deepClone(c), at: new Date().toISOString() });
+
+      const next = list.filter(x => x.id !== id);
+      setCobrancas(next);
+
+      fecharModalDetalhe();
+
+      toast('Cobrança removida. Você pode desfazer (Ctrl+Z).', 'warning', 'Desfazer', () => {
+        desfazerUltimaAcaoCobranca();
+      });
+
+      render();
+      renderLembretes();
+    }
+
+    function abrirEnviarWhatsApp(id) { toast('Reserva: aqui você vai chamar a API do WhatsApp para enviar a cobrança.', 'info'); }
+    function abrirGerarMercadoPago(id) { toast('Reserva: aqui você vai chamar o Mercado Pago para gerar o link/PIX e salvar ids/status.', 'info'); }
+
+    function escapeHTML(s) {
+      return String(s ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('ano-atual').textContent = new Date().getFullYear();
+
+      const isCollapsed = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+      const layout = document.getElementById('mainLayout');
+      if (layout && isCollapsed) layout.classList.add('collapsed');
+
+      atualizarTopUser();
+
+      render();
+      renderLembretes();
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === LS.cobrancas || e.key === LS.config || e.key === LS.vendas || e.key === LS.undoCobrancas) refresh();
+        if (e.key === LS.sidebarCollapsed) {
+          const isCollapsed2 = localStorage.getItem(LS.sidebarCollapsed) === 'true';
+          const layout2 = document.getElementById('mainLayout');
+          if (!layout2) return;
+          if (isCollapsed2) layout2.classList.add('collapsed');
+          else layout2.classList.remove('collapsed');
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleSidebar(); }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+          e.preventDefault();
+          desfazerUltimaAcaoCobranca();
+        }
+        if (e.key === 'Escape') { fecharModalNovaCobranca(); fecharModalDetalhe(); }
+      });
+    });
+
+    window.toggleSidebar = toggleSidebar;
+    window.refresh = refresh;
+    window.render = render;
+
+    window.abrirModalNovaCobranca = abrirModalNovaCobranca;
+    window.fecharModalNovaCobranca = fecharModalNovaCobranca;
+    window.criarCobrancaManual = criarCobrancaManual;
+
+    window.abrirDetalhe = abrirDetalhe;
+    window.fecharModalDetalhe = fecharModalDetalhe;
+
+    window.marcarComoPaga = marcarComoPaga;
+    window.cancelar = cancelar;
+    window.desfazerUltimaAcaoCobranca = desfazerUltimaAcaoCobranca;
+
+    window.abrirEnviarWhatsApp = abrirEnviarWhatsApp;
+    window.abrirGerarMercadoPago = abrirGerarMercadoPago;
+  </script>
+</body>
+</html>
