@@ -1,0 +1,17 @@
+        top: auto;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border-light);
+        z-index: 1000;
+      }
+      .sidebar{ padding: var(--space-4) 0; flex-direction: row; align-items:center; }
+      .menu{ display:flex; overflow-x:auto; flex: 0 0 auto; }
+      .menu li{ margin:0; }
+      .menu a{ flex-direction: column; padding: var(--space-2); }
+      .menu-text{ font-size: 0.625rem; }
+      .content{ padding: var(--space-4); }
+      .topbar{ padding: var(--space-4); }
+      .grid{ grid-template-columns: 1fr; }
+      .page-header{ flex-direction: column; align-items:flex-start; }
+    }
